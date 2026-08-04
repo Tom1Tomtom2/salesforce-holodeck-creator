@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "site-web-story-marketplace",
+  "description": "Skills de démo narratives — parcours client de marque en HTML/CSS artisanal.",
+  "owner": {
+    "name": "Thomas Damiens"
+  },
+  "plugins": [
+    {
+      "name": "site-web-story",
+      "description": "Construit un site de démo narratif (parcours client de marque en actes) : crawl de marque (logo + images produit + palette via navigateur headless), puis génération d'un site statique navigable depuis un manifest. Zéro serveur, zéro clé API.",
+      "category": "productivity",
+      "author": {
+        "name": "Thomas Damiens"
+      },
+      "source": "./plugins/site-web-story"
+    }
+  ]
+}
