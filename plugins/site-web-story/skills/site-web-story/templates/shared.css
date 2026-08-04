@@ -1,0 +1,132 @@
+/* =========================================================
+   Site-web-story — design tokens partagés (base neutre)
+   Réécris les valeurs :root en phase 3 pour coller à la marque.
+   Seuls les tokens changent ; la structure des composants reste.
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+    --accent:      #1c2b4a;   /* accent principal de la marque — À REMPLACER */
+    --accent-dark: #0f1b33;
+    --accent-soft: #eef1f7;   /* fond clair dérivé de l'accent */
+    --black:       #111111;
+    --white:       #ffffff;
+    --off-white:   #f6f6f4;
+    --grey:        #767676;
+    --grey-light:  #9a9a9a;
+    --border:      #e6e6e6;
+    --green:       #1f9d55;
+    --green-bg:    rgba(31,157,85,0.10);
+    --amber:       #c98a1b;
+    --red:         #c0392b;
+    --sans:        'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --body:        'Inter', var(--sans);
+    --shadow:      0 2px 16px rgba(0,0,0,0.06);
+    --shadow-md:   0 8px 32px rgba(0,0,0,0.10);
+    --radius:      14px;
+}
+
+* , *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+    font-family: var(--body);
+    color: var(--black);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+img { max-width: 100%; display: block; }
+
+/* --- Wordmark texte (remplace le logo de la marque) --- */
+.brand {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.5px;
+    color: var(--black);
+}
+.brand--white { color: #fff; }
+
+/* Pastille de marque (petit avatar rond) : mettre l'initiale dedans */
+.brand-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-weight: 700; color: #fff;
+    background: var(--accent); border-radius: 50%;
+}
+
+/* Bandeau décoratif d'accent (rythme visuel de marque) */
+.accent-band {
+    height: 6px; width: 100%;
+    background: repeating-linear-gradient(
+        90deg, var(--accent) 0 22px, transparent 22px 44px);
+    opacity: 0.9;
+}
+
+/* --- Chips / badges --- */
+.chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.3px;
+    background: var(--accent-soft); color: var(--accent);
+}
+.chip--green { background: var(--green-bg); color: var(--green); }
+.chip--amber { background: rgba(201,138,27,0.12); color: var(--amber); }
+.chip--live  { background: var(--red); color: #fff; }
+.chip--live::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: #fff; animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* --- Boutons --- */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 34px; font-family: var(--sans);
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; transition: all 0.25s;
+}
+.btn--dark   { background: var(--black); color: #fff; }
+.btn--dark:hover { background: var(--accent); }
+.btn--outline { border: 1px solid currentColor; }
+.btn--accent { background: var(--accent); color: #fff; }
+
+/* --- Cartouche "acte" en haut d'écran (repère démo, retirable) --- */
+.act-tag {
+    position: fixed; top: 0; left: 0; z-index: 2000;
+    background: var(--accent); color: #fff;
+    font-family: var(--sans); font-size: 0.68rem; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 6px 14px; border-bottom-right-radius: 10px;
+}
+
+/* --- Device frame (mockup mobile) --- */
+.phone {
+    width: 390px; margin: 40px auto;
+    background: var(--white);
+    border-radius: 44px;
+    box-shadow: 0 0 0 12px #1a1a1a, var(--shadow-md);
+    overflow: hidden;
+    position: relative;
+}
+.phone-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 150px; height: 26px; background: #1a1a1a;
+    border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
+    z-index: 50;
+}
+
+/* --- Encart pédagogique "pourquoi cet écran" (clin d'œil produit) --- */
+.why {
+    margin: 4px 14px 20px; display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px; border: 1px dashed var(--border); border-radius: 10px;
+    background: #fafafa;
+}
+.why .q { flex-shrink: 0; color: var(--accent); }
+.why .t { font-size: 0.76rem; color: var(--grey); line-height: 1.5; }
+.why .t b { color: var(--accent); }
+
+/* --- Utilitaires --- */
+.muted { color: var(--grey); }
+.mono  { font-variant-numeric: tabular-nums; }

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Landing de capture (mobile) · résolution d'identité        │
+     │ Data Cloud. CHROME VERROUILLÉE : barre navigateur, hero, formulaire,  │
+     │ overlay de résolution d'identité + timeline scriptée (le "gif").      │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Le hero = dégradé d'accent (aucune image externe).                    │
+     │ Le <script> en bas orchestre l'animation : ne le retire pas,          │
+     │ garde les id (cur, sub, resolve, f1, f2, mrg, uni).                   │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Landing de capture — résolution d'identité<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .phone { width: 390px; }
+    .screen { width: 100%; height: 800px; overflow: hidden; background: #fff; display: flex; flex-direction: column; position: relative; }
+
+    /* mini barre navigateur */
+    .browser { display: flex; align-items: center; gap: 8px; padding: 32px 14px 8px; background: #f2f2f4; }
+    .browser .url { flex: 1; background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 0.72rem; color: var(--grey); display: flex; align-items: center; gap: 6px; }
+    .browser .url svg { width: 12px; height: 12px; color: var(--green); }
+
+    /* hero landing */
+    .hero { aspect-ratio: 1980 / 842; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); position: relative; }
+
+    .lp { padding: 22px 20px; }
+    .lp .brand { justify-content: center; margin: 0 auto 14px; }
+    .lp h1 { font-family: var(--sans); font-weight: 300; font-size: 1.35rem; text-align: center; line-height: 1.3; }
+    .lp .p { font-size: 0.85rem; color: var(--grey); text-align: center; line-height: 1.55; margin: 10px 0 18px; }
+
+    /* formulaire */
+    .field { border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; font-size: 0.88rem; color: var(--black); margin-bottom: 10px; display: flex; align-items: center; }
+    .field.filled { border-color: var(--accent); }
+    .field .cursor { width: 1px; height: 16px; background: var(--accent); animation: blink 0.9s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .btn-sub { width: 100%; background: var(--black); color: #fff; padding: 14px; font-family: var(--sans); font-size: 0.72rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 10px; transition: background 0.3s; }
+    .btn-sub.on { background: var(--accent); }
+    .consent { font-size: 0.68rem; color: var(--grey-light); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+    /* overlay résolution d'identité Data Cloud */
+    .resolve { position: absolute; inset: 0; background: rgba(15,27,51,0.94); color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 28px; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+    .resolve.show { opacity: 1; }
+    .resolve .tag { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 22px; }
+    .resolve .tag svg { width: 15px; height: 15px; }
+    .resolve h2 { font-family: var(--sans); font-weight: 300; font-size: 1.3rem; margin-bottom: 20px; }
+
+    /* fragments qui fusionnent */
+    .frag { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.08); margin-bottom: 10px; opacity: 0; transform: translateY(8px); }
+    .frag.in { animation: rise 0.5s ease forwards; }
+    .frag .fi { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .frag .fi svg { width: 16px; height: 16px; }
+    .frag .ft { font-size: 0.8rem; line-height: 1.35; }
+    .frag .ft b { font-weight: 600; }
+    .frag .ft .s { color: #a9b6d4; font-size: 0.7rem; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+    .merge { text-align: center; color: #a9b6d4; font-size: 1.4rem; opacity: 0; margin: 2px 0; }
+    .merge.in { animation: fade 0.4s ease forwards; }
+    @keyframes fade { to { opacity: 1; } }
+
+    /* profil unifié final */
+    .unified { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; background: #fff; color: var(--accent); opacity: 0; transform: scale(0.94); }
+    .unified.in { animation: pop 0.5s cubic-bezier(.3,1.4,.5,1) forwards; }
+    @keyframes pop { to { opacity: 1; transform: scale(1); } }
+    .unified .av { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; }
+    .unified .u b { font-family: var(--sans); font-size: 0.95rem; }
+    .unified .u .r { font-size: 0.72rem; color: var(--grey); margin-top: 2px; }
+    .unified .chk { margin-left: auto; color: var(--green); }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Prologue · Capture & résolution d'identité (Data Cloud)<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="browser">
+            <div class="url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><!-- SLOT: url -->nova.com/nouveaute<!-- /SLOT --></div>
+        </div>
+
+        <div class="hero"></div>
+
+        <!-- SLOT: landing ─ contenu de la page (titre, offre, champ email pré-rempli). -->
+        <div class="lp">
+            <span class="brand"><span class="brand-mark">N</span> Nova</span>
+            <h1>Comme un air de nouveauté.</h1>
+            <div class="p">−10 % sur votre première commande et nos nouveautés en avant-première.</div>
+
+            <div class="field filled" id="f-email">camille.d@email.com<span class="cursor" id="cur"></span></div>
+            <button class="btn-sub" id="sub">Je m'inscris</button>
+            <div class="consent">En vous inscrivant, vous rejoignez le programme Nova · désinscription à tout moment.</div>
+        </div>
+        <!-- /SLOT: landing -->
+
+        <!-- SLOT: resolve ─ overlay Data Cloud : fragments d'identité qui fusionnent en profil unifié.
+             C'est le clin d'œil produit de cet écran. Garde la structure + les id. -->
+        <div class="resolve" id="resolve">
+            <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>Salesforce Data Cloud · résolution d'identité</span>
+            <h2>Un seul et même profil.</h2>
+
+            <div class="frag" id="f1">
+                <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
+                <div class="ft"><b>Appareil anonyme</b><div class="s">a vu la pub Meta · a visité le site 2×</div></div>
+            </div>
+
+            <div class="frag" id="f2">
+                <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></div>
+                <div class="ft"><b>Email fraîchement capté</b><div class="s">camille.d@email.com · inscription newsletter</div></div>
+            </div>
+
+            <div class="merge" id="mrg">↕</div>
+
+            <div class="unified" id="uni">
+                <div class="av">CD</div>
+                <div class="u"><b>Nouveau profil unifié</b><div class="r">Prospect → connu · prêt pour un parcours de bienvenue</div></div>
+                <span class="chk"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg></span>
+            </div>
+        </div>
+        <!-- /SLOT: resolve -->
+    </div>
+</div>
+
+<script>
+    // ponytail: timeline scriptée pour le GIF — clic simulé puis fusion des fragments
+    var t = 0, step = function (fn, d) { t += d; setTimeout(fn, t); };
+    step(function(){ document.getElementById('cur').style.display = 'none';
+                     document.getElementById('sub').classList.add('on'); }, 1200);
+    step(function(){ document.getElementById('resolve').classList.add('show'); }, 500);
+    step(function(){ document.getElementById('f1').classList.add('in'); }, 500);
+    step(function(){ document.getElementById('f2').classList.add('in'); }, 700);
+    step(function(){ document.getElementById('mrg').classList.add('in'); }, 600);
+    step(function(){ document.getElementById('uni').classList.add('in'); }, 500);
+</script>
+</body>
+</html>

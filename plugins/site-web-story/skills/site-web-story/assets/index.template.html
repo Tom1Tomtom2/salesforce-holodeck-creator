@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!-- HUB / SOMMAIRE — remplace les {{placeholders}}, duplique .act et .screen selon la story.
+     Une carte .screen par écran ; ajoute <span class="gif">▶ animé</span> si l'écran a une animation CSS. -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{BRAND}} — {{STORY_TITLE}}</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: var(--off-white); min-height: 100vh; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 70px 30px; }
+    .head { text-align: center; margin-bottom: 50px; }
+    .head .brand { font-size: 2rem; }
+    .head h1 { font-family: var(--sans); font-weight: 300; font-size: 1.6rem; margin: 14px 0 6px; }
+    .head p { color: var(--grey); font-size: 0.9rem; }
+    .act { margin-bottom: 34px; }
+    .act > h2 { font-family: var(--sans); font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .screens { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .screen { display: block; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s; }
+    .screen:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .screen .n { font-size: 0.7rem; color: var(--grey-light); }
+    .screen .t { font-weight: 600; font-size: 0.92rem; margin: 6px 0 4px; }
+    .screen .d { font-size: 0.78rem; color: var(--grey); line-height: 1.4; }
+    .screen .gif { display: inline-block; margin-top: 8px; font-size: 0.66rem; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="brand">{{BRAND}}</div>
+        <h1>{{STORY_TITLE}}</h1>
+        <p>Écrans de démo · mockups statiques (aucune donnée réelle)</p>
+    </div>
+
+    <!-- Répéter ce bloc .act par acte de la story -->
+    <div class="act">
+        <h2>{{ACT_LABEL}}</h2>
+        <div class="screens">
+            <a class="screen" href="{{SCENE_FILE}}"><div class="n">{{SCENE_N}}</div><div class="t">{{SCENE_TITLE}}</div><div class="d">{{SCENE_DESC}}</div><span class="gif">▶ animé</span></a>
+            <!-- … autres .screen … -->
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

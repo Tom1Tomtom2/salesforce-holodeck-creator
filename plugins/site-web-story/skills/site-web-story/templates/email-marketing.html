@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Email marketing (desktop) · Einstein Copy Insights / MC    │
+     │ CHROME VERROUILLÉE : client mail (mail-top), corps email, panneau     │
+     │ Einstein à droite. NE MODIFIE QUE le contenu entre les marqueurs SLOT.│
+     │ Le hero de l'email = dégradé d'accent (aucune image externe).         │
+     │ Usage : email de bienvenue, réactivation, cross-sell, fidélité…       │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Email — Einstein Copy Insights<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: var(--off-white); padding: 40px 20px; }
+    .stage { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1fr 360px; gap: 30px; align-items: start; }
+
+    /* Client mail (mock) */
+    .mailapp { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; }
+    .mail-top { display: flex; align-items: center; gap: 12px; padding: 16px 22px; border-bottom: 1px solid var(--border); }
+    .mail-top .from-av { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; }
+    .mail-top .subj { font-weight: 600; font-size: 0.95rem; }
+    .mail-top .frm { font-size: 0.78rem; color: var(--grey); }
+    .mail-top .subj em { font-style: normal; background: var(--accent-soft); border-radius: 4px; padding: 0 4px; }
+
+    /* Email body */
+    .email .hero {
+        aspect-ratio: 1980 / 842; position: relative; overflow: hidden;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    }
+    .email .content { padding: 34px; }
+    .email .content p { font-size: 0.98rem; line-height: 1.85; color: #333; margin-bottom: 18px; }
+    .email .content .hl { color: var(--accent); font-weight: 600; }
+
+    .email .pairing { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin: 10px 0 28px; }
+    .email .pairing .it { text-align: center; }
+    .email .pairing .thumb { aspect-ratio: 3/4; border-radius: 8px; background: linear-gradient(135deg,#d9dce6,#eef1f7); margin-bottom: 8px; }
+    .email .pairing .it .cap { font-size: 0.78rem; color: var(--grey); }
+    .email .pairing .it .cap b { display: block; color: var(--black); font-size: 0.85rem; }
+    .email .pairing .plus { font-size: 1.6rem; color: var(--accent); }
+
+    .email .cta-wrap { text-align: center; padding: 6px 0 10px; }
+    .email .footer { text-align: center; padding: 26px; border-top: 1px solid var(--border); font-size: 0.72rem; color: var(--grey); }
+    .email .footer .brand { justify-content: center; margin-bottom: 8px; }
+
+    /* Panneau Einstein (à droite) */
+    .einstein { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+    .einstein .eh { display: flex; align-items: center; gap: 10px; padding: 16px 18px; background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; }
+    .einstein .eh .spark { width: 26px; height: 26px; }
+    .einstein .eh b { font-family: var(--sans); letter-spacing: 0.5px; }
+    .einstein .eb { padding: 18px; }
+    .einstein .eb h4 { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin: 14px 0 8px; }
+    .einstein .eb h4:first-child { margin-top: 0; }
+    .gen { border-left: 3px solid var(--accent); padding: 8px 0 8px 12px; font-size: 0.86rem; line-height: 1.5; margin-bottom: 6px; }
+    .gen .tag { display: inline-block; font-size: 0.68rem; color: var(--green); font-weight: 600; margin-bottom: 3px; }
+    .signals { font-size: 0.82rem; color: #444; line-height: 1.7; }
+    .signals li { list-style: none; padding-left: 18px; position: relative; }
+    .signals li::before { content: '›'; position: absolute; left: 2px; color: var(--accent); }
+    .note { font-size: 0.72rem; color: var(--grey); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 1 · Email — Einstein Copy Insights (Marketing Cloud)<!-- /SLOT --></div>
+
+<div class="stage">
+    <!-- SLOT: email ─ le mail (entête client + hero + corps + footer). -->
+    <div class="mailapp">
+        <div class="mail-top">
+            <div class="from-av">N</div>
+            <div>
+                <div class="subj">Votre nouveauté a trouvé sa compagne <em>✨ objet généré par IA</em></div>
+                <div class="frm">Nova &lt;bonjour@nova.com&gt; · à moi</div>
+            </div>
+        </div>
+
+        <div class="email">
+            <div class="hero"></div>
+
+            <div class="content">
+                <p>Bonjour,</p>
+                <p>Votre <span class="hl">pièce favorite</span> mérite une compagne de saison. Nous avons imaginé pour vous <span class="hl">la nouveauté</span> — celle que vous regardiez justement ces derniers jours.</p>
+
+                <div class="pairing">
+                    <div class="it">
+                        <div class="thumb"></div>
+                        <div class="cap"><b>Votre pièce</b>votre garde-robe</div>
+                    </div>
+                    <div class="plus">+</div>
+                    <div class="it">
+                        <div class="thumb"></div>
+                        <div class="cap"><b>La nouveauté</b>coup de cœur repéré</div>
+                    </div>
+                </div>
+
+                <p>Un accord juste, à porter du matin au soir.</p>
+
+                <div class="cta-wrap">
+                    <a class="btn btn--accent">Réserver un essayage en boutique</a>
+                </div>
+            </div>
+
+            <div class="footer">
+                <span class="brand"><span class="brand-mark">N</span> Nova</span><br>
+                Paris · Se désabonner · Préférences
+            </div>
+        </div>
+    </div>
+    <!-- /SLOT: email -->
+
+    <!-- SLOT: einstein ─ le panneau "clin d'œil" IA. C'est le .why de cet écran : garde-le. -->
+    <aside class="einstein">
+        <div class="eh">
+            <svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+            <b>Einstein Copy Insights</b>
+        </div>
+        <div class="eb">
+            <h4>Objet généré</h4>
+            <div class="gen"><span class="tag">variante retenue</span>« Votre nouveauté a trouvé sa compagne »</div>
+
+            <h4>Bloc de contenu généré</h4>
+            <div class="gen">Accroche éditoriale associant l'article possédé + l'article consulté, ton de marque.</div>
+
+            <h4>Signaux utilisés (Data Cloud)</h4>
+            <ul class="signals">
+                <li>Possède : pièce favorite</li>
+                <li>Consulté 3× : la nouveauté (non converti)</li>
+                <li>Segment : intérêt catégorie</li>
+                <li>Ton de marque : éditorial</li>
+            </ul>
+
+            <div class="note">0 version rédigée à la main. Le marketeur valide, la Journey envoie.</div>
+        </div>
+    </aside>
+    <!-- /SLOT: einstein -->
+</div>
+</body>
+</html>

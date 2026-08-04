@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Service Cloud Console (desktop) · vision 360 conseiller    │
+     │ CHROME VERROUILLÉE : tabbar, grille 3 colonnes (contact 360 · case +  │
+     │ timeline + tracker · panneau Agentforce). Agentforce / MuleSoft.      │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Animation : l'étape .st.now du tracker pulse. Le panneau .agent est   │
+     │ le clin d'œil produit (suggestion IA + brouillon) : garde-le.         │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Service Cloud Console — Conseiller<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #eef1f5; min-height: 100vh; font-family: var(--body); }
+
+    /* Console chrome */
+    .console { max-width: 1320px; margin: 0 auto; }
+    .tabbar { background: var(--accent-dark); color: #fff; display: flex; align-items: center; gap: 2px; padding: 40px 16px 0; }
+    .tab { padding: 11px 18px; font-size: 0.8rem; border-top-left-radius: 8px; border-top-right-radius: 8px; color: #b9c3da; }
+    .tab.on { background: #eef1f5; color: var(--accent); font-weight: 600; }
+
+    .layout { display: grid; grid-template-columns: 300px 1fr 340px; gap: 16px; padding: 16px; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+    .card h2 { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); padding: 16px 18px 0; }
+
+    /* Left — contact 360 */
+    .contact { padding: 18px; text-align: center; }
+    .contact .av { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px; background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; font-size: 1.4rem; }
+    .contact .nm { font-family: var(--sans); font-weight: 600; font-size: 1.1rem; }
+    .contact .sub { font-size: 0.78rem; color: var(--grey); margin-top: 2px; }
+    .kv { text-align: left; padding: 8px 18px 18px; font-size: 0.83rem; }
+    .kv .row { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--border); }
+    .kv .row span:first-child { color: var(--grey); }
+    .boutique-note { margin: 0 18px 18px; padding: 12px; border-radius: 10px; background: var(--accent-soft); font-size: 0.8rem; color: var(--accent); line-height: 1.5; }
+    .boutique-note b { display: block; }
+
+    /* Center — case + timeline */
+    .case-head { padding: 18px; border-bottom: 1px solid var(--border); }
+    .case-head .cn { font-family: var(--sans); font-weight: 600; font-size: 1.1rem; }
+    .case-head .meta { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
+    .timeline { padding: 8px 18px 18px; }
+    .tl-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-item .ic { width: 38px; height: 38px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tl-item.mule .ic { background: var(--green-bg); color: var(--green); }
+    .tl-item .b .t { font-weight: 500; font-size: 0.9rem; }
+    .tl-item .b .d { font-size: 0.78rem; color: var(--grey); margin-top: 3px; }
+    .tl-item .tm { margin-left: auto; font-size: 0.7rem; color: var(--grey-light); white-space: nowrap; }
+
+    /* shipment tracker */
+    .track { margin: 4px 18px 18px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; }
+    .track .th { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .track .th .oms { font-size: 0.68rem; color: var(--green); font-weight: 600; }
+    .steps { display: flex; align-items: center; }
+    .steps .st { flex: 1; text-align: center; position: relative; }
+    .steps .st .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--border); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; }
+    .steps .st.done .dot { background: var(--accent); }
+    .steps .st.now .dot { background: var(--green); box-shadow: 0 0 0 4px var(--green-bg); animation: pulse 1.4s infinite; }
+    .steps .st .lbl { font-size: 0.68rem; color: var(--grey); }
+    .steps .st.now .lbl { color: var(--green); font-weight: 600; }
+    .steps .bar { position: absolute; top: 11px; left: 50%; width: 100%; height: 2px; background: var(--border); z-index: -1; }
+    .steps .st.done .bar { background: var(--accent); }
+
+    /* Right — Agentforce suggestion */
+    .agent .ah { background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+    .agent .ah .spark { width: 22px; height: 22px; }
+    .agent .ah b { font-family: var(--sans); }
+    .agent .ab { padding: 16px; }
+    .agent .ab .lbl { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); margin-bottom: 8px; }
+    .suggestion { border-left: 3px solid var(--accent); padding: 10px 0 10px 12px; font-size: 0.9rem; line-height: 1.6; color: #333; margin-bottom: 14px; }
+    .agent .acts { display: flex; gap: 8px; }
+    .agent .acts .btn { flex: 1; padding: 11px; font-size: 0.66rem; }
+    .draft { margin-top: 14px; padding: 12px; background: var(--off-white); border-radius: 10px; font-size: 0.84rem; line-height: 1.55; color: #444; }
+    .draft .dh { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 4.5 · Service Cloud Console — vision 360 du siège<!-- /SLOT --></div>
+
+<div class="console">
+    <!-- SLOT: tabbar ─ onglets de la console. Le premier (.tab.on) = la case ouverte. -->
+    <div class="tabbar">
+        <div class="tab on">📋 Camille Dubois — Case #4471 · article défectueux</div>
+        <div class="tab">Ma file d'attente</div>
+        <div class="tab">Tableau de bord</div>
+    </div>
+    <!-- /SLOT: tabbar -->
+
+    <div class="layout">
+        <!-- SLOT: contact ─ colonne gauche : contact 360 (avatar, indicateurs, note boutique). -->
+        <div>
+            <div class="card">
+                <div class="contact">
+                    <div class="av">CD</div>
+                    <div class="nm">Camille Dubois</div>
+                    <div class="sub">Cliente fidèle · depuis 2021</div>
+                </div>
+                <div class="kv">
+                    <div class="row"><span>Valeur vie</span><span class="mono">1 840 €</span></div>
+                    <div class="row"><span>Canal</span><span>WhatsApp → Siège</span></div>
+                    <div class="row"><span>Segment</span><span>Fidélité boutique</span></div>
+                </div>
+                <div class="boutique-note">
+                    <b>🏪 Accueillie par Julien</b>
+                    Boutique centre-ville · il y a 2 jours. Nouveauté + article commandé en Endless Aisle (livré à domicile).
+                </div>
+            </div>
+        </div>
+        <!-- /SLOT: contact -->
+
+        <!-- SLOT: case ─ colonne centre : entête de case, tracker d'étapes, timeline d'événements. -->
+        <div class="card">
+            <div class="case-head">
+                <div class="cn">Article reçu défectueux</div>
+                <div class="meta">
+                    <span class="chip">Origine : WhatsApp</span>
+                    <span class="chip chip--amber">Escaladé par Agentforce · geste commercial</span>
+                    <span class="chip">Endless Aisle #7788</span>
+                </div>
+            </div>
+
+            <div class="track">
+                <div class="th">
+                    <b style="font-size:.9rem">Article · Endless Aisle #7788</b>
+                    <span class="oms">● temps réel · MuleSoft ↔ OMS + transporteur</span>
+                </div>
+                <div class="steps">
+                    <div class="st done"><div class="bar"></div><div class="dot">✓</div><div class="lbl">Commandé boutique</div></div>
+                    <div class="st done"><div class="bar"></div><div class="dot">✓</div><div class="lbl">Expédié</div></div>
+                    <div class="st done"><div class="bar"></div><div class="dot">✓</div><div class="lbl">Livré</div></div>
+                    <div class="st now"><div class="dot">!</div><div class="lbl">Défaut signalé</div></div>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <div class="tl-item mule">
+                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16"/></svg></div>
+                    <div class="b"><div class="t">Défaut signalé — pression cassée</div><div class="d">Déclaré via WhatsApp · article Endless Aisle #7788</div></div>
+                    <div class="tm">à l'instant</div>
+                </div>
+                <div class="tl-item">
+                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+                    <div class="b"><div class="t">Suivi colis — résolu par Agentforce</div><div class="d">Question « où est ma commande » traitée en autonomie · aucun humain requis</div></div>
+                    <div class="tm">18:03</div>
+                </div>
+                <div class="tl-item">
+                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+                    <div class="b"><div class="t">Conversation WhatsApp escaladée</div><div class="d">Agentforce → conseiller · motif : produit défectueux · contexte transmis</div></div>
+                    <div class="tm">18:04</div>
+                </div>
+                <div class="tl-item">
+                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+                    <div class="b"><div class="t">Visite boutique centre-ville</div><div class="d">Conseiller Julien · nouveauté + article Endless Aisle</div></div>
+                    <div class="tm">il y a 2 j</div>
+                </div>
+            </div>
+        </div>
+        <!-- /SLOT: case -->
+
+        <!-- SLOT: agent ─ colonne droite : panneau Agentforce (suggestion + actions + brouillon).
+             C'est le clin d'œil produit de cet écran : garde-le. -->
+        <div class="card agent">
+            <div class="ah">
+                <svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+                <b>Agentforce · assistance conseiller</b>
+            </div>
+            <div class="ab">
+                <div class="lbl">Geste commercial suggéré</div>
+                <div class="suggestion">Article <b>défectueux à la livraison</b> · cliente fidèle (1 840 € valeur vie). Recommandation : <b>renvoi gratuit + remplacement prioritaire</b>, ou <b>-30 % sur un prochain achat</b> si elle préfère garder l'article.</div>
+
+                <div class="acts">
+                    <button class="btn btn--dark">Envoyer en 1 clic</button>
+                    <button class="btn btn--outline" style="color:var(--accent)">Éditer</button>
+                </div>
+
+                <div class="draft">
+                    <div class="dh">Brouillon généré</div>
+                    Bonjour Camille, navrée pour ce défaut 🤍 Nous vous renvoyons un article neuf en prioritaire, sans frais — un bon de retour est déjà dans votre boîte mail. Et pour le désagrément, -30 % vous attendent sur votre prochaine commande.
+                </div>
+            </div>
+        </div>
+        <!-- /SLOT: agent -->
+    </div>
+</div>
+</body>
+</html>

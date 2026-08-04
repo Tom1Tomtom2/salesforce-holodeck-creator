@@ -1,0 +1,11 @@
+# Dépendances de site-web-story.
+#
+# build_site.py (génération du site) : AUCUNE dépendance — stdlib pure, Python 3.10+.
+# crawl_brand.py (crawl de marque)   : playwright, ci-dessous.
+#
+# Installation du crawler (une fois par machine) :
+#   pip install -r requirements.txt
+#   playwright install chromium        # télécharge le navigateur (~150 Mo)
+#
+# Le crawler utilise Google Chrome système s'il est présent, sinon le Chromium ci-dessus.
+playwright>=1.40

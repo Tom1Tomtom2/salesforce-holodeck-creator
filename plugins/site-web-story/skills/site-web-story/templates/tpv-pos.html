@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — TPV / caisse boutique (desktop, thème sombre)              │
+     │ Retour / échange / vente scanné en boutique · sync MuleSoft.          │
+     │ CHROME VERROUILLÉE : barre TPV, 2 panneaux (article scanné + code-    │
+     │ barres · récap remboursement), ligne de sync MuleSoft animée.         │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ La vignette produit = dégradé (aucune image externe).                 │
+     │ POS_NAME = nom du logiciel de caisse (Cegid, Lightspeed, générique…). │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->TPV — Retour produit<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #1a1d24; min-height: 100vh; color: #e8eaef; font-family: var(--sans); }
+
+    .pos { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
+    .posbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .posbar .brand { display: flex; align-items: center; gap: 12px; }
+    .posbar .pos-name { font-weight: 700; letter-spacing: 1px; color: #9fb0d4; }
+    .posbar .store { font-size: 0.8rem; color: #8b93a7; }
+
+    .grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+    .panel { background: #23262f; border: 1px solid #333846; border-radius: 12px; padding: 22px; }
+    .panel h2 { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: #8b93a7; margin-bottom: 18px; }
+
+    .mode { display: inline-flex; gap: 4px; background: #1a1d24; border-radius: 8px; padding: 4px; margin-bottom: 22px; }
+    .mode button { padding: 8px 18px; font-size: 0.8rem; border-radius: 6px; color: #8b93a7; font-family: inherit; }
+    .mode button.on { background: var(--accent); color: #fff; }
+
+    /* scanned line */
+    .scan-hint { display: flex; align-items: center; gap: 12px; color: #6f7280; }
+    .barcode { display: flex; gap: 3px; align-items: flex-end; height: 40px; }
+    .barcode i { width: 3px; background: #cfd6e6; display: block; }
+
+    .line { display: flex; gap: 16px; align-items: center; background: #1a1d24; border: 1px solid #333846; border-radius: 10px; padding: 16px; margin-top: 14px; }
+    .line .th { width: 50px; height: 62px; border-radius: 6px; background: linear-gradient(135deg,var(--accent),#4a5470); flex-shrink: 0; }
+    .line .b { flex: 1; }
+    .line .b .t { font-weight: 600; font-size: 0.95rem; color: #fff; }
+    .line .b .d { font-size: 0.78rem; color: #8b93a7; margin-top: 3px; }
+    .line .price { font-weight: 600; color: #fff; }
+
+    .field { margin-top: 18px; }
+    .field label { display: block; font-size: 0.72rem; color: #8b93a7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .field select { width: 100%; padding: 12px 14px; background: #1a1d24; border: 1px solid #3a4256; border-radius: 8px; color: #fff; font-family: inherit; font-size: 0.9rem; }
+
+    /* refund summary */
+    .sum .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333846; font-size: 0.9rem; }
+    .sum .row.total { border-bottom: none; font-weight: 700; font-size: 1.1rem; color: #fff; padding-top: 16px; }
+    .sum .row span:first-child { color: #8b93a7; }
+
+    .validate { width: 100%; margin-top: 20px; padding: 16px; background: var(--green); color: #fff; font-weight: 600; letter-spacing: 1px; border-radius: 10px; font-family: inherit; font-size: 0.85rem; }
+
+    .sync { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 0.78rem; color: #8b93a7; }
+    .sync .dot { width: 9px; height: 9px; border-radius: 50%; background: #f0a020; animation: pulse 1.3s infinite; }
+    .sync b { color: #9fb0d4; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 3 · TPV — retour scanné en boutique<!-- /SLOT --></div>
+
+<div class="pos">
+    <div class="posbar">
+        <div class="brand">
+            <span class="pos-name"><!-- SLOT: pos-name -->CAISSE<!-- /SLOT --></span>
+            <span style="color:#4a5470">Retail</span>
+        </div>
+        <div class="store"><!-- SLOT: store -->Boutique centre-ville · Caisse 2 · Julien<!-- /SLOT --></div>
+    </div>
+
+    <div class="grid">
+        <!-- SLOT: scan ─ panneau gauche : mode (vente/retour/échange), code-barres, article scanné, motif. -->
+        <div class="panel">
+            <div class="mode">
+                <button>Vente</button>
+                <button class="on">Retour</button>
+                <button>Échange</button>
+            </div>
+
+            <h2>Article scanné</h2>
+            <div class="scan-hint">
+                <div class="barcode">
+                    <i style="height:70%"></i><i style="height:100%"></i><i style="height:40%"></i><i style="height:90%"></i><i style="height:55%"></i><i style="height:100%"></i><i style="height:30%"></i><i style="height:80%"></i><i style="height:65%"></i>
+                </div>
+                <span style="color:#8b93a7;font-size:.8rem">SKU 2653J008-1000-T2</span>
+            </div>
+
+            <div class="line">
+                <div class="th"></div>
+                <div class="b">
+                    <div class="t">Votre article</div>
+                    <div class="d">Taille 2 · achat web #9021 · il y a 6 jours</div>
+                </div>
+                <div class="price">115,00 €</div>
+            </div>
+
+            <div class="field">
+                <label>Motif du retour</label>
+                <select>
+                    <option>Taille trop petite</option>
+                    <option>Ne convient pas</option>
+                    <option>Défaut produit</option>
+                </select>
+            </div>
+        </div>
+        <!-- /SLOT: scan -->
+
+        <!-- SLOT: refund ─ panneau droit : récap remboursement + validation + sync MuleSoft (garde .sync). -->
+        <div class="panel">
+            <h2>Remboursement</h2>
+            <div class="sum">
+                <div class="row"><span>Votre article</span><span>115,00 €</span></div>
+                <div class="row"><span>Mode d'origine</span><span>Carte •••• 4417</span></div>
+                <div class="row total"><span>À rembourser</span><span>115,00 €</span></div>
+            </div>
+            <button class="validate">✓ Valider le retour</button>
+
+            <div class="sync">
+                <span class="dot"></span>
+                <span>À la validation → <b>MuleSoft</b> pousse vers Data Cloud &amp; Salesforce · temps réel</span>
+            </div>
+        </div>
+        <!-- /SLOT: refund -->
+    </div>
+</div>
+</body>
+</html>

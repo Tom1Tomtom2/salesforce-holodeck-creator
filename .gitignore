@@ -1,5 +1,8 @@
 __pycache__/
 *.pyc
-*-story/
-*-brand/
 .DS_Store
+
+# Sorties générées par les scripts (jamais dans le repo de distribution).
+# Chemins ancrés à la racine pour ne PAS matcher le dossier skill « site-web-story/ ».
+/*-story/
+/*-brand/

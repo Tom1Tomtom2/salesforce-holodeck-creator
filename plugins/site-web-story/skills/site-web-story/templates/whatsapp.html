@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — WhatsApp (mobile) · Marketing Cloud / Agentforce          │
+     │ CHROME VERROUILLÉE : header, thread, bulles, input, système .step.   │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Palette d'éléments dispo dans le thread (copie/duplique au besoin) : │
+     │   <div class="msg in ...">   bulle reçue (marque/agent)              │
+     │   <div class="msg out ...">  bulle envoyée (client)                  │
+     │   <div class="who ai ...">   bandeau "Agentforce · Data Cloud"       │
+     │   <div class="who ...">      bandeau système (escalade…)             │
+     │   <div class="prod ...">     carte produit                            │
+     │   <div class="slots ...">    sélecteur de créneaux (RDV)             │
+     │   <div class="rdv ...">      carte confirmation RDV                   │
+     │   <div class="escalate ...">  carte passage à un conseiller humain    │
+     │ Anime en ajoutant la classe .step + .sN (s1..s8) pour l'apparition.  │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->WhatsApp — Réengagement<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .phone { width: 390px; }
+    .screen { width: 100%; height: 800px; background: #e5ddd5; display: flex; flex-direction: column; }
+
+    /* WhatsApp header */
+    .wa-head { background: #075e54; color: #fff; padding: 34px 16px 12px; display: flex; align-items: center; gap: 12px; }
+    .wa-head .av { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; color: var(--accent); font-family: var(--sans); font-weight: 700; font-size: 0.9rem; }
+    .wa-head .nm { font-weight: 600; font-size: 0.95rem; }
+    .wa-head .st { font-size: 0.72rem; opacity: 0.85; }
+
+    .thread { flex: 1; overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .thread > * { flex-shrink: 0; } /* sinon flexbox écrase la hauteur des cartes avant de scroller */
+    .msg { max-width: 80%; padding: 9px 12px; border-radius: 10px; font-size: 0.9rem; line-height: 1.45; box-shadow: 0 1px 1px rgba(0,0,0,0.06); position: relative; }
+    .msg .tm { font-size: 0.6rem; color: rgba(0,0,0,0.4); float: right; margin: 4px 0 -2px 8px; }
+    .in { align-self: flex-start; background: #fff; border-top-left-radius: 2px; }
+    .out { align-self: flex-end; background: #dcf8c6; border-top-right-radius: 2px; }
+
+    /* bandeau agent IA / Data Cloud */
+    .who { align-self: center; font-size: 0.66rem; color: #667; background: rgba(255,255,255,0.7); padding: 4px 12px; border-radius: 999px; margin: 2px 0; text-align: center; }
+    .who.ai { color: var(--accent); background: var(--accent-soft); }
+    .who.ai b { font-weight: 700; }
+
+    /* carte produit dans le message */
+    .prod { align-self: flex-start; max-width: 80%; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .prod .img { height: 150px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); }
+    .prod .pb { padding: 10px 12px; }
+    .prod .pt { font-weight: 600; font-size: 0.86rem; }
+    .prod .pd { font-size: 0.76rem; color: var(--grey); margin-top: 2px; }
+
+    /* sélecteur de créneau */
+    .slots { align-self: flex-start; max-width: 82%; background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .slots .sh { font-size: 0.7rem; letter-spacing: .5px; text-transform: uppercase; color: var(--grey); margin-bottom: 10px; }
+    .slot { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; font-size: 0.84rem; }
+    .slot:last-child { margin-bottom: 0; }
+    .slot .d { font-weight: 600; color: var(--accent); }
+    .slot .h { color: var(--grey); margin-left: auto; }
+    .slot.pick { border-color: var(--green); background: var(--green-bg); }
+    .slot.pick .d { color: var(--green); }
+
+    /* carte confirmation RDV */
+    .rdv { align-self: stretch; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+    .rdv .rh { background: var(--green); color: #fff; padding: 10px 14px; font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .rdv .rb { padding: 14px; }
+    .rdv .row { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; font-size: 0.84rem; }
+    .rdv .row .ic { width: 18px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+    .rdv .row b { color: #222; }
+    .rdv .adv { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .rdv .adv .pf { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; font-size: 0.78rem; }
+    .rdv .adv .an { font-size: 0.84rem; font-weight: 600; }
+    .rdv .adv .ar { font-size: 0.72rem; color: var(--grey); }
+
+    /* carte escalade vers conseiller humain */
+    .escalate { align-self: stretch; background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+    .escalate .eh { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .escalate .eh .av2 { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; font-size: 0.8rem; }
+    .escalate .eh b { font-size: 0.88rem; }
+    .escalate .eh .r { font-size: 0.72rem; color: var(--grey); }
+    .escalate .txt { font-size: 0.84rem; color: #444; line-height: 1.5; }
+
+    .wa-input { background: #f0f0f0; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+    .wa-input .box { flex: 1; background: #fff; border-radius: 999px; padding: 10px 16px; font-size: 0.85rem; color: var(--grey-light); }
+    .wa-input .send { width: 42px; height: 42px; border-radius: 50%; background: #075e54; display: flex; align-items: center; justify-content: center; color: #fff; }
+
+    /* apparition progressive (le "gif") — garde ces classes, ajuste le nb de .sN */
+    .step { opacity: 0; transform: translateY(8px); animation: appear 0.4s ease forwards; }
+    @keyframes appear { to { opacity: 1; transform: translateY(0); } }
+    .s1 { animation-delay: 0.4s; } .s2 { animation-delay: 1.6s; } .s3 { animation-delay: 2.8s; }
+    .s4 { animation-delay: 4.0s; } .s5 { animation-delay: 5.2s; } .s6 { animation-delay: 6.6s; }
+    .s7 { animation-delay: 8.0s; } .s8 { animation-delay: 9.2s; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 1 · WhatsApp — réengagement<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="wa-head">
+            <div class="av"><!-- SLOT: brand-initial -->N<!-- /SLOT --></div>
+            <div>
+                <div class="nm"><!-- SLOT: contact-name -->Nova · Boutique<!-- /SLOT --></div>
+                <div class="st"><!-- SLOT: contact-status -->Boutique · en ligne<!-- /SLOT --></div>
+            </div>
+        </div>
+
+        <!-- SLOT: thread ─ tout le fil de discussion. Duplique/retire les blocs ci-dessous.
+             Garde class="step sN" pour l'apparition animée ; renumérote s1,s2,… dans l'ordre. -->
+        <div class="thread">
+            <div class="who ai step s1">🤖 <b>Agentforce</b> · déclenché par <b>Data Cloud</b> — produit consulté, panier non finalisé</div>
+
+            <div class="msg in step s2">Bonjour 🤍 Vous avez repéré <b>la nouveauté</b> mais ne l'avez pas emportée. Elle est en stock en <b>boutique centre-ville</b>, à quelques minutes. Envie de l'essayer ?<span class="tm">10:12</span></div>
+
+            <div class="prod step s2">
+                <div class="img"></div>
+                <div class="pb">
+                    <div class="pt">Nouveauté de la collection</div>
+                    <div class="pd">215 € · dispo tailles 1 · 2 · 3 — centre-ville</div>
+                </div>
+            </div>
+
+            <div class="msg out step s3">Oh oui, avec plaisir ! Un créneau cette semaine ?<span class="tm">10:14</span></div>
+
+            <div class="slots step s4">
+                <div class="sh">Créneaux d'essayage · centre-ville</div>
+                <div class="slot"><span class="d">Jeu. 30/07</span><span>12:30</span><span class="h">→</span></div>
+                <div class="slot pick"><span class="d">Ven. 31/07</span><span>17:30</span><span class="h">✓ choisi</span></div>
+                <div class="slot"><span class="d">Sam. 01/08</span><span>11:00</span><span class="h">→</span></div>
+            </div>
+
+            <div class="msg out step s5">Vendredi 17h30, parfait 🙌<span class="tm">10:15</span></div>
+
+            <div class="who ai step s6">✨ RDV enregistré dans <b>Salesforce</b> · visible par le conseiller boutique</div>
+
+            <div class="rdv step s7">
+                <div class="rh">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+                    Rendez-vous confirmé
+                </div>
+                <div class="rb">
+                    <div class="row"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span><b>Vendredi 31 juillet · 17h30</b><br>Essayage — nouveauté de la collection</span></div>
+                    <div class="row"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span>Boutique <b>centre-ville</b></span></div>
+                    <div class="adv">
+                        <div class="pf">JD</div>
+                        <div>
+                            <div class="an">Vous serez accueilli·e par un conseiller</div>
+                            <div class="ar">Pièce mise de côté à votre nom</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /SLOT: thread -->
+
+        <div class="wa-input">
+            <div class="box">Écrivez un message…</div>
+            <div class="send"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Client App / clienteling (mobile)                          │
+     │ App conseiller : vue 360 du client en boutique (Data Cloud unifié).   │
+     │ CHROME VERROUILLÉE : appbar, hero client dégradé (stats), sections    │
+     │ RDV + historique réconcilié web/boutique, barre d'action.             │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Toutes les vignettes = dégradés (aucune image externe).               │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Client App — Vue 360 en boutique<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .screen { width: 100%; height: 780px; overflow-y: auto; background: var(--off-white); }
+    .phone { width: 390px; }
+
+    /* App header */
+    .appbar { background: #fff; padding: 34px 20px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
+    .appbar .row { display: flex; align-items: center; justify-content: space-between; }
+
+    /* Client hero */
+    .chero { background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; padding: 22px 20px; }
+    .chero .top { display: flex; gap: 14px; align-items: center; }
+    .chero .av { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; font-size: 1.3rem; }
+    .chero .nm { font-family: var(--sans); font-weight: 600; font-size: 1.25rem; }
+    .chero .sub { font-size: 0.78rem; opacity: 0.85; margin-top: 2px; }
+    .chero .stats { display: flex; gap: 22px; margin-top: 18px; }
+    .chero .stat .v { font-family: var(--sans); font-weight: 600; font-size: 1.1rem; }
+    .chero .stat .l { font-size: 0.68rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .sec { padding: 18px 20px 4px; }
+    .sec h3 { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 12px; }
+
+    /* RDV card (highlight) */
+    .appt { background: #fff; border: 1px solid var(--accent); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: flex; gap: 14px; align-items: center; }
+    .appt .cal { width: 46px; height: 46px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+    .appt .cal .d { font-family: var(--sans); font-weight: 700; font-size: 1.2rem; line-height: 1; }
+    .appt .cal .m { font-size: 0.6rem; text-transform: uppercase; }
+    .appt .info .t { font-weight: 600; font-size: 0.92rem; }
+    .appt .info .d { font-size: 0.78rem; color: var(--grey); margin-top: 3px; }
+
+    /* Reconciled history */
+    .hist { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+    .item { display: flex; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--border); align-items: center; }
+    .item:last-child { border-bottom: none; }
+    .item .th { width: 44px; height: 54px; border-radius: 6px; background: linear-gradient(135deg,#d9dce6,#eef1f7); flex-shrink: 0; }
+    .item .th.accent { background: linear-gradient(135deg,var(--accent),#3a4d75); }
+    .item .b { flex: 1; }
+    .item .b .t { font-weight: 500; font-size: 0.88rem; }
+    .item .b .d { font-size: 0.74rem; color: var(--grey); margin-top: 2px; }
+    .item .src { font-size: 0.62rem; padding: 3px 8px; border-radius: 999px; font-weight: 600; letter-spacing: 0.3px; }
+    .src.web { background: var(--accent-soft); color: var(--accent); }
+    .src.shop { background: #efe9df; color: var(--amber); }
+
+    .reconcile { text-align: center; font-size: 0.72rem; color: var(--accent); margin: 12px 0 4px; }
+    .reconcile b { font-weight: 600; }
+
+    .cta-bar { padding: 16px 20px 28px; }
+    .cta-bar .btn { width: 100%; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 2 · Client App — vue 360 en boutique<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="appbar">
+            <div class="row">
+                <span class="brand"><!-- SLOT: brand --><span class="brand-mark">N</span> Nova<!-- /SLOT --></span>
+                <span class="chip"><!-- SLOT: advisor -->👤 Julien · boutique<!-- /SLOT --></span>
+            </div>
+        </div>
+
+        <!-- SLOT: client-hero ─ identité client + 3 indicateurs clés. -->
+        <div class="chero">
+            <div class="top">
+                <div class="av">CD</div>
+                <div>
+                    <div class="nm">Camille Dubois</div>
+                    <div class="sub">Cliente fidèle · depuis 2021</div>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat"><div class="v">1 840 €</div><div class="l">Valeur vie</div></div>
+                <div class="stat"><div class="v">7</div><div class="l">Commandes</div></div>
+                <div class="stat"><div class="v">36</div><div class="l">Taille</div></div>
+            </div>
+        </div>
+        <!-- /SLOT: client-hero -->
+
+        <!-- SLOT: appointment ─ le RDV du jour (facultatif : retire la section si non pertinent). -->
+        <div class="sec">
+            <h3>Rendez-vous du jour</h3>
+            <div class="appt">
+                <div class="cal"><div class="d">14</div><div class="m">h30</div></div>
+                <div class="info">
+                    <div class="t">Essayage — La nouveauté (T.36)</div>
+                    <div class="d">Réservé depuis l'email · cabine à préparer</div>
+                </div>
+            </div>
+        </div>
+        <!-- /SLOT: appointment -->
+
+        <!-- SLOT: history ─ historique réconcilié web + boutique. Badge .src.web ou .src.shop par ligne. -->
+        <div class="sec">
+            <h3>Historique réconcilié · web + boutique</h3>
+            <div class="hist">
+                <div class="item">
+                    <div class="th accent"></div>
+                    <div class="b"><div class="t">Votre pièce favorite</div><div class="d">325 € · le mois dernier</div></div>
+                    <span class="src web">web</span>
+                </div>
+                <div class="item">
+                    <div class="th"></div>
+                    <div class="b"><div class="t">Votre article</div><div class="d">115 € · la semaine dernière</div></div>
+                    <span class="src web">web</span>
+                </div>
+                <div class="item">
+                    <div class="th"></div>
+                    <div class="b"><div class="t">Un achat plus ancien</div><div class="d">175 € · l'an dernier</div></div>
+                    <span class="src shop">boutique</span>
+                </div>
+            </div>
+            <div class="reconcile">↕ <b>3 achats</b> unifiés en un seul profil client</div>
+        </div>
+        <!-- /SLOT: history -->
+
+        <!-- SLOT: cta ─ action principale du conseiller. -->
+        <div class="cta-bar">
+            <button class="btn btn--dark">Préparer la cabine — La nouveauté</button>
+        </div>
+        <!-- /SLOT: cta -->
+    </div>
+</div>
+</body>
+</html>

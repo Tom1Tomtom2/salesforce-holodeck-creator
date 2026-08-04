@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Data Cloud : profil unifié (desktop)                       │
+     │ CHROME VERROUILLÉE : topbar produit, colonne identité (avatar+KV),    │
+     │ flux d'engagement temps réel, segments recalculés.                    │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Animation : les 2 events .live-1/.live-2 "tombent" en direct,         │
+     │ le segment .seg.on s'allume (garde ces classes).                      │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Data Cloud — Profil unifié<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: var(--off-white); min-height: 100vh; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 60px 30px; }
+
+    .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
+    .topbar .sep { color: var(--grey-light); }
+    .topbar .prod { font-family: var(--sans); font-weight: 600; letter-spacing: 0.5px; color: var(--accent); }
+
+    .grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card h2 { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); padding: 18px 22px 0; }
+
+    /* Profil identité */
+    .ident { padding: 22px; text-align: center; }
+    .avatar { width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 14px; background: linear-gradient(135deg,var(--accent),#3a4d75); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--sans); font-weight: 600; font-size: 1.6rem; }
+    .ident .name { font-family: var(--sans); font-weight: 600; font-size: 1.15rem; }
+    .ident .meta { font-size: 0.82rem; color: var(--grey); margin-top: 4px; }
+    .kv { text-align: left; margin-top: 20px; font-size: 0.85rem; }
+    .kv .row { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--border); }
+    .kv .row span:first-child { color: var(--grey); }
+    .idres { margin: 16px 22px 22px; padding: 12px; border-radius: 10px; background: var(--accent-soft); font-size: 0.78rem; color: var(--accent); }
+    .idres b { display: block; margin-bottom: 4px; }
+
+    /* Timeline temps réel */
+    .stream { padding: 8px 22px 22px; }
+    .stream-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; position: sticky; top: 0; background: #fff; }
+    .event { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--border); opacity: 1; transform: none; }
+    /* les 2 derniers events "tombent" en direct pour le GIF */
+    .event.live-1 { animation: drop 0.5s ease both; animation-delay: 1.2s; opacity: 0; }
+    .event.live-2 { animation: drop 0.5s ease both; animation-delay: 2.6s; opacity: 0; }
+    @keyframes drop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .event .tl { flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--accent-soft); color: var(--accent); }
+    .event.hot .tl { background: var(--green-bg); color: var(--green); }
+    .event .body .t { font-size: 0.9rem; font-weight: 500; }
+    .event .body .d { font-size: 0.78rem; color: var(--grey); margin-top: 3px; }
+    .event .time { margin-left: auto; font-size: 0.72rem; color: var(--grey-light); white-space: nowrap; }
+    .justnow { color: var(--green); font-weight: 600; }
+
+    /* Segments qui s'activent */
+    .segs { display: flex; gap: 10px; flex-wrap: wrap; padding: 4px 22px 22px; }
+    .seg { border: 1px dashed var(--border); border-radius: 999px; padding: 8px 14px; font-size: 0.8rem; color: var(--grey); }
+    .seg.on { border-style: solid; border-color: var(--accent); background: var(--accent); color: #fff; animation: pop 0.4s ease both; animation-delay: 3.4s; }
+    @keyframes pop { from { transform: scale(0.85); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 1 · Data Cloud — profil client unifié<!-- /SLOT --></div>
+<div class="wrap">
+    <div class="topbar">
+        <span class="brand"><!-- SLOT: brand --><span class="brand-mark">N</span> Nova<!-- /SLOT --></span>
+        <span class="sep">›</span>
+        <span class="prod">Data Cloud — Profil unifié</span>
+        <span class="chip chip--live" style="margin-left:auto">Temps réel</span>
+    </div>
+
+    <div class="grid">
+        <!-- SLOT: identity ─ colonne identité : avatar, nom, indicateurs clés, résolution d'identité. -->
+        <div>
+            <div class="card">
+                <div class="ident">
+                    <div class="avatar">CD</div>
+                    <div class="name">Camille Dubois</div>
+                    <div class="meta">Cliente · depuis 2021</div>
+                    <div class="kv">
+                        <div class="row"><span>Valeur vie client</span><span class="mono">1 840 €</span></div>
+                        <div class="row"><span>Commandes</span><span class="mono">7</span></div>
+                        <div class="row"><span>Canal préféré</span><span>E-commerce</span></div>
+                        <div class="row"><span>Dernier achat</span><span>Votre article</span></div>
+                    </div>
+                </div>
+                <div class="idres">
+                    <b>Identity Resolution</b>
+                    3 sources réconciliées → 1 profil unifié (Web · Commerce · CRM)
+                </div>
+            </div>
+        </div>
+        <!-- /SLOT: identity -->
+
+        <!-- Colonne flux + segments -->
+        <div>
+            <div class="card" style="margin-bottom:24px;">
+                <div class="stream">
+                    <div class="stream-head">
+                        <h2 style="padding:0">Flux d'engagement web</h2>
+                        <span class="chip chip--green">● en écoute</span>
+                    </div>
+
+                    <!-- SLOT: stream ─ événements, du plus récent (en haut) au plus ancien.
+                         Garde .live-2 puis .live-1 en tête pour l'effet "temps réel". -->
+                    <div class="event live-2 hot">
+                        <div class="tl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg></div>
+                        <div class="body">
+                            <div class="t">Consultation — La nouveauté <span class="justnow">à l'instant</span></div>
+                            <div class="d">Catégorie · 3e vue produit · sans ajout panier</div>
+                        </div>
+                        <div class="time">now</div>
+                    </div>
+
+                    <div class="event live-1">
+                        <div class="tl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/></svg></div>
+                        <div class="body">
+                            <div class="t">Session ouverte — mobile</div>
+                            <div class="d">Site · rubrique Nouveautés</div>
+                        </div>
+                        <div class="time">il y a 1 min</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="tl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+                        <div class="body">
+                            <div class="t">Achat en ligne — Votre article</div>
+                            <div class="d">Commande #9021 · 115 € · en cours de livraison</div>
+                        </div>
+                        <div class="time">cette semaine</div>
+                    </div>
+                    <div class="event">
+                        <div class="tl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg></div>
+                        <div class="body">
+                            <div class="t">Achat — Votre pièce favorite</div>
+                            <div class="d">Commande #7731 · 325 € · livrée</div>
+                        </div>
+                        <div class="time">le mois dernier</div>
+                    </div>
+                    <div class="event">
+                        <div class="tl"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 9h16"/></svg></div>
+                        <div class="body">
+                            <div class="t">Ouverture newsletter — Nouvelle collection</div>
+                            <div class="d">Taux d'engagement élevé</div>
+                        </div>
+                        <div class="time">il y a 3 semaines</div>
+                    </div>
+                    <!-- /SLOT: stream -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Segments — recalculés en direct</h2>
+                <!-- SLOT: segments ─ pastilles de segments. Une seule en .seg.on (celle qui s'active). -->
+                <div class="segs">
+                    <div class="seg">Clientes fidèles</div>
+                    <div class="seg">Acheteuses récentes</div>
+                    <div class="seg on">⚡ Intérêt catégorie — non converti</div>
+                </div>
+                <!-- /SLOT: segments -->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Data Cloud : pipeline d'activation (desktop)               │
+     │ Un seul gabarit pour 3 scènes : acquisition (lookalike),              │
+     │ activation d'audience (→ Meta), ou re-segmentation post-événement.    │
+     │ CHROME VERROUILLÉE : topbar, flow 3 nœuds (source→modèle→activation), │
+     │ cartes chiffrées, status-line animée.                                 │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Le dernier nœud .node.dest est mis en avant (activation).             │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Data Cloud — Activation d'audience<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: var(--off-white); min-height: 100vh; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 30px; }
+    .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+    .topbar .sep { color: var(--grey-light); }
+    .topbar .prod { font-family: var(--sans); font-weight: 600; color: var(--accent); }
+    .sub { color: var(--grey); font-size: 0.88rem; margin-bottom: 34px; max-width: 720px; }
+    .sub b { color: var(--accent); }
+
+    /* pipeline : source → modèle → activation */
+    .flow { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; gap: 12px; align-items: stretch; }
+    .node { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+    .node .ico { width: 42px; height: 42px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .node h3 { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); margin-bottom: 8px; }
+    .node .big { font-family: var(--sans); font-weight: 600; font-size: 1.05rem; line-height: 1.3; }
+    .node .d { font-size: 0.82rem; color: var(--grey); margin-top: 8px; line-height: 1.5; }
+
+    .arrow { display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .arrow svg { width: 28px; height: 28px; }
+
+    .node.dest { border-color: var(--accent); }
+    .node.dest .ico { background: var(--accent); color: #fff; }
+    .platforms { display: flex; gap: 8px; margin-top: 12px; }
+    .platforms .p { flex: 1; text-align: center; font-family: var(--sans); font-weight: 600; font-size: 0.78rem; padding: 8px 4px; border: 1px solid var(--border); border-radius: 8px; color: var(--accent); }
+
+    /* cartes chiffrées */
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .card .ch { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card .ch .t { font-family: var(--sans); font-weight: 600; font-size: 0.95rem; }
+    .card .cb { padding: 18px 20px; }
+    .card .metric { font-family: var(--sans); font-weight: 700; font-size: 2rem; color: var(--accent); line-height: 1; }
+    .card .metric small { font-size: 0.85rem; font-weight: 400; color: var(--grey); }
+    .card .cd { font-size: 0.82rem; color: var(--grey); margin-top: 10px; line-height: 1.55; }
+    .card.suppress .metric { color: var(--black); }
+
+    /* barre de similarité */
+    .simbar { height: 8px; border-radius: 999px; background: var(--accent-soft); margin-top: 14px; overflow: hidden; }
+    .simbar > span { display: block; height: 100%; width: 92%; background: var(--accent); border-radius: 999px; }
+    .simlbl { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--grey); margin-top: 6px; }
+
+    .status-line { display: flex; align-items: center; gap: 10px; margin-top: 22px; padding: 14px 18px; background: var(--green-bg); border-radius: var(--radius); font-size: 0.85rem; color: var(--green); font-weight: 500; }
+    .status-line .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); animation: pulse 1.3s infinite; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Prologue · Acquisition — Data Cloud → Meta & Google<!-- /SLOT --></div>
+
+<div class="wrap">
+    <div class="topbar">
+        <span class="brand"><!-- SLOT: brand --><span class="brand-mark">N</span> Nova<!-- /SLOT --></span>
+        <span class="sep">›</span>
+        <span class="prod"><!-- SLOT: prod-label -->Data Cloud — Acquisition de nouveaux clients<!-- /SLOT --></span>
+        <span class="chip chip--green" style="margin-left:auto"><!-- SLOT: status-chip -->● audience active<!-- /SLOT --></span>
+    </div>
+    <div class="sub"><!-- SLOT: intro -->Avant même de connaître le client — la marque utilise sa <b>donnée first-party</b> pour aller chercher des prospects qui <b>ressemblent</b> à ses meilleurs clients, et exclut de la prospection ceux qu'elle possède déjà.<!-- /SLOT --></div>
+
+    <!-- SLOT: flow ─ les 3 nœuds source → modèle → activation. Garde le 3e en .node.dest. -->
+    <div class="flow">
+        <div class="node">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+            <h3>Source (first-party)</h3>
+            <div class="big">Meilleurs clients</div>
+            <div class="d">Segment « valeur vie élevée » · 18 200 profils unifiés Data Cloud</div>
+        </div>
+
+        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+
+        <div class="node">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><line x1="7" y1="7" x2="10" y2="10"/><line x1="17" y1="7" x2="14" y2="10"/><line x1="7" y1="17" x2="10" y2="14"/><line x1="17" y1="17" x2="14" y2="14"/></svg></div>
+            <h3>Modèle</h3>
+            <div class="big">Audience « jumeaux »</div>
+            <div class="d">La régie trouve des profils net-new au comportement similaire — <i>lookalike</i></div>
+        </div>
+
+        <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+
+        <div class="node dest">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
+            <h3>Activation · prospection</h3>
+            <div class="big">Pub vers de nouveaux profils</div>
+            <div class="platforms">
+                <div class="p">Meta</div>
+                <div class="p">Google</div>
+            </div>
+        </div>
+    </div>
+    <!-- /SLOT: flow -->
+
+    <!-- SLOT: cards ─ 1 ou 2 cartes chiffrées (métrique + description + barre). Retire-en une si besoin. -->
+    <div class="cards">
+        <div class="card">
+            <div class="ch">
+                <span class="t">Audience jumeaux générée</span>
+                <span class="chip">temps réel</span>
+            </div>
+            <div class="cb">
+                <div class="metric">312 000 <small>profils net-new</small></div>
+                <div class="cd">Prospects qui ne sont pas encore dans le CRM, mais qui ressemblent aux meilleurs clients.</div>
+                <div class="simbar"><span></span></div>
+                <div class="simlbl"><span>Similarité au segment source</span><span>92 %</span></div>
+            </div>
+        </div>
+
+        <div class="card suppress">
+            <div class="ch">
+                <span class="t">Suppression · clients connus</span>
+                <span class="chip chip--amber">budget protégé</span>
+            </div>
+            <div class="cb">
+                <div class="metric">− 41 500 <small>exclus</small></div>
+                <div class="cd">Les clients déjà connus sont retirés de la prospection : pas de budget média dépensé pour « acquérir » quelqu'un qu'on possède déjà.</div>
+                <div class="simbar"><span style="width:22%;background:var(--amber)"></span></div>
+                <div class="simlbl"><span>Chevauchement évité</span><span>13 % du reach</span></div>
+            </div>
+        </div>
+    </div>
+    <!-- /SLOT: cards -->
+
+    <!-- SLOT: status ─ ligne de statut verte (le résultat). -->
+    <div class="status-line">
+        <span class="dot"></span>
+        Audiences synchronisées vers Meta & Google · cookieless, 100 % first-party — la prochaine visiteuse du site sera peut-être votre prochain client.
+    </div>
+    <!-- /SLOT: status -->
+</div>
+</body>
+</html>

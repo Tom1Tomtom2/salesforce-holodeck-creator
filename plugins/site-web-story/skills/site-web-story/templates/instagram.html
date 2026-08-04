@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Instagram (mobile) · post sponsorisé / Data Cloud → Meta   │
+     │ CHROME VERROUILLÉE : barre IG, rail stories, actions, encart .why.    │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Le visuel du post = dégradé d'accent (aucune image externe).          │
+     │ Animation fournie : compteur de likes (.odo / @keyframes roll).       │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Instagram — Publicité ciblée<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .screen { width: 100%; height: 800px; overflow-y: auto; background: #fff; display: flex; flex-direction: column; }
+
+    /* IG top bar */
+    .ig-top { display: flex; align-items: center; justify-content: space-between; padding: 34px 16px 10px; border-bottom: 1px solid #efefef; }
+    .ig-top .ig-logo { font-family: 'Brush Script MT', cursive; font-size: 1.5rem; }
+    .ig-top .ic { display: flex; gap: 18px; }
+
+    /* Stories rail */
+    .stories { display: flex; gap: 14px; padding: 12px 16px; border-bottom: 1px solid #efefef; overflow-x: auto; }
+    .story { text-align: center; flex-shrink: 0; }
+    .story .ring { width: 58px; height: 58px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
+    .story .ring .in { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg,#d9dce6,#eef1f7); border: 2px solid #fff; }
+    .story.brand .ring { background: var(--accent); }
+    .story.brand .ring .in { background: var(--accent); display: flex; align-items: center; justify-content: center; color:#fff; font-weight:700; font-family:var(--sans); }
+    .story .lbl { font-size: 0.66rem; color: #333; margin-top: 4px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Sponsored post */
+    .post-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+    .post-head .av { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color:#fff; font-weight:700; font-family:var(--sans); font-size:0.8rem; }
+    .post-head .nm { font-weight: 600; font-size: 0.85rem; }
+    .post-head .sp { font-size: 0.72rem; color: #8e8e8e; }
+
+    /* fond = dégradé d'accent (remplace une photo produit) */
+    .post-img { position: relative; aspect-ratio: 4/5; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); display: flex; align-items: flex-end; overflow: hidden; }
+    .post-img .veil { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 55%); }
+    .post-img .cap-in { position: relative; padding: 22px; color: #fff; }
+    .post-img .cap-in .eyebrow { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.85; }
+    .post-img .cap-in h2 { font-family: var(--sans); font-weight: 300; font-size: 1.5rem; line-height: 1.2; margin-top: 6px; }
+
+    /* CTA bar */
+    .cta-strip { display: flex; align-items: center; justify-content: space-between; background: var(--accent-soft); padding: 12px 14px; }
+    .cta-strip .t { font-size: 0.82rem; font-weight: 600; color: var(--accent); }
+    .cta-strip .go { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: var(--accent); }
+
+    .post-actions { display: flex; align-items: center; gap: 16px; padding: 12px 14px 6px; }
+    .post-actions svg { width: 24px; height: 24px; }
+    .post-actions .spacer { flex: 1; }
+
+    .post-meta { padding: 0 14px 8px; }
+    .post-meta .likes { font-size: 0.82rem; font-weight: 600; }
+    /* animation : la 2e ligne de chiffres remonte pour simuler un compteur qui grimpe */
+    .odo { display:inline-block; height:1em; line-height:1; overflow:hidden; vertical-align:bottom; }
+    .odo b { display:block; height:1em; line-height:1; animation: roll 3s steps(1) infinite; font-weight:600; }
+    @keyframes roll { 0%,45%{transform:translateY(0)} 55%,100%{transform:translateY(-1em)} }
+
+    .post-caption { padding: 4px 14px 10px; font-size: 0.85rem; line-height: 1.5; }
+    .post-caption .nm { font-weight: 600; }
+    .post-caption .hl { color: var(--accent); }
+
+    /* encart .why plus discret sur cet écran */
+    .why { flex-direction: column; gap: 3px; opacity: 0.78; font-size: 0.72rem; }
+    .why .q { font-size: 0.72rem; font-weight: 600; }
+    .why .t { font-size: 0.72rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 0 · Instagram — publicité ciblée (Data Cloud → Meta)<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="ig-top">
+            <span class="ig-logo">Instagram</span>
+            <div class="ic">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><path d="M12 21s-7-4.35-9-8a5 5 0 019-3 5 5 0 019 3c-2 3.65-9 8-9 8z"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            </div>
+        </div>
+
+        <!-- SLOT: stories ─ rail de stories. La story de marque = class="story brand" avec l'initiale. -->
+        <div class="stories">
+            <div class="story"><div class="ring"><div class="in"></div></div><div class="lbl">Votre story</div></div>
+            <div class="story brand"><div class="ring"><div class="in">N</div></div><div class="lbl">nova</div></div>
+            <div class="story"><div class="ring"><div class="in"></div></div><div class="lbl">lea.p</div></div>
+            <div class="story"><div class="ring"><div class="in"></div></div><div class="lbl">galerie…</div></div>
+            <div class="story"><div class="ring"><div class="in"></div></div><div class="lbl">marie</div></div>
+        </div>
+        <!-- /SLOT: stories -->
+
+        <!-- SLOT: post ─ le post sponsorisé (entête + visuel + CTA + actions + légende). -->
+        <div class="post-head">
+            <div class="av">N</div>
+            <div>
+                <div class="nm">nova_officiel</div>
+                <div class="sp">Sponsorisé</div>
+            </div>
+        </div>
+
+        <div class="post-img">
+            <div class="veil"></div>
+            <div class="cap-in">
+                <div class="eyebrow">Nouvelle collection</div>
+                <h2>La pièce qui<br>complète votre style.</h2>
+            </div>
+        </div>
+
+        <div class="cta-strip">
+            <span class="t">Découvrir la nouveauté →</span>
+            <span class="go">En savoir plus
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+        </div>
+
+        <div class="post-actions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><path d="M12 21s-7-4.35-9-8a5 5 0 019-3 5 5 0 019 3c-2 3.65-9 8-9 8z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <span class="spacer"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </div>
+
+        <div class="post-meta"><span class="likes"><span class="odo"><b>1 284</b><b>1 285</b></span> j'aime</span></div>
+        <div class="post-caption">
+            <span class="nm">nova_officiel</span> Une nouvelle saison commence. Une pièce pensée pour accompagner vos favoris. <span class="hl">#nova #nouveaute</span>
+        </div>
+        <!-- /SLOT: post -->
+
+        <!-- SLOT: why ─ l'encart pédagogique Salesforce. Toujours présent. -->
+        <div class="why">
+            <span class="q">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+            </span>
+            <div class="t">Vous voyez cette publicité car vous faites partie de l'audience <b>« Acheteuses récentes »</b>, activée depuis <b>Salesforce Data Cloud</b>.</div>
+        </div>
+        <!-- /SLOT: why -->
+    </div>
+</div>
+</body>
+</html>
