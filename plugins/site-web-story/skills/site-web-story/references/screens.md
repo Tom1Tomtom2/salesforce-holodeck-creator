@@ -78,6 +78,31 @@ que le JSON, jamais la structure du composant**. Le header Lightning (`sf-*`) es
 - **lightning-dashboard.html** (tableau de bord) — `title`, `act-tag`, `sf-*`, `heading`, `filters` (`lc-dashboard-filters`), `kpis` (`lc-kpi-grid`), `donut` (`lc-chart-donut`), `gauge` (`lc-chart-gauge`), `trend` (`lc-chart-line`), `bars` (`lc-chart-bar`), `leaderboard` (`lc-leaderboard`), `insight` (`lc-ai-recommendation` = **Einstein, clin d'œil, garde-le**)
 - **lightning-fieldservice.html** (Field Service) — `title`, `act-tag`, `sf-*`, `heading`, `roster` (`lc-technician-roster`), `appointment` (`lc-service-appointment`), `dispatch` (`lc-dispatch-console`), `map` (`lc-map`), `workorder` (`lc-work-order`), `parts` (`lc-parts-inventory`), `assistant` (`lc-ai-recommendation` = **Einstein optimisation, clin d'œil, garde-le**)
 
+## B2B vs B2C — quels écrans existent
+
+La bibliothèque a été bâtie pour des parcours **grand public (B2C)** : acquisition (instagram, email),
+conversation/SAV (whatsapp, service-console), boutique (site-ecommerce, tpv-pos), fidélité, et les vues
+Salesforce transverses (datacloud-*, lightning-record/dashboard/fieldservice). Pour une démo **B2B**
+(vente entreprise : lead → opportunité → prévision → devis → onboarding → renouvellement), la couverture
+est **partielle** — voici l'état honnête, à annoncer à l'utilisateur en Phase 2 :
+
+| Besoin B2B | Écran dispo aujourd'hui | Statut |
+|---|---|---|
+| Prospection / réengagement compte | `email-marketing`, `whatsapp` | ✅ réutilisable (adapter le ton B2B) |
+| Fiche compte / contact 360 | `lightning-record` | ✅ (persona = contact du compte) |
+| Console commerciale / relance | `service-console` | ⚠️ proche (conçue SAV, se détourne en console vente) |
+| Pipeline & prévision des ventes | `lightning-dashboard` | ⚠️ proche (KPI/charts génériques) — **pas** un vrai pipeline board |
+| **Pipeline board / deal inspection** | — | ❌ **à créer** (composants dispo : `lc-pipeline-board`, `lc-deal-inspection`) |
+| **Prévision (forecast) Sales Cloud** | — | ❌ **à créer** (`lc-forecast-summary/-categories/-hierarchy`, `lc-team-attainment`, `lc-pipeline-velocity`, `lc-win-rate-heatmap`) |
+| **Devis (CPQ / Revenue Cloud)** | — | ❌ **à créer** (`lc-quote-builder`, `lc-quote-approval`) |
+| Portail partenaire / Experience Cloud | — | ❌ **à créer** (aucun composant dédié — chrome à dessiner) |
+
+**Règle** : si le brief B2B réclame un écran ❌, ne l'improvise pas — signale-le et prends le ⚠️ le plus
+proche en attendant. Les composants `<lc-*>` cités existent DÉJÀ dans le kit (re-syncés) mais **ne sont
+câblés à aucun template** : créer un template B2B = les envelopper (comme les autres `lightning-*`) +
+ajouter leurs libellés EN à `KIT_I18N` dans `build_site.py`. On le fait **à partir du cahier des charges**
+(on ne construit pas d'écran spéculatif).
+
 ## Kit de composants Lightning (`assets/lightning-kit/`)
 
 Les 3 templates `lightning-*` sont **composables** : au lieu d'une chrome figée, leur corps est fait de

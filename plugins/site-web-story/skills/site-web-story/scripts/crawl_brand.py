@@ -90,12 +90,32 @@ EXTRACT_JS = r"""
                     return r.width > 60 && r.height > 24 && r.top < innerHeight*2; })
     .map(el => rgb2hex(getComputedStyle(el).backgroundColor)).filter(Boolean);
   const titleEl = document.querySelector('h1, h2');
+  // --- catalogue de liens produit : <a> qui enveloppe une image (cartes produit) ---
+  // On ne DEVINE jamais d'URL : on récolte les liens RÉELS de la page (URL + libellé), à
+  // matcher plus tard (produit de la story → lien réel) puis re-crawler via --pages pour la
+  // vraie photo. Même origine seulement (écarte réseaux sociaux/paiement) ; en test (origin
+  // 'null' pour about:blank/data:) on ne filtre pas l'origine → parser vérifiable hors ligne.
+  const origin = location.origin && location.origin !== 'null' ? location.origin : null;
+  const seenH = new Set();
+  const productLinks = [];
+  for (const a of document.querySelectorAll('a[href]')) {
+    if (!a.querySelector('img')) continue;                       // carte produit = lien AVEC visuel
+    const href = abs(a.getAttribute('href'));
+    if (!href || (origin && !href.startsWith(origin)) || seenH.has(href)) continue;
+    const label = ((a.querySelector('img').alt || a.textContent || '')
+                    .trim().replace(/\s+/g, ' ')).slice(0, 80);
+    if (!label) continue;
+    seenH.add(href);
+    productLinks.push({ href, label });
+    if (productLinks.length >= 24) break;
+  }
   return {
     title: document.title,
     description: document.querySelector('meta[name=description]')?.content || '',
     logo, logoSvg,
     ogImages: og,
     images: imgs.slice(0, 12),
+    productLinks,
     theme,
     bg: rgb2hex(bodyCS.backgroundColor),
     text: rgb2hex(bodyCS.color),
@@ -287,6 +307,9 @@ def crawl(url: str, brand: str, slug: str, max_images: int = 6) -> Path:
         "logo": logo_file,
         "logo_source": logo_source,
         "product_images": products,
+        # liens produit RÉELS de la home, à re-crawler après la story validée (--pages) pour
+        # les visuels exacts. Claude matche produit-de-la-story → href, ne DEVINE aucune URL.
+        "product_links": data.get("productLinks", []),
     }
     (out / "brand.json").write_text(json.dumps(brand_json, indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -333,6 +356,57 @@ def fetch_urls(urls: list, slug: str) -> Path:
     return out
 
 
+def crawl_pages(urls: list, slug: str) -> Path:
+    """2e passe (après story validée) : visite chaque PAGE produit avec le vrai navigateur et
+    télécharge son visuel exact (og:image en priorité, sinon la plus grande image rendue) en
+    product-N.*. Contrairement à --fetch (URL d'images DIRECTES), ici on donne des URL de PAGES
+    — typiquement des `href` du catalogue `product_links` de brand.json (jamais devinées). Passe
+    l'anti-bot comme crawl() (même furtivité). Les échecs sont best-effort : on saute et on continue."""
+    from playwright.sync_api import sync_playwright
+
+    out = Path.cwd() / f"{slug}-brand"
+    out.mkdir(exist_ok=True)
+    saved = []
+    launch = dict(args=["--disable-blink-features=AutomationControlled"])
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.launch(channel="chrome", **launch)
+        except Exception:
+            browser = p.chromium.launch(**launch)
+        ctx = browser.new_context(user_agent=UA, viewport={"width": 1440, "height": 900}, locale="fr-FR")
+        ctx.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
+        for u in urls:
+            img_url = None
+            try:
+                page = ctx.new_page()
+                page.goto(u, wait_until="domcontentloaded", timeout=45000)
+                try:
+                    page.wait_for_selector("img[src]:not([src^='data:'])", timeout=8000)
+                except Exception:
+                    pass
+                page.evaluate("scrollTo(0, document.body.scrollHeight*0.4)")
+                page.wait_for_timeout(600)
+                d = page.evaluate(EXTRACT_JS)
+                page.close()
+                imgs = [i["url"] for i in d.get("images", [])]  # déjà triées par surface
+                img_url = (d.get("ogImages") or imgs or [None])[0]
+            except Exception as e:
+                print(f"  ⚠ page non chargée ({u}) : {e}")
+            if not img_url:
+                print(f"  ✗ pas de visuel trouvé sur {u}")
+                continue
+            name = f"product-{len(saved)+1}{_ext(img_url)}"
+            if download(img_url, out / name, u):        # referer = la page produit (passe le CDN)
+                saved.append(name)
+                print(f"  ✓ {name}  ← {u}")
+            else:
+                print(f"  ✗ échec téléchargement du visuel de {u}")
+        browser.close()
+    print(f"\n{len(saved)}/{len(urls)} visuel(s) dans {out}/ — référence-les dans le manifest "
+          f"(clé assets, par basename).")
+    return out
+
+
 def selfcheck():
     """Sans réseau : charge un HTML en mémoire, vérifie l'extraction JS + pick_accent."""
     from playwright.sync_api import sync_playwright
@@ -345,6 +419,8 @@ def selfcheck():
         <h1 style="font-family:'Brand Sans'">Titre</h1>
         <a style="background:#cc0022;width:120px;height:40px;display:inline-block">CTA</a>
         <a style="background:#333;width:120px;height:40px;display:inline-block">gris</a>
+        <a href="https://ex.test/p/manteau-will"><img alt="Le manteau Will" src="https://ex.test/m.jpg"></a>
+        <a href="https://ex.test/mentions-legales">texte sans image</a>
       </body></html>"""
     with sync_playwright() as p:
         b = p.chromium.launch()
@@ -355,6 +431,10 @@ def selfcheck():
     assert d["title"] == "ACME — Voitures", d["title"]
     assert d["logo"] == "https://ex.test/logo.png", d["logo"]
     assert d["ogImages"] == ["https://ex.test/hero.jpg"], d["ogImages"]
+    # catalogue product_links : le <a> AVEC image est capté (href absolu + libellé = alt),
+    # le <a> sans image est écarté. Origine non filtrée en test (about:blank → origin null).
+    assert d["productLinks"] == [{"href": "https://ex.test/p/manteau-will",
+                                  "label": "Le manteau Will"}], d["productLinks"]
     assert d["theme"] == "#0a5", d["theme"]  # meta content brut, non normalisé
     assert "#cc0022" in d["ctaColors"] and "Brand Sans" in d["titleFont"], d
     # pick_accent doit sauter le gris #333 et prendre le rouge saturé
@@ -406,11 +486,18 @@ def main():
     ap.add_argument("--slug", help="slug (dossier de sortie <slug>-brand/)")
     ap.add_argument("--max-images", type=int, default=6)
     ap.add_argument("--fetch", nargs="+", metavar="URL",
-                    help="backup manuel : télécharge ces URL d'images produit (avec --slug)")
+                    help="backup manuel : télécharge ces URL d'images DIRECTES (avec --slug)")
+    ap.add_argument("--pages", nargs="+", metavar="URL",
+                    help="2e passe : visite ces PAGES produit et prend leur visuel (avec --slug). "
+                         "URL = href du catalogue product_links de brand.json (jamais devinées).")
     ap.add_argument("--selfcheck", action="store_true")
     a = ap.parse_args()
     if a.selfcheck:
         selfcheck(); return
+    if a.pages:
+        if not a.slug:
+            ap.error("--pages nécessite --slug (dossier <slug>-brand/)")
+        crawl_pages(a.pages, a.slug); return
     if a.fetch:
         if not a.slug:
             ap.error("--fetch nécessite --slug (dossier <slug>-brand/)")

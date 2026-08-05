@@ -16,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.7.2"
+version: "1.8.0"
 ---
 
 # Site Web Story
@@ -54,6 +54,29 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 
 ## Phase 1 — Intro : marque + ambiance
 
+0. **Cahier des charges (si l'utilisateur en fournit un).** Un cahier des charges = le document
+   client qui liste les besoins/objectifs de la démo (PDF, Word, texte collé, ou lien). Quand il y
+   en a un, **il devient la colonne vertébrale de la story** — tu ne la devines plus, tu la déduis
+   du document. Tu sais déjà lire un PDF/Word/texte : lis-le et **restitue un « brief » structuré en
+   markdown, puis demande validation** avant d'avancer. Le brief tient en ~8 puces :
+   - **Objectif de la démo** (ce que le client veut prouver/vendre : moderniser le SAV, unifier
+     web↔magasin, accélérer le cycle de vente B2B…) ;
+   - **Cible / segment** : grand public (B2C) **ou** entreprise (B2B) — ça change le persona et les
+     canaux (voir Phase 2) ;
+   - **Persona(s)** imposés par le doc (rôles, fonctions) ;
+   - **Parcours / moments** à démontrer (les étapes que le client cite explicitement) ;
+   - **Produits Salesforce** attendus (Sales Cloud, Service Cloud, Data Cloud, Agentforce, CPQ/Revenue,
+     Marketing Cloud, MuleSoft…) — s'ils sont nommés, respecte-les ; sinon propose ;
+   - **Canaux / écrans** demandés (email, WhatsApp, console, dashboard, pipeline commercial, devis…) ;
+   - **Contraintes** : ton, langue, secteur, éléments à ne PAS montrer, marque à respecter ;
+   - **Exigences non couvertes par un template existant** — signale-les EXPLICITEMENT (« le doc
+     demande un écran de prévision des ventes ; aucun template ne le couvre encore »). **N'improvise
+     jamais l'écran manquant** (règle d'or) : liste-le comme un manque à combler côté skill, et
+     propose de continuer avec le template le plus proche en attendant. Voir `references/screens.md`
+     (§ B2B) pour ce qui existe et ce qui reste à créer.
+   Le reste de la Phase 1 (crawl marque, recherche stratégie, ambiance) s'applique toujours : le
+   cahier des charges dit **quoi** démontrer, le crawl + la recherche disent **à quoi ça ressemble**.
+
 1. Demande **le nom de la marque** et **l'URL du site** (si pas déjà donnés).
 2. **Crawle le site** (n'utilise PAS WebFetch : les sites de marque renvoient 503 à un
    client sans JS) :
@@ -63,6 +86,11 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    Il écrit `./<slug>-brand/` : `brand.json` (accent proposé, typo, secteur, CTA détectés),
    `logo.*`, et `product-N.*` (visuels produit HD). **Lis `brand.json`** pour l'ambiance.
    Regarde les `product-N.*` (`Read`) pour repérer les modèles/produits réels.
+   - **Ce 1er crawl est « à l'aveugle »** (il tourne AVANT qu'on sache quels produits l'histoire va
+     montrer) : il ramasse le logo, la palette, et quelques visuels de la home pour l'ambiance. Les
+     **images produit EXACTES** se récupèrent en 2e passe, après la story validée (voir Phase 3 §1bis).
+     Le champ `brand.json.product_links` = un **catalogue de liens produit RÉELS** (href + libellé)
+     relevés sur la home, qui servira à cette 2e passe. Ne devine jamais une URL produit toi-même.
    - **Logo — cascade de sources** (le champ `brand.json.logo_source` dit laquelle a servi) :
      DOM du site → SVG inline → **Wikidata/Commons** (logo officiel, propriété P154, non bloqué
      par les anti-bot) → favicon `icon.horse`. Un site bloqué rend souvent quand même son **vrai
@@ -121,19 +149,36 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 
 Propose en markdown une **story de parcours client**, inspirée des actes agnès b.
 Adapte le nombre d'actes au secteur (retail, banque, télécom, auto…). **Ancre la story sur la
-lecture stratégique de la Phase 1** : que le persona, les moments et surtout le mapping de valeur
-Salesforce répondent à la tension clé de la marque (ex. digital-first qui ouvre des boutiques →
-unification web↔magasin par Data Cloud ; positionnement premium/prix juste → fidélité plutôt que
-promo ; expansion internationale → activation multi-marché). Structure :
+lecture stratégique de la Phase 1** (et, s'il y en a un, sur le **brief du cahier des charges** :
+chaque besoin listé doit correspondre à au moins un acte). Que le persona, les moments et surtout
+le mapping de valeur Salesforce répondent à la tension clé de la marque (ex. digital-first qui ouvre
+des boutiques → unification web↔magasin par Data Cloud ; positionnement premium/prix juste →
+fidélité plutôt que promo ; expansion internationale → activation multi-marché). Structure :
 
 - **Persona** : prénom, profil en 1 ligne (âge, contexte, ce qu'il cherche).
 - **N actes** (vise 5–8), chacun :
   - `acte` (libellé, ex. « Acte 1 · Réengagement »),
   - `titre` court de l'écran,
-  - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard,
+  - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard · **lightning-sales / lightning-record / lightning-dashboard / lightning-fieldservice** (écrans Salesforce riches),
   - `moment` (1 phrase : ce qui se passe),
   - `valeur` Salesforce (le produit mis en avant : Data Cloud, Marketing Cloud,
     Agentforce, Service Cloud, MuleSoft, Commerce…).
+
+**B2C ou B2B — adapte la grammaire de la story.** Le brief (ou le secteur) dit si la démo vise le
+grand public (B2C) ou l'entreprise (B2B). Ce n'est pas qu'un ton, ça change la structure :
+- **B2C (défaut, cas actuel)** : persona = un individu ; parcours acquisition → boutique/e-commerce
+  → SAV → fidélité ; canaux Instagram/WhatsApp/email/site/app ; produits Marketing/Data Cloud, Service, Commerce.
+- **B2B** : le « client » est un **compte** (une entreprise), pas une personne seule. Le persona
+  devient un **duo/trio** — le **commercial Salesforce** (héros côté vendeur) + le **contact/comité
+  d'achat** côté client (ex. Directeur Achats + utilisateur métier). Parcours type : **lead/signal →
+  qualification → opportunité (pipeline) → prévision → devis (CPQ/Revenue) → signature → onboarding →
+  expansion/renouvellement**. Canaux : LinkedIn/email de prospection, **console commerciale**,
+  **pipeline & prévision** (`lightning-dashboard` / `lightning-sales`), **devis**, portail partenaire.
+  Produits mis en avant : **Sales Cloud** (pipeline, prévision), **Revenue/CPQ** (devis), Agentforce
+  (SDR/assistant vente), Data Cloud (scoring/intent). ⚠ **Vérifie dans `references/screens.md` (§ B2B)
+  quels écrans B2B existent réellement.** Si le parcours B2B demande un écran non couvert (prévision,
+  devis, portail partenaire…), **signale-le** et prends le template le plus proche — n'improvise pas
+  un écran Salesforce de zéro (règle d'or). On créera le template manquant à partir de ton besoin.
 
 Présente ça en **tableau ou liste numérotée**. Dis explicitement : « édite librement
 (retire, ajoute, réordonne, change un canal) — on génère quand c'est bon ». **Attends
@@ -145,6 +190,26 @@ Quand la story est validée, **tu n'écris pas de HTML.** Tu produis un seul
 `manifest.json`, puis tu lances le script qui assemble le site. C'est ce qui rend
 la skill rapide : recopier des templates de 130–190 lignes pour changer 4–9 zones
 est du travail mécanique — le script le fait en une seconde, toi jamais.
+
+### 1bis. Re-crawl ciblé des visuels (si le 1er crawl a réussi)
+Maintenant que la story est **validée**, tu sais exactement quels produits apparaissent (fiche
+e-commerce, pub Instagram, carte WhatsApp…). C'est le moment de récupérer leurs **vraies photos** —
+plus précis que les visuels « à l'aveugle » de la Phase 1. **Uniquement si `brand.json.status == "ok"`**
+(sinon reste sur le Plan B `--fetch` / assets fournis).
+1. Ouvre `brand.json.product_links` (le catalogue de liens **réels** relevés en Phase 1). **Matche**
+   chaque produit de la story à un lien via son `label` (ex. story « manteau Will » → `label` contenant
+   « Will »). Ne prends QUE des `href` présents dans le catalogue — **ne devine, ne construis, ni ne
+   complète aucune URL** (une URL inventée = 404 = image cassée ; contrat « données réelles »).
+2. Re-crawle ces pages produit — leur visuel exact atterrit en `product-N.*` :
+   ```bash
+   python3 scripts/crawl_brand.py --pages <href1> <href2>… --slug <slug>
+   ```
+   (`--pages` visite des **pages** et en extrait l'og:image ; `--fetch` reste pour des **URL d'images
+   directes**. Les deux écrivent `product-N.*` dans `<slug>-brand/`.)
+3. `Read` les `product-N.*` obtenus pour vérifier que ce sont les bons produits, puis réfère-les par
+   **basename** dans la clé `assets` du manifest (comme au Plan B). Si un produit de la story n'a AUCUN
+   lien correspondant dans le catalogue, ne force pas : garde le dégradé d'accent pour cet écran, ou
+   demande l'URL/le fichier à l'utilisateur. Un visuel générique vaut mieux qu'une URL inventée.
 
 ### 1. Écris `manifest.json`
 Ton seul livrable créatif = les **textes de la story** répartis dans les SLOTs.
