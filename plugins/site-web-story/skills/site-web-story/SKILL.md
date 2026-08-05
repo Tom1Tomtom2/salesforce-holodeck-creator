@@ -164,10 +164,18 @@ Règles pour le manifest :
 - **`intro`** : l'écran de mise en situation entre le hero et le 1ᵉʳ acte. `title` + `lede`, et
   `cast[]` = les personnages (`name`, `role`, `bio`, `image` optionnelle). La **frise du parcours**
   (une étape par écran, titres repris des `screens`) est générée automatiquement — ne la liste pas.
-  - `image` = **basename d'un fichier de `assets`** (portrait humain fourni par l'utilisateur ou
-    crawlé). Sans `image`, l'initiale du prénom s'affiche dans une pastille. **Un agent Agentforce
-    n'est pas un humain** : si un personnage est l'agent, utilise une image de robot/agent, pas un
+  - `image` = un portrait de la **banque livrée avec la skill** (`assets/people/` : `femme-1..3`,
+    `homme-1..2`, `agent-1..2`) → réfère-le par `people/<nom>.jpg`. Ou un fichier de `assets`
+    (portrait fourni/crawlé), par basename. Sans `image`, l'initiale du prénom s'affiche dans une
+    pastille. **Un agent Agentforce n'est pas un humain** : utilise `people/agent-*.jpg`, pas un
     portrait. Ne fabrique jamais un faux visage ni une fausse identité (contrat « données réelles »).
+  - **Cohérence des visages — 1 personnage = 1 photo, réutilisée PARTOUT.** La photo choisie pour
+    un personnage dans `cast[]` doit être la MÊME dans chaque écran où il apparaît (avatar de fiche
+    `.avatar`/`.av`, carte conseiller `.pf`, et l'avatar du header SF `sf-avatar` si ce personnage
+    est l'utilisateur connecté). Le build glisse une `<img src="people/…">` dans n'importe quel
+    avatar rond (`.avatar`/`.av`/`.pf`/`.ln-avatar`) et la recadre. Deux personnages = deux photos ;
+    jamais un visage qui n'est présenté nulle part dans l'histoire.
+  - Le script ne copie dans le site QUE les portraits `people/` réellement référencés (aucun poids mort).
 - **`animated: true`** : marque un écran animé (métadonnée ; plus de badge sur l'index scrollytelling).
 - **`assets`** (Plan B, crawl échoué) : liste de chemins de fichiers fournis par l'utilisateur
   (logo + photos produit). Le script les copie dans `<slug>-story/` ; réfère-les par **basename** :

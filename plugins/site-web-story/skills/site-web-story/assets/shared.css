@@ -101,7 +101,13 @@ img { max-width: 100%; display: block; }
 .ln-bell .badge { position: absolute; top: -7px; right: -7px; background: #ea001e; color: #fff;
     font-size: 0.58rem; font-weight: 700; border-radius: 999px; min-width: 15px; height: 15px;
     display: flex; align-items: center; justify-content: center; padding: 0 3px; }
-.ln-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#8a8a8a,#3a3a3a); flex-shrink: 0; }
+/* Avatar : <span> vide = dégradé de repli, ou <img class="ln-avatar" src="people/…"> = vrai portrait. */
+.ln-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#8a8a8a,#3a3a3a); flex-shrink: 0; object-fit: cover; }
+
+/* Portrait fictif dans un avatar rond (identité client, hero, contact 360…) :
+   glisse une <img src="people/…"> dans le conteneur, elle remplit et recadre en rond.
+   Marche pour .avatar / .av / .pf quel que soit le template (shared.css chargé partout). */
+.avatar img, .av img, .pf img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 /* align-items: center → tout est centré verticalement (logo d'app, waffle).
    Seuls les onglets s'étirent (align-self: stretch) pour que le trait bleu de
    l'onglet actif touche le bas de la barre. */

@@ -170,6 +170,7 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
 
     # 2. un écran par acte
     leaks, wrap_warn = [], []
+    rendered = {}  # file -> markup, pour scanner les portraits people/ après coup
     for s in manifest["screens"]:
         markup = (root / "templates" / f'{s["template"]}.html').read_text(encoding="utf-8")
         warns, markup = inject_slots(markup, s.get("slots", {}), s["template"])
@@ -179,7 +180,22 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
         if "Nova" in markup:
             leaks.append(s["file"])
         (out / s["file"]).write_text(markup, encoding="utf-8")
+        rendered[s["file"]] = markup
         written.append(s["file"])
+
+    # 2b. portraits fictifs de la banque assets/people/ RÉELLEMENT référencés (src="people/xxx").
+    # On ne copie que ceux utilisés → aucun poids mort dans le site généré. Le hub (cast[].image)
+    # peut aussi y pointer, donc on scanne écrans + manifest sérialisé.
+    haystack = "".join(rendered.values()) + json.dumps(manifest, ensure_ascii=False)
+    used = set(re.findall(r'people/([\w.-]+\.(?:jpg|jpeg|png|webp))', haystack))
+    if used:
+        (out / "people").mkdir(exist_ok=True)
+        for name in sorted(used):
+            src = root / "assets" / "people" / name
+            if not src.is_file():
+                raise SystemExit(f"ERREUR : portrait people/{name} introuvable (voir assets/people/).")
+            shutil.copy(src, out / "people" / name)
+            written.append(f"people/{name}")
 
     # 3. hub
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
@@ -210,7 +226,7 @@ def selfcheck():
         "tokens": {"--accent": "#ff0000"},
         "tagline": "TAGLINE_INJECTEE",
         "intro": {"title": "INTRO_TITRE", "lede": "intro lede",
-                  "cast": [{"name": "Camille", "role": "La cliente", "bio": "bio", "image": "camille.jpg"}]},
+                  "cast": [{"name": "Camille", "role": "La cliente", "bio": "bio", "image": "people/femme-1.jpg"}]},
         "screens": [
             {"file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
              "act": "Acte 1 · Test", "title": "Pub test", "desc": "desc test", "animated": True,
@@ -229,6 +245,7 @@ def selfcheck():
         try:
             out = build(m, root=ROOT)
             assert (out / "logo.png").is_file(), "asset fourni non copié"
+            assert (out / "people" / "femme-1.jpg").is_file(), "portrait people/ référencé non copié"
             css = (out / "shared.css").read_text(encoding="utf-8")
             assert "#ff0000" in css, "token accent non réécrit"
             screen = (out / "acte1-instagram.html").read_text(encoding="utf-8")
@@ -236,7 +253,7 @@ def selfcheck():
             assert "POURQUOI_INJECTE" in screen, "SLOT why non injecté"
             hub = (out / "index.html").read_text(encoding="utf-8")
             assert "TAGLINE_INJECTEE" in hub, "tagline hero non injectée"
-            assert "INTRO_TITRE" in hub and 'src="camille.jpg"' in hub, "section intro/personnage manquante"
+            assert "INTRO_TITRE" in hub and 'src="people/femme-1.jpg"' in hub, "section intro/personnage manquante"
             assert '<span class="sl">Pub test</span>' or "Pub test" in hub, "titre écran absent du récit"
             # écran 1 (instagram) = cadre téléphone ; écran 2 (site-ecommerce) = cadre desktop, côté alterné
             assert 'class="frame phone"' in hub, "cadre téléphone manquant"
