@@ -1,85 +1,165 @@
 <!DOCTYPE html>
 <!-- ┌─────────────────────────────────────────────────────────────────────┐
-     │ TEMPLATE — Service Cloud Console (desktop) · vision 360 conseiller    │
-     │ CHROME VERROUILLÉE : tabbar, grille 3 colonnes (contact 360 · case +  │
-     │ timeline + tracker · panneau Agentforce). Agentforce / MuleSoft.      │
+     │ TEMPLATE — Service Cloud Console (desktop) · appel vocal + IA         │
+     │ La console conseiller moderne : rail d'icônes + 3 colonnes            │
+     │   · gauche : contact 360 (photo, statuts, compteurs, jauges CSAT/NPS, │
+     │     panneau téléphone CTI, détails de la requête clé/valeur) ;        │
+     │   · centre : en-tête « Appel vocal », sous-onglets, rappel IA de la   │
+     │     conversation, transcript en bulles ;                             │
+     │   · droite : Service Assistant (Agentforce) — accueil + guidage       │
+     │     pas-à-pas + saisie. C'est le clin d'œil produit : garde-le.        │
+     │ CHROME VERROUILLÉE (couleurs SF pour le header ; --accent ailleurs).  │
      │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
-     │ Animation : l'étape .st.now du tracker pulse. Le panneau .agent est   │
-     │ le clin d'œil produit (suggestion IA + brouillon) : garde-le.         │
      └─────────────────────────────────────────────────────────────────────┘ -->
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><!-- SLOT: title -->Service Cloud Console — Conseiller<!-- /SLOT --></title>
+<title><!-- SLOT: title -->Service Cloud Console — Appel vocal<!-- /SLOT --></title>
 <link rel="stylesheet" href="shared.css">
 <style>
-    body { background: #eef1f5; min-height: 100vh; font-family: var(--body); }
+    body { background: #f3f2f2; min-height: 100vh; font-family: var(--body); --sf-w: 1440px; }
+    .work { display: flex; max-width: var(--sf-w); margin: 0 auto; align-items: stretch; }
 
-    /* Console chrome */
-    .console { max-width: 1320px; margin: 0 auto; }
-    .tabbar { background: var(--accent-dark); color: #fff; display: flex; align-items: center; gap: 2px; padding: 12px 16px 0; }
-    .tab { padding: 11px 18px; font-size: 0.8rem; border-top-left-radius: 8px; border-top-right-radius: 8px; color: #b9c3da; }
-    .tab.on { background: #eef1f5; color: var(--accent); font-weight: 600; }
+    /* rail d'icônes de la console (chrome verrouillée) */
+    .rail { width: 48px; background: #fff; border-right: 1px solid #e5e5e5; flex-shrink: 0;
+        display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 14px 0; color: #5c5c5c; }
+    .rail svg { width: 20px; height: 20px; }
+    .rail .home { width: 30px; height: 30px; border-radius: 6px; background: var(--accent); color: #fff;
+        display: flex; align-items: center; justify-content: center; }
+    .rail .home svg { width: 17px; height: 17px; }
 
-    .layout { display: grid; grid-template-columns: 300px 1fr 340px; gap: 16px; padding: 16px; }
-    .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
-    .card h2 { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); padding: 16px 18px 0; }
+    .layout { flex: 1; display: grid; grid-template-columns: 292px 1fr 304px; gap: 14px; padding: 14px; align-items: start; }
+    .col { display: flex; flex-direction: column; gap: 14px; }
+    .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; }
+    .card h3 { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); }
 
-    /* Left — contact 360 */
-    .contact { padding: 18px; text-align: center; }
-    .contact .av { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px; background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; font-size: 1.4rem; }
-    .contact .nm { font-family: var(--sans); font-weight: 600; font-size: 1.1rem; }
-    .contact .sub { font-size: 0.78rem; color: var(--grey); margin-top: 2px; }
-    .kv { text-align: left; padding: 8px 18px 18px; font-size: 0.83rem; }
-    .kv .row { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--border); }
-    .kv .row span:first-child { color: var(--grey); }
-    .boutique-note { margin: 0 18px 18px; padding: 12px; border-radius: 10px; background: var(--accent-soft); font-size: 0.8rem; color: var(--accent); line-height: 1.5; }
-    .boutique-note b { display: block; }
+    /* ── Colonne gauche : profil 360 ── */
+    .banner { height: 66px; border-radius: 8px 8px 0 0; background: linear-gradient(120deg, var(--accent), var(--accent-dark)); }
+    .profile { padding: 0 16px 14px; margin-top: -30px; }
+    .profile .ph { width: 62px; height: 62px; border-radius: 50%; border: 3px solid #fff; object-fit: cover;
+        background: #ccc; display: block; }
+    .profile .nm { font-family: var(--sans); font-weight: 700; font-size: 1.02rem; margin-top: 8px; }
+    .profile .nm .verified { color: var(--accent); }
+    .profile .loc { font-size: 0.78rem; color: var(--grey); }
 
-    /* Center — case + timeline */
-    .case-head { padding: 18px; border-bottom: 1px solid var(--border); }
-    .case-head .cn { font-family: var(--sans); font-weight: 600; font-size: 1.1rem; }
-    .case-head .meta { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .pills { display: flex; border-top: 1px solid #e5e5e5; }
+    .pill { flex: 1; text-align: center; padding: 12px 4px; }
+    .pill svg { width: 17px; height: 17px; color: var(--grey); }
+    .pill .v { display: block; font-family: var(--sans); font-weight: 700; font-size: 0.85rem; color: #080707; margin-top: 3px; }
+    .pill .l { display: block; font-size: 0.63rem; color: var(--grey); letter-spacing: 0.2px; }
 
-    .timeline { padding: 8px 18px 18px; }
-    .tl-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .tl-item:last-child { border-bottom: none; }
-    .tl-item .ic { width: 38px; height: 38px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .tl-item.mule .ic { background: var(--green-bg); color: var(--green); }
-    .tl-item .b .t { font-weight: 500; font-size: 0.9rem; }
-    .tl-item .b .d { font-size: 0.78rem; color: var(--grey); margin-top: 3px; }
-    .tl-item .tm { margin-left: auto; font-size: 0.7rem; color: var(--grey-light); white-space: nowrap; }
+    .counts { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid #e5e5e5; font-size: 0.8rem; }
+    .counts .c { display: flex; align-items: center; gap: 7px; color: var(--grey); }
+    .counts .c b { color: #080707; font-family: var(--sans); }
 
-    /* shipment tracker */
-    .track { margin: 4px 18px 18px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; }
-    .track .th { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .track .th .oms { font-size: 0.68rem; color: var(--green); font-weight: 600; }
-    .steps { display: flex; align-items: center; }
-    .steps .st { flex: 1; text-align: center; position: relative; }
-    .steps .st .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--border); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; }
-    .steps .st.done .dot { background: var(--accent); }
-    .steps .st.now .dot { background: var(--green); box-shadow: 0 0 0 4px var(--green-bg); animation: pulse 1.4s infinite; }
-    .steps .st .lbl { font-size: 0.68rem; color: var(--grey); }
-    .steps .st.now .lbl { color: var(--green); font-weight: 600; }
-    .steps .bar { position: absolute; top: 11px; left: 50%; width: 100%; height: 2px; background: var(--border); z-index: -1; }
-    .steps .st.done .bar { background: var(--accent); }
+    .gauges { display: flex; justify-content: space-around; padding: 14px 8px 18px; border-top: 1px solid #e5e5e5; }
+    .gauge { text-align: center; }
+    /* jauge = anneau conique (le score pilote --v, en %) ; disque blanc au centre pour le trou */
+    .gauge .ring { width: 62px; height: 62px; border-radius: 50%; margin: 0 auto 6px;
+        background: conic-gradient(var(--green) calc(var(--v) * 1%), #e5e5e5 0);
+        display: flex; align-items: center; justify-content: center; }
+    .gauge .ring::before { content: ''; position: absolute; width: 46px; height: 46px; border-radius: 50%; background: #fff; }
+    .gauge .num { position: relative; font-family: var(--sans); font-weight: 700; font-size: 1.05rem; color: #080707; }
+    .gauge .lbl { font-size: 0.68rem; color: var(--grey); }
 
-    /* Right — Agentforce suggestion */
-    .agent .ah { background: linear-gradient(135deg,var(--accent),#3a4d75); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; border-top-left-radius: 12px; border-top-right-radius: 12px; }
-    .agent .ah .spark { width: 22px; height: 22px; }
-    .agent .ah b { font-family: var(--sans); }
-    .agent .ab { padding: 16px; }
-    .agent .ab .lbl { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); margin-bottom: 8px; }
-    .suggestion { border-left: 3px solid var(--accent); padding: 10px 0 10px 12px; font-size: 0.9rem; line-height: 1.6; color: #333; margin-bottom: 14px; }
-    .agent .acts { display: flex; gap: 8px; }
-    .agent .acts .btn { flex: 1; padding: 11px; font-size: 0.66rem; }
-    .draft { margin-top: 14px; padding: 12px; background: var(--off-white); border-radius: 10px; font-size: 0.84rem; line-height: 1.55; color: #444; }
-    .draft .dh { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 6px; }
+    /* panneau téléphone (CTI) */
+    .cti-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 0; }
+    .cti-head .rec { display: flex; align-items: center; gap: 7px; font-size: 0.72rem; color: var(--grey); }
+    .cti-head .sw { width: 30px; height: 17px; border-radius: 999px; background: var(--green); position: relative; }
+    .cti-head .sw::after { content: ''; position: absolute; top: 2px; right: 2px; width: 13px; height: 13px; border-radius: 50%; background: #fff; }
+    .cti { padding: 12px 16px 16px; }
+    .cti .conn { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 600; color: var(--green);
+        background: var(--green-bg); border-radius: 999px; padding: 3px 10px; }
+    .cti .line { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+    .cti .num { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; }
+    .cti .num small { display: block; font-size: 0.68rem; font-weight: 400; color: var(--grey); }
+    .cti .timer { font-variant-numeric: tabular-nums; color: var(--red); font-size: 0.82rem; }
+    .cti .timer .rd { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--red); margin-right: 5px; animation: pulse 1.3s infinite; }
+    .cti .ctrls { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+    .cti .rnd { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #c9c9c9; color: #5c5c5c;
+        display: flex; align-items: center; justify-content: center; }
+    .cti .rnd svg { width: 15px; height: 15px; }
+    .cti .end { margin-left: auto; background: var(--red); color: #fff; border-radius: 999px; padding: 8px 16px;
+        font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+
+    /* détails de la requête (clé/valeur éditables) */
+    .det { padding: 14px 16px 16px; }
+    .det .dh { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+    .det .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
+    .det .f { padding: 9px 0; border-top: 1px solid #e5e5e5; display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+    .det .f .k { font-size: 0.68rem; color: var(--grey); display: block; }
+    .det .f .v { font-size: 0.82rem; color: #080707; }
+    .det .f .v.link { color: var(--accent); }
+    .det .f .pencil { color: var(--grey-light); flex-shrink: 0; }
+    .det .f .pencil svg { width: 13px; height: 13px; }
+
+    /* ── Colonne centre : appel + conversation ── */
+    .call-head { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-bottom: 1px solid #e5e5e5; }
+    .call-ico { width: 40px; height: 40px; border-radius: 50%; background: var(--green-bg); color: var(--green); flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center; }
+    .call-ico svg { width: 20px; height: 20px; }
+    .call-kicker { font-size: 0.75rem; color: var(--grey); }
+    .call-title { font-family: var(--sans); font-weight: 700; font-size: 1.15rem; color: #080707; }
+    .call-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 10px; }
+    .call-meta .m .k { font-size: 0.66rem; color: var(--grey); display: block; }
+    .call-meta .m .v { font-size: 0.78rem; color: #080707; }
+    .call-meta .m .v.link { color: var(--accent); }
+    .modif { margin-left: auto; flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #c9c9c9;
+        border-radius: 6px; padding: 7px 14px; font-size: 0.8rem; color: #0176d3; font-weight: 600; }
+    .modif svg { width: 12px; height: 12px; }
+
+    .subtabs { display: flex; gap: 24px; padding: 0 18px; border-bottom: 1px solid #e5e5e5; }
+    .subtab { padding: 12px 0; font-size: 0.84rem; color: var(--grey); display: inline-flex; align-items: center; gap: 6px; }
+    .subtab svg { width: 14px; height: 14px; }
+    .subtab.on { color: var(--accent); font-weight: 600; border-bottom: 2px solid var(--accent); }
+
+    .recap { margin: 16px 18px; background: #faf9f9; border: 1px solid #e5e5e5; border-radius: 8px; padding: 13px 15px; }
+    .recap .rh { display: flex; align-items: center; gap: 8px; }
+    .recap .rh svg { width: 16px; height: 16px; color: var(--accent); }
+    .recap .rh b { font-size: 0.86rem; }
+    .recap .rh .ignore { margin-left: auto; font-size: 0.74rem; color: var(--grey); }
+    .recap .txt { font-size: 0.8rem; color: #444; line-height: 1.55; margin-top: 7px; }
+    .recap .txt .more { color: var(--accent); font-weight: 600; }
+
+    .thread { padding: 6px 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+    .thread .lead { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; font-weight: 600; color: #080707; padding: 6px 0; }
+    .thread .lead svg { width: 15px; height: 15px; color: var(--grey); }
+    .msg { max-width: 76%; padding: 10px 14px; border-radius: 13px; font-size: 0.85rem; line-height: 1.5; }
+    .msg .stamp { display: block; font-size: 0.64rem; color: var(--grey-light); margin-top: 6px; }
+    .msg.in { align-self: flex-start; background: #f3f2f2; color: #080707; border-bottom-left-radius: 3px; }
+    .msg.out { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 3px; }
+    .msg.out .stamp { color: rgba(255,255,255,0.72); }
+    .joined { text-align: center; font-size: 0.72rem; color: var(--grey); padding-top: 4px; }
+    .joined b { color: var(--accent); font-weight: 600; }
+
+    /* ── Colonne droite : Service Assistant (Agentforce) ── */
+    .sa-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px 12px; }
+    .sa-head b { font-family: var(--sans); font-size: 0.95rem; }
+    .sa-head .on { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .sa-hero { margin: 0 14px; height: 118px; border-radius: 10px; background: linear-gradient(135deg, var(--accent-soft), #fff);
+        display: flex; align-items: center; justify-content: center; }
+    .sa-hero .bot { width: 66px; height: 66px; color: var(--accent); }
+    .sa-welcome { padding: 14px 16px; font-size: 0.82rem; color: #444; line-height: 1.55; }
+    .sa-step { margin: 4px 14px 14px; }
+    .sa-step .sh { display: flex; gap: 9px; align-items: flex-start; font-size: 0.85rem; font-weight: 600; color: #080707; margin-bottom: 8px; }
+    .sa-step .sh .bic { width: 24px; height: 24px; border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+        flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sa-step .sh .bic svg { width: 15px; height: 15px; }
+    .sa-block { background: #f7f7f9; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px 14px; font-size: 0.8rem; color: #444; line-height: 1.6; }
+    .sa-block .who { font-weight: 700; color: #080707; }
+    .sa-block ul { margin: 4px 0 0 16px; }
+    .sa-block b { color: #080707; }
+    .sa-next { margin-top: 10px; display: inline-flex; border: 1px solid #c9c9c9; border-radius: 6px; padding: 7px 18px;
+        font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+    .sa-input { margin: 14px; position: relative; }
+    .sa-input .box { border: 1px solid #c9c9c9; border-radius: 8px; padding: 12px 40px 12px 14px; font-size: 0.82rem; color: var(--grey); min-height: 46px; }
+    .sa-input .send { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--grey); }
+    .sa-input .send svg { width: 17px; height: 17px; }
 </style>
 </head>
 <body>
-<div class="act-tag"><!-- SLOT: act-tag -->Acte 4.5 · Service Cloud Console — vision 360 du siège<!-- /SLOT --></div>
+<div class="act-tag"><!-- SLOT: act-tag -->Service Cloud Console — appel vocal & Service Assistant<!-- /SLOT --></div>
 
 <!-- ═══ Header Salesforce Lightning (chrome verrouillée, couleurs SF). Ne modifie que sf-logo / sf-app / sf-tabs. ═══ -->
 <div class="lightning">
@@ -108,117 +188,180 @@
         <!-- SLOT: sf-app ─ nom de l'app Salesforce (ex. Sales, Service, Data Cloud). -->
         <span class="ln-app">Service - Console</span>
         <!-- /SLOT: sf-app -->
-        <!-- SLOT: sf-tabs ─ onglets. Le 1er en .ln-tab.on = actif (souligné bleu). Ajoute la <svg class="caret"> pour un menu déroulant. -->
+        <!-- SLOT: sf-tabs ─ onglets. Le 1er en .ln-tab.on = actif (souligné bleu). Ajoute la caret pour un menu déroulant. -->
         <div class="ln-tabs">
-            <span class="ln-tab on">Home <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="ln-tab on">Accueil <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="ln-tab">Appel · #VC-00000054</span>
         </div>
         <!-- /SLOT: sf-tabs -->
     </div>
 </div>
 
-<div class="console">
-    <!-- SLOT: tabbar ─ onglets de la console. Le premier (.tab.on) = la case ouverte. -->
-    <div class="tabbar">
-        <div class="tab on">📋 Camille Dubois — Case #4471 · article défectueux</div>
-        <div class="tab">Ma file d'attente</div>
-        <div class="tab">Tableau de bord</div>
+<div class="work">
+    <!-- rail d'icônes (chrome verrouillée) -->
+    <div class="rail">
+        <span class="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v14H4z"/><path d="M4 9h16"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.8 2z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 2h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1c.6.5 1.3.9 2 1.2L10 22h4l.5-2.6c.7-.3 1.4-.7 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>
     </div>
-    <!-- /SLOT: tabbar -->
 
     <div class="layout">
-        <!-- SLOT: contact ─ colonne gauche : contact 360 (avatar, indicateurs, note boutique). -->
-        <div>
+        <!-- ═══ COLONNE GAUCHE ═══ -->
+        <div class="col">
+            <!-- SLOT: contact ─ profil 360 : bandeau + photo people/… + statuts + compteurs + jauges CSAT/NPS.
+                 Le score des jauges se règle avec style="--v:87" (0-100). -->
             <div class="card">
-                <div class="contact">
-                    <div class="av">CD</div>
-                    <div class="nm">Camille Dubois</div>
-                    <div class="sub">Cliente fidèle · depuis 2021</div>
+                <div class="banner"></div>
+                <div class="profile">
+                    <img class="ph" src="people/femme-1.jpg" alt="">
+                    <div class="nm">Prénom Nom <span class="verified">●</span></div>
+                    <div class="loc">Ville, Pays</div>
                 </div>
-                <div class="kv">
-                    <div class="row"><span>Valeur vie</span><span class="mono">1 840 €</span></div>
-                    <div class="row"><span>Canal</span><span>WhatsApp → Siège</span></div>
-                    <div class="row"><span>Segment</span><span>Fidélité boutique</span></div>
+                <div class="pills">
+                    <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="5"/><path d="M8 13l-2 8 6-3 6 3-2-8"/></svg><span class="v">Gold</span><span class="l">Statut</span></div>
+                    <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12h20"/><path d="M12 2a15 15 0 000 20 15 15 0 000-20"/><circle cx="12" cy="12" r="10"/></svg><span class="v">1 344 099</span><span class="l">Points</span></div>
+                    <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg><span class="v">Fréquent</span><span class="l">Segment</span></div>
                 </div>
-                <div class="boutique-note">
-                    <b>🏪 Accueillie par Julien</b>
-                    Boutique centre-ville · il y a 2 jours. Nouveauté + article commandé en Endless Aisle (livré à domicile).
+                <div class="counts">
+                    <span class="c"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3"/></svg> Requêtes ouvertes <b>24</b></span>
+                    <span class="c"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Clôturées <b>5</b></span>
+                </div>
+                <div class="gauges">
+                    <div class="gauge"><div class="ring" style="--v:80"><span class="num">8</span></div><div class="lbl">Score CSAT</div></div>
+                    <div class="gauge"><div class="ring" style="--v:87"><span class="num">87</span></div><div class="lbl">Score NPS</div></div>
                 </div>
             </div>
-        </div>
-        <!-- /SLOT: contact -->
+            <!-- /SLOT: contact -->
 
-        <!-- SLOT: case ─ colonne centre : entête de case, tracker d'étapes, timeline d'événements. -->
+            <!-- SLOT: phone ─ panneau téléphone (CTI) : état, numéro, minuteur, contrôles, bouton rouge « Terminer l'appel ». -->
+            <div class="card">
+                <div class="cti-head"><h3>Téléphone</h3><span class="rec">Enregistrement <span class="sw"></span></span></div>
+                <div class="cti">
+                    <span class="conn">● Connecté</span>
+                    <div class="line">
+                        <div class="num">+33 6 10 02 21 08<small>Entrant</small></div>
+                        <div class="timer"><span class="rd"></span>00:04:21</div>
+                    </div>
+                    <div class="ctrls">
+                        <span class="rnd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l22 22"/><path d="M9 9v3a3 3 0 004.5 2.6M12 2a3 3 0 013 3v4"/><path d="M17 16.9A7 7 0 0119 12v-2"/></svg></span>
+                        <span class="rnd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg></span>
+                        <span class="rnd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="9"/></svg></span>
+                        <span class="end"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5a17 17 0 01-5-.8 1.5 1.5 0 00-1.5.4l-2.2 2.2a17 17 0 01-7.3-7.3l2.2-2.2A1.5 1.5 0 008.3 6 17 17 0 017.5 1 1.5 1.5 0 006 0H2.5A1.5 1.5 0 001 1.7 21 21 0 0022.3 23 1.5 1.5 0 0024 21.5V18a1.5 1.5 0 00-1.5-1.5z" transform="rotate(135 12 12)"/></svg> Terminer l'appel</span>
+                    </div>
+                </div>
+            </div>
+            <!-- /SLOT: phone -->
+
+            <!-- SLOT: details ─ détails de la requête en clé/valeur (crayon = éditable). Garde 6-8 champs. -->
+            <div class="card">
+                <div class="det">
+                    <div class="dh"><h3>Détails de la requête</h3></div>
+                    <div class="grid">
+                        <div class="f"><span><span class="k">Objet</span><span class="v">Demande d'indemnisation</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                        <div class="f"><span><span class="k">Statut</span><span class="v">En cours</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                        <div class="f"><span><span class="k">Numéro de requête</span><span class="v">00008328</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                        <div class="f"><span><span class="k">Type</span><span class="v">Informations sur un vol</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                        <div class="f"><span><span class="k">Priorité</span><span class="v">Moyenne</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                        <div class="f"><span><span class="k">Sous-type</span><span class="v">Nouvelle demande</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                        <div class="f"><span><span class="k">Réservation</span><span class="v link">X537E52E79</span></span><span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- /SLOT: details -->
+        </div>
+
+        <!-- ═══ COLONNE CENTRE ═══ -->
         <div class="card">
-            <div class="case-head">
-                <div class="cn">Article reçu défectueux</div>
-                <div class="meta">
-                    <span class="chip">Origine : WhatsApp</span>
-                    <span class="chip chip--amber">Escaladé par Agentforce · geste commercial</span>
-                    <span class="chip">Endless Aisle #7788</span>
+            <!-- SLOT: callhead ─ en-tête de l'appel : icône + titre + métadonnées + bouton Modifier. -->
+            <div class="call-head">
+                <span class="call-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.8 2z"/></svg></span>
+                <div>
+                    <div class="call-kicker">Appel vocal</div>
+                    <div class="call-title">Demande d'indemnisation — vol annulé</div>
+                    <div class="call-meta">
+                        <span class="m"><span class="k">Contact</span><span class="v link">Prénom Nom</span></span>
+                        <span class="m"><span class="k">Type d'appel</span><span class="v">Entrant</span></span>
+                        <span class="m"><span class="k">Coordonnées</span><span class="v link">+33 6 10 02 21 08</span></span>
+                        <span class="m"><span class="k">Appel démarré</span><span class="v">16/03/2026, 18:03</span></span>
+                    </div>
                 </div>
+                <span class="modif">Modifier <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <!-- /SLOT: callhead -->
+
+            <div class="subtabs">
+                <span class="subtab on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Conversation</span>
+                <span class="subtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg> Détails</span>
+                <span class="subtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg> Enregistrement</span>
+                <span class="subtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg> Associés</span>
             </div>
 
-            <div class="track">
-                <div class="th">
-                    <b style="font-size:.9rem">Article · Endless Aisle #7788</b>
-                    <span class="oms">● temps réel · MuleSoft ↔ OMS + transporteur</span>
+            <!-- SLOT: recap ─ rappel de la conversation généré par l'IA (résumé + « Afficher plus »). -->
+            <div class="recap">
+                <div class="rh">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+                    <b>Rappel de la conversation</b>
+                    <span class="ignore">Ignorer</span>
                 </div>
-                <div class="steps">
-                    <div class="st done"><div class="bar"></div><div class="dot">✓</div><div class="lbl">Commandé boutique</div></div>
-                    <div class="st done"><div class="bar"></div><div class="dot">✓</div><div class="lbl">Expédié</div></div>
-                    <div class="st done"><div class="bar"></div><div class="dot">✓</div><div class="lbl">Livré</div></div>
-                    <div class="st now"><div class="dot">!</div><div class="lbl">Défaut signalé</div></div>
-                </div>
+                <div class="txt">La cliente a contacté l'agent pour replanifier un vol annulé. Après avoir exploré plusieurs options, elle a confirmé une réservation sur le vol direct suivant. Elle demande aussi des informations sur l'indemnisation liée à l'annulation. <span class="more">Afficher plus</span></div>
             </div>
+            <!-- /SLOT: recap -->
 
-            <div class="timeline">
-                <div class="tl-item mule">
-                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16"/></svg></div>
-                    <div class="b"><div class="t">Défaut signalé — pression cassée</div><div class="d">Déclaré via WhatsApp · article Endless Aisle #7788</div></div>
-                    <div class="tm">à l'instant</div>
-                </div>
-                <div class="tl-item">
-                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-                    <div class="b"><div class="t">Suivi colis — résolu par Agentforce</div><div class="d">Question « où est ma commande » traitée en autonomie · aucun humain requis</div></div>
-                    <div class="tm">18:03</div>
-                </div>
-                <div class="tl-item">
-                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-                    <div class="b"><div class="t">Conversation WhatsApp escaladée</div><div class="d">Agentforce → conseiller · motif : produit défectueux · contexte transmis</div></div>
-                    <div class="tm">18:04</div>
-                </div>
-                <div class="tl-item">
-                    <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
-                    <div class="b"><div class="t">Visite boutique centre-ville</div><div class="d">Conseiller Julien · nouveauté + article Endless Aisle</div></div>
-                    <div class="tm">il y a 2 j</div>
-                </div>
+            <!-- SLOT: transcript ─ le transcript en bulles. .msg.in = client (gauche, clair) ; .msg.out = agent (droite, accent). -->
+            <div class="thread">
+                <div class="lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Conversation</div>
+                <div class="msg out">En tant que cliente Gold, vous bénéficiez d'une couverture entière : cinq cents euros forfaitaires.<span class="stamp">Agent · 18:06</span></div>
+                <div class="msg in">C'est très bien, merci.<span class="stamp">+33 6 10 02 21 08 · 18:08</span></div>
+                <div class="msg in">Est-ce que vous pouvez procéder au virement et au dossier, s'il vous plaît ?<span class="stamp">+33 6 10 02 21 08 · 18:08</span></div>
+                <div class="msg out">Oui, bien sûr. Avant cela, nous allons vérifier les informations bancaires.<span class="stamp">Agent · 18:09</span></div>
+                <div class="msg in">Elles sont à jour.<span class="stamp">+33 6 10 02 21 08 · 18:11</span></div>
+                <div class="joined"><b>Un conseiller</b> a rejoint la conversation · 18:07 GMT+1</div>
             </div>
+            <!-- /SLOT: transcript -->
         </div>
-        <!-- /SLOT: case -->
 
-        <!-- SLOT: agent ─ colonne droite : panneau Agentforce (suggestion + actions + brouillon).
-             C'est le clin d'œil produit de cet écran : garde-le. -->
-        <div class="card agent">
-            <div class="ah">
-                <svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
-                <b>Agentforce · assistance conseiller</b>
+        <!-- ═══ COLONNE DROITE — Service Assistant (Agentforce) : clin d'œil produit, garde-le. ═══ -->
+        <div class="card">
+            <!-- SLOT: assistant ─ Service Assistant : accueil + guidage pas-à-pas (blocs Astro) + saisie. C'est la valeur Agentforce. -->
+            <div class="sa-head"><span class="on"></span><b>Service Assistant</b></div>
+            <div class="sa-hero">
+                <svg class="bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="8" width="16" height="11" rx="3"/><circle cx="9" cy="13.5" r="1.4" fill="currentColor"/><circle cx="15" cy="13.5" r="1.4" fill="currentColor"/><line x1="12" y1="3" x2="12" y2="8"/><circle cx="12" cy="2.4" r="1.4" fill="currentColor"/><line x1="4" y1="12" x2="2" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
             </div>
-            <div class="ab">
-                <div class="lbl">Geste commercial suggéré</div>
-                <div class="suggestion">Article <b>défectueux à la livraison</b> · cliente fidèle (1 840 € valeur vie). Recommandation : <b>renvoi gratuit + remplacement prioritaire</b>, ou <b>-30 % sur un prochain achat</b> si elle préfère garder l'article.</div>
+            <div class="sa-welcome">Bonjour, je suis votre Service Assistant, propulsé par <b>Agentforce</b>. Je travaille à vos côtés pendant l'appel : je fais remonter les bonnes informations et je propose l'action suivante. Tout ce que je trouve est enregistré dans la fiche.</div>
 
-                <div class="acts">
-                    <button class="btn btn--dark">Envoyer en 1 clic</button>
-                    <button class="btn btn--outline" style="color:var(--accent)">Éditer</button>
-                </div>
-
-                <div class="draft">
-                    <div class="dh">Brouillon généré</div>
-                    Bonjour Camille, navrée pour ce défaut 🤍 Nous vous renvoyons un article neuf en prioritaire, sans frais — un bon de retour est déjà dans votre boîte mail. Et pour le désagrément, -30 % vous attendent sur votre prochaine commande.
+            <div class="sa-step">
+                <div class="sh"><span class="bic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="8" width="16" height="11" rx="3"/><circle cx="9" cy="13.5" r="1.2" fill="currentColor"/><circle cx="15" cy="13.5" r="1.2" fill="currentColor"/><line x1="12" y1="4" x2="12" y2="8"/></svg></span> Étape 2 · Communiquer le montant de l'indemnisation à la cliente</div>
+                <div class="sa-block">
+                    <span class="who">Assistant</span>
+                    <ul>
+                        <li>Statut voyageur : <b>Gold</b></li>
+                        <li>Couverture météo : <b>entièrement couvert</b></li>
+                        <li>Conditions d'indemnisation : <b>500 € forfaitaires</b></li>
+                    </ul>
+                    <span class="sa-next">Suivant</span>
                 </div>
             </div>
+
+            <div class="sa-step">
+                <div class="sh"><span class="bic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="8" width="16" height="11" rx="3"/><circle cx="9" cy="13.5" r="1.2" fill="currentColor"/><circle cx="15" cy="13.5" r="1.2" fill="currentColor"/><line x1="12" y1="4" x2="12" y2="8"/></svg></span> Étape 3 · Vérifier les informations bancaires pour le remboursement</div>
+                <div class="sa-block">
+                    <span class="who">Assistant</span>
+                    <ul>
+                        <li>Titulaire du compte : <b>au nom du contact</b></li>
+                        <li>Banque : <b>vérifiée</b></li>
+                        <li>IBAN : <b>FR76 xxxx xxxx xxxx 1234</b></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sa-input">
+                <div class="box">Posez une question ou lancez une action via Agentforce…</div>
+                <span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>
+            </div>
+            <!-- /SLOT: assistant -->
         </div>
-        <!-- /SLOT: agent -->
     </div>
 </div>
 </body>

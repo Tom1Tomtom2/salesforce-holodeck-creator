@@ -82,6 +82,9 @@ img { max-width: 100%; display: block; }
 /* Valeurs figées d'après une vraie org (SLDS 2) : header 50px, context-bar 40px,
    icônes #5c5c5c, bleu actif #0176d3 (info-50), badge #ea001e, base 13px. */
 .lightning { background: #fff; border-bottom: 1px solid #dddbda; position: sticky; top: 0; z-index: 200;
+    /* --sf-w = largeur de la "fenêtre" SF, réglée par chaque template desktop pour aligner header + corps.
+       Plafond centré : ne s'active que si l'écran est plus large (corrige le grand écran, transparent en iframe). */
+    max-width: var(--sf-w, 100%); margin-inline: auto;
     font-size: 0.8125rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
 .lightning, .lightning * { font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
@@ -153,11 +156,12 @@ img { max-width: 100%; display: block; }
 
 /* --- Cartouche "acte" en haut d'écran (repère démo, retirable) --- */
 .act-tag {
-    position: fixed; top: 0; left: 0; z-index: 2000;
+    position: fixed; bottom: 14px; left: 14px; z-index: 2000;
     background: var(--accent); color: #fff;
     font-family: var(--sans); font-size: 0.68rem; font-weight: 600;
     letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 6px 14px; border-bottom-right-radius: 10px;
+    padding: 7px 15px; border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.22);
 }
 
 /* --- Device frame (mockup mobile) --- */

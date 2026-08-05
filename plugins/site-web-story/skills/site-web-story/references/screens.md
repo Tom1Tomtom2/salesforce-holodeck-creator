@@ -25,8 +25,9 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Landing de capture + résolution d'identité | `landing-capture.html` | mobile | Data Cloud identity resolution (overlay) | fusion des fragments (scriptée) |
 | Profil client unifié | `datacloud-profil.html` | desktop | Data Cloud — flux + segments | events « live » + segment qui s'allume |
 | Acquisition / activation / re-segmentation | `datacloud-pipeline.html` | desktop | Data Cloud — pipeline vers Meta/Google | status-line qui pulse |
+| Création de segment assistée IA | `datacloud-segment.html` | desktop | Data Cloud — Einstein génère le segment (panneau chat) | — (statique) |
 | App conseiller / clienteling (vue 360) | `client-app.html` | mobile | Data Cloud — historique réconcilié | — (statique) |
-| Console SAV siège | `service-console.html` | desktop | Agentforce + MuleSoft (panneau) | tracker `.st.now` qui pulse |
+| Console conseiller — appel vocal + IA | `service-console.html` | desktop | Service Assistant / Agentforce (panneau + guidage pas-à-pas) | point d'enregistrement + minuteur qui pulse |
 | Caisse / TPV boutique (retour, vente) | `tpv-pos.html` | desktop | MuleSoft → Data Cloud & Salesforce | dot de sync qui pulse |
 
 `datacloud-pipeline.html` couvre 3 scènes du même gabarit (acquisition « lookalike »,
@@ -47,8 +48,11 @@ activation d'audience vers Meta, re-segmentation post-événement) : n'adapte qu
   (garde `.live-2`/`.live-1` en tête du flux, une seule pastille `.seg.on`)
 - **datacloud-pipeline.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `brand`, `prod-label`, `status-chip`, `intro`, `flow`, `cards`, `status`
   (garde le 3e nœud en `.node.dest`)
+- **datacloud-segment.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `seg-card`, `seg-metrics`, `seg-desc`, `attributes`, `chat`
+  (modale « Créer un segment avec Einstein » : panneau gauche aperçu + panneau droit chat Einstein — le chat EST le clin d'œil produit, garde-le. Dans `chat`, le message utilisateur porte `<img src="people/…">` = le personnage qui pilote Data Cloud ; garde-le cohérent avec `cast[]`. Dans `attributes`, garde 2-3 lignes `.attr-tbl` cochées.)
 - **client-app.html** — `title`, `act-tag`, `brand`, `advisor`, `client-hero`, `appointment` (retirable), `history`, `cta`
-- **service-console.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `tabbar`, `contact`, `case`, `agent`
+- **service-console.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `contact`, `phone`, `details`, `callhead`, `recap`, `transcript`, `assistant`
+  (console conseiller « appel vocal » en 3 colonnes : **gauche** profil 360 — `contact` (bandeau + photo `people/…` + statuts + compteurs + 2 jauges CSAT/NPS, score réglé par `style="--v:87"`), `phone` (panneau CTI : état, numéro, minuteur, contrôles + bouton rouge Terminer), `details` (requête clé/valeur, crayon éditable) ; **centre** — `callhead` (en-tête appel + Modifier), `recap` (rappel de conversation généré par l'IA), `transcript` (bulles `.msg.in` client / `.msg.out` conseiller) ; **droite** — `assistant` = **Service Assistant (Agentforce)** : accueil + guidage pas-à-pas (blocs `.sa-step` avec Étape N + Suivant) + saisie. Le panneau `assistant` EST le clin d'œil produit, garde-le.)
 
 ### Header Salesforce Lightning (3 écrans desktop : datacloud-profil, datacloud-pipeline, service-console)
 Ces 3 écrans portent en haut le **header Lightning** (défini dans `shared.css` : `.lightning`).

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Data Cloud : « Create Segment with Einstein » (desktop)    │
+     │ La modale de création de segment assistée par Einstein :             │
+     │   · panneau gauche « Segment Preview » (nom, jauge 100%, description, │
+     │     table Attributs/Valeurs des DMO) ;                                │
+     │   · panneau droit « Einstein » (chat : prompt utilisateur → réponse   │
+     │     du bot, boutons Regenerate/Explain, champ de saisie) ;            │
+     │   · barre d'actions Cancel / Edit Rules / Save Segment.               │
+     │ CHROME VERROUILLÉE (couleurs Salesforce, PAS --accent, comme le       │
+     │ header). NE MODIFIE QUE le contenu entre les marqueurs SLOT.          │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Data Cloud — Créer un segment avec Einstein<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    /* Modale Salesforce native → couleurs SF (bleu #0176d3, gris SLDS), jamais repeinte à --accent. */
+    body { background: #f3f2f2; min-height: 100vh; }
+    .scrim { background: rgba(0,0,0,0.45); min-height: calc(100vh - 91px);
+        display: flex; justify-content: center; align-items: flex-start; padding: 24px 40px 44px; }
+    .modal { width: min(1180px, 100%); background: #fff; border-radius: 6px;
+        box-shadow: 0 4px 28px rgba(0,0,0,0.28); overflow: hidden; display: flex; flex-direction: column; }
+    .modal-head { text-align: center; font-size: 1.35rem; font-weight: 400; color: #080707;
+        padding: 20px 60px; border-bottom: 1px solid #e5e5e5; position: relative; }
+    .modal-head .x { position: absolute; top: 18px; right: 20px; color: #706e6b; }
+    .modal-head .x svg { width: 20px; height: 20px; }
+    .modal-body { display: flex; align-items: stretch; min-height: 640px; }
+
+    /* ── Panneau gauche : Segment Preview ── */
+    .pane { padding: 22px 28px; }
+    .preview { flex: 1.35; }
+    .pane h2 { font-size: 1.02rem; font-weight: 700; color: #080707; }
+    .pane-sub { font-size: 0.84rem; color: #444; line-height: 1.5; margin: 6px 0 20px; max-width: 60ch; }
+
+    .seg-card { display: flex; align-items: center; gap: 12px; background: #f3f2f2;
+        border: 1px solid #e5e5e5; border-radius: 4px; padding: 14px 16px; }
+    .seg-ico { width: 34px; height: 34px; border-radius: 6px; background: #ff5d2d; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center; }
+    .seg-ico svg { width: 20px; height: 20px; }
+    .seg-name { font-weight: 700; font-size: 1.05rem; color: #080707; }
+    .seg-card .pencil { margin-left: auto; color: #706e6b; }
+    .seg-card .pencil svg { width: 15px; height: 15px; }
+
+    .seg-metrics { display: flex; align-items: center; gap: 14px; margin: 20px 0 4px; }
+    .refresh { width: 34px; height: 34px; border: 1px solid #c9c9c9; border-radius: 4px;
+        color: #0176d3; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .refresh svg { width: 16px; height: 16px; }
+    .seg-count { font-size: 1.7rem; font-weight: 700; color: #080707; display: flex; align-items: center; gap: 6px; }
+    .seg-count .info { color: #706e6b; }
+    .seg-count .info svg { width: 15px; height: 15px; }
+    .pop { flex: 1; }
+    .pop .lbl { font-size: 0.8rem; color: #444; margin-bottom: 6px; }
+    .bar { height: 8px; border-radius: 999px; background: #e5e5e5; overflow: hidden; max-width: 360px; }
+    .bar > span { display: block; height: 100%; width: 100%; background: #0176d3; border-radius: 999px; }
+
+    .seg-desc { font-size: 0.85rem; color: #444; margin: 18px 0 6px; line-height: 1.5; }
+    .seg-desc b { color: #080707; display: block; margin-bottom: 2px; }
+
+    /* table des attributs (DMO) */
+    .dmo-row { display: flex; align-items: center; gap: 8px; padding: 12px 0; border-top: 1px solid #e5e5e5;
+        font-size: 0.9rem; color: #080707; font-weight: 400; }
+    .dmo-row .caret { width: 16px; height: 16px; color: #5c5c5c; }
+    .dmo-sub { font-weight: 700; font-size: 0.9rem; margin: 4px 0 8px; }
+    .attr-tbl { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .attr-tbl th { text-align: left; font-weight: 700; color: #080707; padding: 6px 8px; }
+    .attr-tbl td { padding: 9px 8px; color: #444; vertical-align: middle; }
+    .attr-tbl td.val { color: #080707; }
+    .attr-tbl .colinfo { width: 24px; text-align: right; color: #b0b0b0; }
+    .attr-tbl .colinfo svg { width: 15px; height: 15px; }
+    .cbx { width: 16px; height: 16px; border: 1px solid #a0a0a0; border-radius: 2px; display: inline-flex;
+        align-items: center; justify-content: center; flex-shrink: 0; }
+    .cbx.on { background: #0176d3; border-color: #0176d3; }
+    .cbx svg { width: 12px; height: 12px; color: #fff; }
+    .attr-tbl td.colcbx { width: 26px; }
+
+    /* ── Panneau droit : Einstein (chat) ── */
+    .einstein { flex: 1; border-left: 1px solid #e5e5e5; display: flex; flex-direction: column; padding: 0; }
+    .e-head { display: flex; align-items: center; gap: 9px; padding: 18px 24px 14px;
+        border-bottom: 2px solid #0176d3; }
+    .e-head .ein-ico { width: 24px; height: 24px; }
+    .e-head h2 { font-size: 1.05rem; }
+    .ein-ico { border-radius: 5px; background: #eaf5fe; color: #0b5cab;
+        display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ein-ico svg { width: 66%; height: 66%; }
+
+    .chat { flex: 1; display: flex; flex-direction: column; padding: 20px 24px; }
+    .chat-scroll { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+    .c-msg { display: flex; gap: 12px; align-items: flex-start; }
+    .c-av { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+        background: linear-gradient(135deg,#8a8a8a,#3a3a3a); }
+    .c-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .c-av.bot { border-radius: 6px; background: #eaf5fe; color: #0b5cab; display: flex; align-items: center; justify-content: center; }
+    .c-av.bot svg { width: 22px; height: 22px; }
+    .c-body { flex: 1; }
+    .c-txt { font-size: 0.9rem; color: #080707; line-height: 1.55; }
+    .c-txt .note { color: #706e6b; }
+    .c-rate { display: flex; gap: 12px; justify-content: flex-end; color: #706e6b; margin-bottom: 6px; }
+    .c-rate svg { width: 16px; height: 16px; }
+    .c-actions { display: flex; align-items: stretch; margin-top: 12px; }
+    .c-actions button { border: 1px solid #c9c9c9; color: #0176d3; font-size: 0.82rem; font-weight: 600;
+        padding: 7px 14px; background: #fff; }
+    .c-actions button:first-child { border-radius: 4px 0 0 4px; }
+    .c-actions button + button { border-left: none; }
+    .c-actions button.caret { border-radius: 0 4px 4px 0; padding: 7px 8px; }
+    .c-actions button.caret svg { width: 13px; height: 13px; display: block; }
+
+    .c-input { margin-top: 16px; position: relative; }
+    .c-input .box { border: 1px solid #c9c9c9; border-radius: 6px; padding: 12px 40px 34px 14px;
+        font-size: 0.86rem; color: #706e6b; min-height: 78px; }
+    .c-input .send { position: absolute; right: 12px; bottom: 12px; color: #706e6b; }
+    .c-input .send svg { width: 18px; height: 18px; }
+
+    /* ── Barre d'actions ── */
+    .modal-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px;
+        border-top: 1px solid #e5e5e5; background: #fff; }
+    .m-btn { padding: 8px 18px; border-radius: 4px; font-size: 0.86rem; font-weight: 600; }
+    .m-btn.neutral { border: 1px solid #c9c9c9; color: #0176d3; background: #fff; }
+    .m-btn.blue { background: #0176d3; color: #fff; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Data Cloud — Créer un segment avec Einstein<!-- /SLOT --></div>
+
+<!-- ═══ Header Salesforce Lightning (chrome verrouillée, couleurs SF). Ne modifie que sf-logo / sf-app / sf-tabs. ═══ -->
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo ─ logo du CLIENT (remplace le cloud Salesforce) : wordmark .brand, ou une balise img de classe brand-logo pointant sur le logo fourni. -->
+        <span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Nova</span></span>
+        <!-- /SLOT: sf-logo -->
+        <div class="ln-search">
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>
+            Search…
+        </div>
+        <span class="ln-ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg> Ask</span>
+        <!-- Icônes = vrais tracés SLDS (utility: favorite, help, settings, notification) -->
+        <div class="ln-icons">
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="m274 31 46 150c2 6 8 9 14 9h150c15 0 21 20 9 29l-122 90c-5 4-7 11-5 17l58 154c4 14-11 26-23 17l-131-98c-5-4-12-4-18 0l-132 98c-12 9-28-3-23-17l56-154c2-6 0-13-5-17L26 219c-12-9-5-29 9-29h150c7 0 12-2 14-9l47-151c4-14 24-13 28 1"/></svg>
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="M284 380h-50c-8 0-14-6-14-14v-15c0-42 27-80 67-94a80 80 0 0 0-24-155c-22-1-43 7-59 22a70.4 70.4 0 0 0-23 44c-1 6-7 11-15 11h-50c-9 0-16-7-15-16 4-38 21-72 48-99 32-30 73-46 117-45 83 3 151 71 154 154 3 70-40 133-105 157-9 4-15 11-15 20v15c0 9-8 15-16 15m16 105c0 8-7 15-15 15h-50c-8 0-15-7-15-15v-50c0-8 7-15 15-15h50c8 0 15 7 15 15z"/></svg>
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="M261 191c-39 0-70 31-70 70s31 70 70 70 70-31 70-70-31-70-70-70m210 133-37-31a195 195 0 0 0 0-68l37-31c12-10 16-28 8-42l-16-28a34 34 0 0 0-40-14l-46 17a168 168 0 0 0-59-34l-8-47c-3-16-17-25-33-25h-32c-16 0-30 9-33 25l-8 46a180 180 0 0 0-60 34l-46-17-11-2c-12 0-23 6-29 16l-16 28c-8 14-5 32 8 42l37 31a195 195 0 0 0 0 68l-37 31a34 34 0 0 0-8 42l16 28a34 34 0 0 0 40 14l46-17c18 16 38 27 59 34l8 48a33 33 0 0 0 33 27h32c16 0 30-12 33-28l8-48a170 170 0 0 0 62-37l43 17 12 2c12 0 23-6 29-16l15-26c9-11 5-29-7-39m-210 47c-61 0-110-49-110-110s49-110 110-110 110 49 110 110-49 110-110 110"/></svg>
+            <span class="ln-bell"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M460 330h-5a35 35 0 0 1-35-35V180A160 160 0 0 0 252 20c-86 4-152 78-152 165v111c0 19-16 34-35 34h-5c-22 0-40 19-40 41v15c0 7 7 14 15 14h450c8 0 15-7 15-15v-15a40 40 0 0 0-40-40M309 440h-98a10 10 0 0 0-10 12c5 28 30 48 59 48s54-21 59-48a10 10 0 0 0-10-12"/></svg><span class="badge">8</span></span>
+            <!-- SLOT: sf-avatar ─ photo de l'utilisateur SF (haut droite). <img class="ln-avatar" src="people/…" alt="">, ou <span class="ln-avatar"></span> pour le dégradé. -->
+            <img class="ln-avatar" src="people/femme-2.jpg" alt="">
+            <!-- /SLOT: sf-avatar -->
+        </div>
+    </div>
+    <div class="ln-nav">
+        <span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <!-- SLOT: sf-app ─ nom de l'app Salesforce (ex. Sales, Service, Data Cloud). -->
+        <span class="ln-app">Data Cloud</span>
+        <!-- /SLOT: sf-app -->
+        <!-- SLOT: sf-tabs ─ onglets. Le 1er en .ln-tab.on = actif (souligné bleu). Ajoute la <svg class="caret"> pour un menu déroulant. -->
+        <div class="ln-tabs">
+            <span class="ln-tab on">Segments</span>
+            <span class="ln-tab">Activations <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="ln-tab">Data Streams <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="ln-tab">Calculated Insights</span>
+            <span class="ln-tab">Data Explorer</span>
+        </div>
+        <!-- /SLOT: sf-tabs -->
+    </div>
+</div>
+
+<div class="scrim">
+    <div class="modal">
+        <div class="modal-head">
+            Créer un segment avec Einstein
+            <span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+        </div>
+        <div class="modal-body">
+
+            <!-- ═══ Panneau gauche : aperçu du segment ═══ -->
+            <div class="pane preview">
+                <h2>Aperçu du segment</h2>
+                <p class="pane-sub">Vérifiez le segment et ses attributs, ajustez si besoin. Vous pouvez toujours revenir au prompt et relancer une passe.</p>
+
+                <!-- SLOT: seg-card ─ carte titre : icône segment + nom + crayon. Change juste le .seg-name. -->
+                <div class="seg-card">
+                    <span class="seg-ico"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><path d="M12 12 L12 4 A8 8 0 0 1 20 12 Z" fill="#fff"/></svg></span>
+                    <span class="seg-name">Clientes à forte valeur — Nord-Est</span>
+                    <span class="pencil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span>
+                </div>
+                <!-- /SLOT: seg-card -->
+
+                <!-- SLOT: seg-metrics ─ jauge : nombre de profils + « 100 % de N ». Change seg-count et le libellé .lbl. -->
+                <div class="seg-metrics">
+                    <span class="refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 11-2.1-9.4L23 10"/></svg></span>
+                    <span class="seg-count">214 <span class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg></span></span>
+                    <span class="pop">
+                        <div class="lbl">100 % des 214 profils de la population</div>
+                        <div class="bar"><span></span></div>
+                    </span>
+                </div>
+                <!-- /SLOT: seg-metrics -->
+
+                <!-- SLOT: seg-desc ─ description du segment (1 phrase). Garde le libellé gras de tête. -->
+                <div class="seg-desc"><b>Description du segment</b>Clientes ayant assisté au salon, résidant dans le Nord-Est des États-Unis.</div>
+                <!-- /SLOT: seg-desc -->
+
+                <!-- SLOT: attributes ─ les DMO et leur table Attributs / Valeurs possibles. Ajuste les lignes .attr-tbl (garde 2-3 lignes). -->
+                <div class="dmo-row"><svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Direct DMO (1)</div>
+                <div class="dmo-sub">Individus unifiés</div>
+                <table class="attr-tbl">
+                    <tr><th class="colcbx"></th><th>Attributs</th><th>Valeurs possibles</th><th class="colinfo"></th></tr>
+                    <tr>
+                        <td class="colcbx"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+                        <td>Présence au salon</td><td class="val">Oui</td>
+                        <td class="colinfo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg></td>
+                    </tr>
+                    <tr>
+                        <td class="colcbx"><span class="cbx on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+                        <td>État de facturation</td><td class="val">NY, NJ, CT, MA, PA, NH, VT, RI</td>
+                        <td class="colinfo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg></td>
+                    </tr>
+                </table>
+                <div class="dmo-row"><svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> DMO liés (3)</div>
+                <!-- /SLOT: attributes -->
+            </div>
+
+            <!-- ═══ Panneau droit : Einstein (le clin d'œil produit — c'est le .why de cet écran) ═══ -->
+            <div class="pane einstein">
+                <div class="e-head">
+                    <span class="ein-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="10" rx="3"/><circle cx="9.5" cy="13" r="1.3" fill="currentColor"/><circle cx="14.5" cy="13" r="1.3" fill="currentColor"/><line x1="12" y1="4" x2="12" y2="8"/><circle cx="12" cy="3.4" r="1.2" fill="currentColor"/></svg></span>
+                    <h2>Einstein</h2>
+                </div>
+                <!-- SLOT: chat ─ conversation : message utilisateur (avec photo people/…) → réponse d'Einstein. -->
+                <div class="chat">
+                    <div class="chat-scroll">
+                        <div class="c-msg user">
+                            <span class="c-av"><img src="people/femme-2.jpg" alt=""></span>
+                            <div class="c-body"><div class="c-txt">Crée un segment des participants de notre dernier salon qui vivent dans le Nord-Est des États-Unis. <span class="note">(N'entre aucune donnée personnelle identifiante : noms, adresses ou identifiants numériques.)</span></div></div>
+                        </div>
+                        <div class="c-msg bot">
+                            <span class="c-av bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="10" rx="3"/><circle cx="9.5" cy="13" r="1.3" fill="currentColor"/><circle cx="14.5" cy="13" r="1.3" fill="currentColor"/><line x1="12" y1="4" x2="12" y2="8"/><circle cx="12" cy="3.4" r="1.2" fill="currentColor"/></svg></span>
+                            <div class="c-body">
+                                <div class="c-rate">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.3a2 2 0 002-1.7l1.4-9A2 2 0 0019.7 9z"/><path d="M7 22V11"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.7a2 2 0 00-2 1.7l-1.4 9A2 2 0 004.3 15z"/><path d="M17 2v11"/></svg>
+                                </div>
+                                <div class="c-txt">Le brouillon de segment <b>Clientes à forte valeur — Nord-Est</b> est prêt. Vous pouvez en revoir le nom, la description et les attributs, et les modifier si vous le souhaitez.</div>
+                                <div class="c-actions">
+                                    <button>Régénérer</button>
+                                    <button>Expliquer les attributs</button>
+                                    <button class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c-input">
+                        <div class="box">Décrivez votre tâche ou posez une question…</div>
+                        <span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>
+                    </div>
+                </div>
+                <!-- /SLOT: chat -->
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="m-btn neutral">Annuler</button>
+            <button class="m-btn neutral">Éditer les règles</button>
+            <button class="m-btn blue">Enregistrer le segment</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -16,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.2.0"
+version: "1.5.0"
 ---
 
 # Site Web Story
@@ -37,6 +37,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `templates/*.html` — **bibliothèque d'écrans complets, chrome verrouillée + SLOTs.**
   C'est le cœur : tu pars TOUJOURS d'un template, tu ne redessines jamais un écran.
 - `references/screens.md` — table canal → template + liste des SLOTs de chaque template.
+- `references/fidelite-salesforce.md` — grille de relecture des écrans **desktop Salesforce**
+  (crédibilité du shell Lightning, dimensions de référence, pièges à éviter). Passe-la sur ces écrans.
 - `scripts/build_site.py` — assemble le site depuis un manifest JSON (copie les
   templates, injecte les SLOTs, réécrit les tokens, génère le hub). **C'est lui qui
   écrit le HTML, pas toi.**
@@ -74,17 +76,38 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
      (et signale-le) — le site reste en dégradés d'accent (contrat « zéro image »).
    - Première utilisation : `pip install -r requirements.txt && playwright install chromium`
      (Chrome système utilisé en priorité s'il est là).
-3. Restitue une **ambiance proposée** en markdown, courte, à partir de `brand.json` :
+3. **Recherche la stratégie de la marque** (pour que la story colle à ses vrais enjeux,
+   pas juste à son catalogue). C'est de la synthèse — pas de parsing : tu lis et tu résumes.
+   - **Google News (source de tête, passe l'anti-bot)** — presse récente et datée :
+     ```
+     WebFetch https://news.google.com/rss/search?q=<Marque>+stratégie&hl=fr&gl=FR&ceid=FR:fr
+     ```
+     Demande dans le prompt : les titres/sources/dates récents + 3 puces d'enjeux
+     (croissance, international, retail vs digital, positionnement prix, durabilité, levée de fonds).
+   - **Wikipédia en complément** (`fr.wikipedia.org/wiki/<Marque>`) : création, fondateur·rice,
+     modèle éco (DTC / digital-first / boutiques), extensions de gamme, présence internationale, chiffres clés.
+   - **Le site de marque lui-même** (pages `/à-propos`, `/engagements`, `/mission`) est souvent en **403
+     sur WebFetch** (même anti-bot que le crawl). N'insiste pas : Google News + Wikipédia suffisent.
+   - **Contrat données réelles** : ne cite que ce que les sources disent ; date les faits ; si une source
+     manque (marque confidentielle, pas de page Wikipédia), dis-le et déduis prudemment du secteur — n'invente
+     pas de chiffre ni de levée de fonds. Voir la règle « données réelles » de la mémoire projet.
+   - **Restitue une « lecture stratégique » en 3-5 puces** (mission, modèle, tension clé — ex. web↔boutique —,
+     cible, cap récent) : c'est ce qui va orienter le persona, les actes et le mapping de valeur Salesforce en Phase 2.
+4. Restitue une **ambiance proposée** en markdown, courte, à partir de `brand.json` :
    - couleur d'accent (hex, `proposed_tokens.--accent`) + 1 phrase de justification,
    - typo : mappe la `title_font` détectée sur la Google Font la plus proche (une police
      propriétaire type « AudiType » n'est pas sur Google Fonts → prends l'équivalent : ici Inter),
-   - 1 phrase de positionnement, appuyée sur le secteur/produits vus dans les images.
-4. Demande validation / ajustement de la couleur avant de continuer.
+   - 1 phrase de positionnement, appuyée sur le secteur/produits vus dans les images **et sur la lecture stratégique**.
+5. Demande validation / ajustement (couleur **et** angle stratégique) avant de continuer.
 
 ## Phase 2 — Story (validée en chat, pas de formulaire web)
 
 Propose en markdown une **story de parcours client**, inspirée des actes agnès b.
-Adapte le nombre d'actes au secteur (retail, banque, télécom, auto…). Structure :
+Adapte le nombre d'actes au secteur (retail, banque, télécom, auto…). **Ancre la story sur la
+lecture stratégique de la Phase 1** : que le persona, les moments et surtout le mapping de valeur
+Salesforce répondent à la tension clé de la marque (ex. digital-first qui ouvre des boutiques →
+unification web↔magasin par Data Cloud ; positionnement premium/prix juste → fidélité plutôt que
+promo ; expansion internationale → activation multi-marché). Structure :
 
 - **Persona** : prénom, profil en 1 ligne (âge, contexte, ce qu'il cherche).
 - **N actes** (vise 5–8), chacun :
