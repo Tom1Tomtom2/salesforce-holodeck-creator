@@ -49,6 +49,11 @@ img { max-width: 100%; display: block; }
 }
 .brand--white { color: #fff; }
 
+/* Logo réel fourni par l'utilisateur (quand le crawl échoue).
+   Remplace le wordmark .brand dans un slot nav/brand : <img class="brand-logo" src="logo.png" alt="Marque">.
+   Logo clair sur fond sombre → ajoute inline style="filter:brightness(0) invert(1)". */
+.brand-logo { height: 26px; width: auto; display: inline-block; object-fit: contain; }
+
 /* Pastille de marque (petit avatar rond) : mettre l'initiale dedans */
 .brand-mark {
     display: inline-flex; align-items: center; justify-content: center;

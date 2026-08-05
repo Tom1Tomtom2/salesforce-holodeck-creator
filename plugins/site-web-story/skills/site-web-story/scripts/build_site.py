@@ -112,6 +112,15 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     (out / "shared.css").write_text(css, encoding="utf-8")
     written.append("shared.css")
 
+    # 1b. assets fournis (logo + photos produit, quand le crawl échoue) : copiés tels quels.
+    # manifest["assets"] = liste de chemins ; les écrans y réfèrent par basename (src="logo.png").
+    for src in manifest.get("assets", []):
+        p = Path(src).expanduser()
+        if not p.is_file():
+            raise SystemExit(f"ERREUR : asset introuvable : {src}")
+        shutil.copy(p, out / p.name)
+        written.append(p.name)
+
     # 2. un écran par acte
     leaks, wrap_warn = [], []
     for s in manifest["screens"]:
@@ -161,8 +170,11 @@ def selfcheck():
     with tempfile.TemporaryDirectory() as tmp:
         import os
         os.chdir(tmp)
+        (Path(tmp) / "logo.png").write_bytes(b"\x89PNG\r\n")  # faux asset à copier
+        m["assets"] = ["logo.png"]
         try:
             out = build(m, root=ROOT)
+            assert (out / "logo.png").is_file(), "asset fourni non copié"
             css = (out / "shared.css").read_text(encoding="utf-8")
             assert "#ff0000" in css, "token accent non réécrit"
             screen = (out / "acte1-instagram.html").read_text(encoding="utf-8")

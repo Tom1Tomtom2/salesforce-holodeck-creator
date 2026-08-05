@@ -6,7 +6,8 @@ description: |
   (chrome Instagram/WhatsApp/console/email dessinée en markup, animations CSS).
   Mode conversationnel en 3 phases : marque + URL → ambiance + story validée en
   chat → génération d'un dossier de site statique navigable (hub + une page par
-  écran). Zéro image générée, zéro serveur, zéro clé API.
+  écran). Zéro image générée, zéro serveur, zéro clé API. Si le crawl est bloqué,
+  demande à l'utilisateur le logo + N photos produit et embarque-les dans le site.
 
   TRIGGER quand : l'utilisateur veut un site de démo qui raconte un parcours
   client (acquisition → boutique → SAV…), une "story de marque" cliquable,
@@ -15,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # Site Web Story
@@ -57,9 +58,19 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    `logo.*`, et `product-N.*` (visuels produit HD). **Lis `brand.json`** pour l'ambiance.
    Regarde les `product-N.*` (`Read`) pour repérer les modèles/produits réels.
    - **Vérifie `brand.json.status`** : si `"failed"`, le crawl a été bloqué (anti-bot) ou n'a
-     rien récupéré — le champ `error` dit quoi. Ne te sers PAS des valeurs par défaut ; suis le
-     fallback affiché : soit installer le navigateur, soit **déduire l'ambiance du nom + secteur**
-     (et le signaler), soit remplir logo/tokens/images du manifest à la main.
+     rien récupéré — le champ `error` dit quoi. Ne te sers PAS des valeurs par défaut.
+   - **Plan B quand le crawl échoue — demande les visuels à l'utilisateur.** Dis-lui que
+     le crawl automatique n'a pas abouti, et **demande-lui de fournir en local** :
+     1. **le logo de la marque** (fichier image : png/svg/jpg) ;
+     2. **des photos produit** — indique combien il en faut : **1 par écran qui montre un
+        produit** (fiche e-commerce, pub Instagram, carte WhatsApp, historique app…).
+        Compte ces écrans dans la story et **annonce le nombre précis** (« il me faut
+        2 photos produit pour cette story » — souvent 2 à 4). Minimum 2.
+     Demande les **chemins des fichiers** (ex. `~/Desktop/logo.png`, `~/Desktop/manteau.jpg`).
+     Tu les embarqueras dans le site en Phase 3 (clé `assets` du manifest + `.brand-logo` /
+     `<img>` dans les slots). Déduis quand même l'accent/typo du nom + secteur (et signale-le).
+   - Si l'utilisateur ne peut/veut pas fournir d'images : **déduis l'ambiance du nom + secteur**
+     (et signale-le) — le site reste en dégradés d'accent (contrat « zéro image »).
    - Première utilisation : `pip install -r requirements.txt && playwright install chromium`
      (Chrome système utilisé en priorité s'il est là).
 3. Restitue une **ambiance proposée** en markdown, courte, à partir de `brand.json` :
@@ -135,6 +146,13 @@ Règles pour le manifest :
   beacon Data Cloud…) : c'est la valeur Salesforce, signature de la démo.
 - **`tokens`** : accent de marque (Phase 1). `font_import` seulement si tu changes de typo.
 - **`animated: true`** sur les écrans à animation CSS → badge `▶ animé` sur le hub.
+- **`assets`** (Plan B, crawl échoué) : liste de chemins de fichiers fournis par l'utilisateur
+  (logo + photos produit). Le script les copie dans `<slug>-story/` ; réfère-les par **basename** :
+  - logo dans un slot `nav`/`brand` → `<img class="brand-logo" src="logo.png" alt="Marque">`
+    (remplace le `<span class="brand">…` ; sur fond sombre, ajoute `style="filter:brightness(0) invert(1)"`).
+  - photo produit dans une zone visuelle (`.post-img`, `.shot`, `.prod .img`, `.item .th`…) →
+    mets-la en fond inline : `style="background-image:url('manteau.jpg');background-size:cover;background-position:center"`
+    sur l'élément d'exemple (garde sa classe). Une photo = un écran produit.
 
 ### 2. Lance le script
 ```bash
@@ -156,7 +174,9 @@ Le script imprime la liste des fichiers. Invite l'utilisateur à ouvrir
   template ne colle au canal voulu, prends le plus proche et signale-le — n'improvise pas
   un écran de zéro (c'est là que naissent les hallucinations).
 - Chrome crédible : vrais éléments d'UI (barres, onglets, bulles, timelines) en HTML/SVG,
-  pas de capture d'écran ni d'image externe. Les visuels produits = dégradés d'accent.
+  pas de capture d'écran ni d'image externe. Les visuels produits = dégradés d'accent —
+  **sauf** logo + photos fournis par l'utilisateur au Plan B (crawl échoué), embarqués
+  localement via `assets` (jamais d'URL externe : uniquement des fichiers copiés à côté du site).
 - Accessibilité de base : `lang`, `alt`, contrastes lisibles.
 - « Gif animé » = CSS `@keyframes`, jamais de fichier GIF.
 - Chaque écran garde son encart pédagogique `.why` (c'est la signature de la démo).
