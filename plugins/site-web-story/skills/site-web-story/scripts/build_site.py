@@ -23,22 +23,156 @@ ROOT = Path(__file__).resolve().parent.parent  # dossier de la skill
 TPL = ROOT / "templates"
 ASSETS = ROOT / "assets"
 KIT = ASSETS / "lightning-kit"
-KIT_JS = ("lightning-components.js", "field-service-components.js")  # base avant field-service
+KIT_BASE = "lightning-components.js"                      # définit JsonComponent : DOIT passer en 1er
+KIT_SKIP = {"scenario-loader.js"}                         # fetch() → bloqué en file://, exclu
+
+# Franc­isation au build (shim). Le kit vendoré reste IDENTIQUE à la source amont de l'utilisateur
+# (un re-sync ne casse donc jamais le français) ; on traduit ses libellés EN codés en dur au moment
+# du bundle. Chaque clé porte son CONTEXTE (`>`, `</span>`, guillemets) → unique et sûre, pas de
+# remplacement de mot sauvage. Remplacements SANS apostrophe droite (' casse une string JS) : on
+# utilise l'apostrophe typographique ’ (U+2019), valide dans une string JS et plus jolie en FR.
+# ponytail: quand l'utilisateur AJOUTE un composant avec de nouveaux libellés EN, on étend ce dico
+# (une ligne par libellé) — c'est le seul endroit du français, testé au --selfcheck.
+KIT_I18N = [
+    # — statusClass() : les badges/pastilles se colorent d'après le STATUT (données du manifest, en FR).
+    #   Sans ça, un statut français ("Terminé", "Critique"…) n'est pas reconnu → tout tombe en bleu par
+    #   défaut au lieu de vert/rouge/orange. On étend les 3 listes avec les termes FR des templates. —
+    ("['completed', 'available', 'on-site', 'success'].includes(normalized)",
+     "['completed', 'available', 'on-site', 'success', 'terminé', 'terminée', 'disponible', 'sur-site', 'en-ligne', 'livré', 'livrée', 'actif', 'active'].includes(normalized)"),
+    ("['late', 'critical', 'blocked', 'error'].includes(normalized)",
+     "['late', 'critical', 'blocked', 'error', 'en-retard', 'critique', 'bloqué', 'bloquée', 'urgent', 'urgente'].includes(normalized)"),
+    ("['en-route', 'travel', 'warning', 'at-risk'].includes(normalized)",
+     "['en-route', 'travel', 'warning', 'at-risk', 'trajet', 'à-risque', 'en-attente', 'en-cours'].includes(normalized)"),
+    # — Field Service : libellés VRAIMENT codés en dur (non pilotables par le JSON) —
+    (">Optimize Schedule<", ">Optimiser la tournée<"),
+    (">New Appointment<", ">Nouveau rendez-vous<"),
+    (">View Details<", ">Voir le détail<"),
+    (">Request Restock<", ">Demander un réappro.<"),
+    ("<th>SKU</th><th>Part</th><th>Required</th><th>Van Stock</th><th>Status</th>",
+     "<th>SKU</th><th>Pièce</th><th>Requis</th><th>Stock camion</th><th>Statut</th>"),
+    ("? 'Available' : 'Restock'", "? 'Disponible' : 'À réappro.'"),
+    ("<h3>Checklist</h3>", "<h3>Liste de contrôle</h3>"),
+    ("Use my location", "Utiliser ma position"),
+    (">Open appointment<", ">Ouvrir le rendez-vous<"),
+    ('aria-label="Locations"', 'aria-label="Lieux"'),
+    (">Reset<", ">Réinitialiser<"),
+    # légendes carte + dispatch (mêmes clés → traduction cohérente des deux)
+    ("> Scheduled</span>", "> Planifié</span>"),
+    ("> Travel</span>", "> Trajet</span>"),
+    ("> Completed</span>", "> Terminé</span>"),
+    ("> Conflict</span>", "> Conflit</span>"),
+    # filtre carte : sentinelle logique ET affichage → traduits ENSEMBLE (sinon le filtre casse)
+    ("['All', ...statuses]", "['Tous', ...statuses]"),
+    ("filter === 'All'", "filter === 'Tous'"),
+    # — panneau IA (Agentforce/Einstein) : "Draft" codé en dur —
+    ("<strong>Draft</strong>", "<strong>Brouillon</strong>"),
+    # — modale / toast : libellés d'action codés en dur —
+    (">Cancel<", ">Annuler<"),
+    ('aria-label="Close"', 'aria-label="Fermer"'),
+    ('aria-label="Close notification"', 'aria-label="Fermer la notification"'),
+    # — valeurs par DÉFAUT (fuient si le manifest omet le champ ; on les francise par sécurité) —
+    ("'Service Map'", "'Carte du service'"),
+    ("} locations`", "} lieux`"),
+    ("'Map showing service locations'", "'Carte des interventions'"),
+    ("'Unassigned'", "'Non assigné'"),
+    ("'Dispatch Console'", "'Console de répartition'"),
+    ("} technicians</div>", "} techniciens</div>"),
+    ("'Technicians'", "'Techniciens'"),
+    ("} resources`", "} ressources`"),
+    ("'Technician Route'", "'Tournée technicien'"),
+    ("} stops`", "} arrêts`"),
+    ("'Service Appointment'", "'Rendez-vous de service'"),
+    ("'Start Travel'", "'Démarrer le trajet'"),
+    ("'Work Order'", "'Ordre de travail'"),
+    ("'Parts Inventory'", "'Pièces & stock'"),
+    ("'Technician van stock'", "'Stock du camion'"),
+    ("'Dashboard Filters'", "'Filtres du tableau de bord'"),
+    ("'Bar chart'", "'Diagramme en barres'"),
+    ("'Donut chart'", "'Diagramme en anneau'"),
+    ("'Line chart'", "'Courbe'"),
+    ("'Gauge'", "'Jauge'"),
+    ("|| 'Chart'", "|| 'Graphique'"),
+    ("'Untitled record'", "'Enregistrement sans titre'"),
+    ("'Customer 360'", "'Vue client 360'"),
+    ("'Unified profile'", "'Profil unifié'"),
+    ("'Related records'", "'Enregistrements liés'"),
+    ("} items`", "} éléments`"),
+    ("'Engagement Feed'", "'Flux d’engagement'"),
+    ("'All time · All activities'", "'Tout · Toutes activités'"),
+    ("|| 'Status'", "|| 'Statut'"),
+    ("'Key performance indicators'", "'Indicateurs clés'"),
+    ("'Agentforce recommendation'", "'Recommandation Agentforce'"),
+    ("'Suggested next action'", "'Meilleure action suivante'"),
+    ("|| 'Apply'", "|| 'Appliquer'"),
+    ("|| 'Edit'", "|| 'Modifier'"),
+    ("'Recalculated in real time'", "'Recalculé en temps réel'"),
+    ("'Nothing here yet'", "'Rien pour l’instant'"),
+    ("'Edit record'", "'Modifier l’enregistrement'"),
+    ("|| 'Save'", "|| 'Enregistrer'"),
+]
+
+
+def kit_js_files() -> list:
+    """Fichiers JS du kit à bundler, base d'abord. Découverte auto → quand l'utilisateur AJOUTE
+    un fichier de composants au kit, il est pris sans toucher au code (cf. son workflow « j'en
+    ajoute, on récupère petit à petit »). Ordre : lightning-components.js (base JsonComponent dont
+    tout hérite → sinon `class X extends JsonComponent` casse à l'évaluation) puis le reste, trié."""
+    others = sorted(f.name for f in KIT.glob("*.js") if f.name not in KIT_SKIP and f.name != KIT_BASE)
+    return ([KIT_BASE] if (KIT / KIT_BASE).is_file() else []) + others
+
+
+def _top_level_dupes(js: str) -> list:
+    """Noms déclarés PLUSIEURS fois au top-level du bundle (colonne 0 = même portée globale).
+    En file:// tout est concaténé dans un seul <script> → un double `const X` lève une
+    SyntaxError qui tue TOUT le kit (aucun composant n'hydrate). Garde-fou du re-sync."""
+    names = re.findall(r"^(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)", js, re.M)
+    seen, dupes = set(), []
+    for n in names:
+        (dupes.append(n) if n in seen else seen.add(n))
+    return sorted(set(dupes))
 
 
 def bundle_kit_js() -> str:
     """Concatène les modules du kit <lc-*> en UN script CLASSIQUE (chargeable en file://).
     Les ES modules (import/export) et fetch() sont bloqués en file:// ; le contrat de la skill
-    est le double-clic. On retire donc `import`/`export` : une fois concaténés, les 2 fichiers se
-    partagent la même portée globale (aucune collision de noms entre eux — vérifié). scenario-loader
-    est exclu exprès (il fait fetch()) : la config passe en JSON inline dans le markup, pas au runtime."""
+    est le double-clic. On retire donc `import`/`export` : une fois concaténés, les fichiers
+    partagent la même portée globale. `escapeHtml`/`JsonComponent`/`lcIcon` sont définis UNE fois
+    (dans le fichier base) → aucune collision. Mais chaque fichier de composants a sa propre map
+    d'enregistrement `const definitions = {…}` (convention du kit) : au top-level partagé, ces
+    homonymes lèveraient `Identifier 'definitions' has already been declared`. On la renomme donc
+    par fichier (elle n'est jamais partagée entre fichiers). Toute AUTRE collision → on lève."""
     parts = []
-    for f in KIT_JS:
-        src = (KIT / f).read_text(encoding="utf-8")
+    for name in kit_js_files():
+        src = (KIT / name).read_text(encoding="utf-8")
         src = re.sub(r"^\s*import\s.*?;\s*$", "", src, flags=re.M)  # lignes `import … ;`
         src = re.sub(r"^export\s+", "", src, flags=re.M)            # mot-clé `export`
-        parts.append(f"/* {f} */\n{src}")
-    return "\n\n".join(parts)
+        slug = re.sub(r"[^A-Za-z0-9]", "_", name)                   # map d'enregistrement → unique/fichier
+        src = re.sub(r"\bdefinitions\b", f"definitions__{slug}", src)
+        parts.append(f"/* {name} */\n{src}")
+    js = translate_kit("\n\n".join(parts))
+    dupes = _top_level_dupes(js)
+    if dupes:
+        raise SystemExit(
+            "ERREUR : collision de noms top-level dans le bundle du kit (casse tout le kit en "
+            "file://) :\n  " + ", ".join(dupes) + "\n→ un fichier de composants ré-emploie un nom "
+            "global ; renomme-le à la source ou traite-le comme `definitions` dans bundle_kit_js()."
+        )
+    return js
+
+
+def translate_kit(js: str) -> str:
+    """Applique KIT_I18N au bundle. Chaque clé DOIT exister (sinon un libellé a bougé à la source
+    et le shim ne traduirait plus en silence → on lève, c'est justement le risque à couvrir)."""
+    missing = [en for en, _ in KIT_I18N if en not in js]
+    if missing:
+        raise SystemExit(
+            "ERREUR : libellés à traduire absents du kit (déplacés à la source ?) :\n  "
+            + "\n  ".join(missing)
+            + "\n→ mets à jour KIT_I18N dans build_site.py (ou re-sync le kit)."
+        )
+    for en, fr in KIT_I18N:
+        js = js.replace(en, fr)
+    return js
 
 
 def _first_tag(s: str) -> str | None:
@@ -54,10 +188,12 @@ def inject_slots(markup: str, slots: dict, template_name: str) -> list:
     for name, content in slots.items():
         # <!-- SLOT: nom [─ description] --> (corps) <!-- /SLOT
         # ouverture inline (`nom -->`) ou bloc (`nom ─ desc -->`) ; 2 fermetures possibles.
-        # [^>]* borne l'ouverture au 1er `-->` (pas de `>` dans le libellé d'un SLOT).
+        # `.*?-->` (non-greedy, DOTALL) borne l'ouverture au 1er `-->` : c'est forcément la
+        # fermeture du commentaire d'ouverture (un commentaire HTML ne peut pas contenir `--`).
+        # → le libellé peut contenir des `>` (« garde le <script JSON> ») ET tenir sur plusieurs lignes.
         # groupe 2 = corps d'origine (l'exemple), pour comparer le wrapper de tête.
         pat = re.compile(
-            r"(<!-- SLOT: " + re.escape(name) + r"(?![\w-])[^>]*-->)(.*?)(<!-- /SLOT)",
+            r"(<!-- SLOT: " + re.escape(name) + r"(?![\w-]).*?-->)(.*?)(<!-- /SLOT)",
             re.DOTALL,
         )
         m = pat.search(markup)
@@ -289,6 +425,11 @@ def selfcheck():
                 raise AssertionError("SLOT inconnu aurait dû lever")
             except SystemExit:
                 pass
+            # libellé de SLOT avec un `>` (« garde le <script JSON> ») ET sur plusieurs lignes → match
+            _, m2 = inject_slots(
+                "<!-- SLOT: x ─ garde le <script JSON>\n     sur 2 lignes -->OLD<!-- /SLOT: x -->",
+                {"x": "NEW"}, "t")
+            assert "NEW" in m2 and "OLD" not in m2, "SLOT à libellé multi-ligne avec `>` non injecté"
             # garde-fou wrapper avalé : `why` sans <div class="why"> → warning
             tpl = (ROOT / "templates" / "instagram.html").read_text(encoding="utf-8")
             warns, _ = inject_slots(tpl, {"why": "<b>texte nu sans wrapper</b>"}, "instagram")
@@ -301,6 +442,15 @@ def selfcheck():
             assert "export " not in js and not re.search(r"^\s*import\s", js, re.M), "import/export non retiré du bundle"
             assert "customElements.define" in js, "définitions de composants absentes du bundle"
             assert not (out / "lightning-kit.js").exists(), "kit copié alors qu'aucun écran n'utilise <lc-*>"
+            # franc­isation : le FR est là, l'EN codé en dur a disparu, ET le filtre carte reste cohérent
+            assert ">Optimiser la tournée<" in js and ">Voir le détail<" in js, "libellés FS non traduits"
+            assert ">Optimize Schedule<" not in js and ">View Details<" not in js, "libellé EN encore présent"
+            assert "['Tous', ...statuses]" in js and "filter === 'Tous'" in js, "filtre carte non traduit (cohérence affichage/logique)"
+            assert "'All'" not in js, "sentinelle 'All' orpheline → filtre carte cassé"
+            assert "'terminé'" in js and "'critique'" in js and "'trajet'" in js, "statusClass ne reconnaît pas les statuts FR (badges tous bleus)"
+            # re-sync : aucune collision de noms top-level (sinon SyntaxError → tout le kit tombe en file://)
+            assert not _top_level_dupes(js), f"collision top-level dans le bundle : {_top_level_dupes(js)}"
+            assert "const definitions =" not in js, "map d'enregistrement `definitions` non isolée par fichier"
         finally:
             os.chdir(prev)
     print("selfcheck OK")

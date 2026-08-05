@@ -17,10 +17,11 @@
     body { background: var(--lc-page); min-height: 100vh; --sf-w: 1480px; }
     .fs-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
     .fs-title { margin: 4px 0 0; color: var(--lc-heading); font-size: 26px; font-weight: 400; }
-    .fs-grid { display: grid; grid-template-columns: minmax(260px, 330px) minmax(0, 1fr); gap: 16px; align-items: start; }
-    .fs-stack { display: grid; gap: 16px; }
-    .fs-detail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
-    @media (max-width: 1050px) { .fs-grid, .fs-detail { grid-template-columns: 1fr; } }
+    /* Colonnes SLDS : 2/3 (canvas opérationnel) | 1/3 (contexte + Einstein). UNE seule grille → tout aligné,
+       les composants vivent chacun dans une colonne de largeur définie (pas de grilles empilées qui décrochent). */
+    .fs-body { display: grid; grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); gap: 16px; align-items: start; }
+    .fs-main, .fs-rail { display: grid; gap: 16px; }
+    @media (max-width: 1050px) { .fs-body { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -66,45 +67,9 @@
 <main class="fs-page">
     <h1 class="fs-title"><!-- SLOT: heading -->Opérations Field Service<!-- /SLOT --></h1>
 
-    <section class="fs-grid">
-        <aside class="fs-stack">
-            <!-- SLOT: roster ─ liste des techniciens (lc-technician-roster). Garde le <script JSON> ; ajuste technicians. -->
-            <lc-technician-roster>
-                <script type="application/json">
-                {
-                  "title": "Techniciens", "meta": "4 ressources · Île-de-France",
-                  "technicians": [
-                    { "initials": "LD", "name": "Léa Durand", "skills": ["CVC", "Électricité"], "status": "Sur site", "workload": "3/4 interv." },
-                    { "initials": "ML", "name": "Marc Leroy", "skills": ["Réseau", "Fibre"], "status": "En route", "workload": "2/4 interv." },
-                    { "initials": "SB", "name": "Sofia Benali", "skills": ["Solaire", "Batterie"], "status": "Disponible", "workload": "1/4 interv." },
-                    { "initials": "HM", "name": "Hugo Martin", "skills": ["CVC", "Sécurité"], "status": "Terminé", "workload": "4/4 interv." }
-                  ]
-                }
-                </script>
-            </lc-technician-roster>
-            <!-- /SLOT: roster -->
-
-            <!-- SLOT: appointment ─ résumé de rendez-vous (lc-service-appointment). Garde le <script JSON> ; ajuste details. -->
-            <lc-service-appointment>
-                <script type="application/json">
-                {
-                  "title": "Data Center Alpha · Refroidissement", "number": "SA-0001842",
-                  "status": "Sur site", "time": "09:00", "duration": "90 minutes",
-                  "address": "12 rue de la Data, 93200 Saint-Denis",
-                  "primaryAction": "Clôturer l'intervention",
-                  "details": [
-                    { "label": "Technicien", "value": "Léa Durand" },
-                    { "label": "Territoire", "value": "Paris Centre" },
-                    { "label": "Priorité", "value": "Haute" },
-                    { "label": "SLA", "value": "2 h restantes" }
-                  ]
-                }
-                </script>
-            </lc-service-appointment>
-            <!-- /SLOT: appointment -->
-        </aside>
-
-        <div class="fs-stack">
+    <section class="fs-body">
+        <!-- Colonne 2/3 : canvas opérationnel (répartition → carte → pièces) -->
+        <div class="fs-main">
             <!-- SLOT: dispatch ─ console de répartition (lc-dispatch-console). Garde le <script JSON> ; ajuste technicians/appointments. -->
             <lc-dispatch-console>
                 <script type="application/json">
@@ -113,7 +78,7 @@
                   "technicians": [
                     { "initials": "LD", "name": "Léa Durand", "territory": "Paris Centre", "appointments": [
                       { "title": "Data Center Alpha", "start": "09:00", "end": "10:30", "status": "Terminé" },
-                      { "title": "Trajet", "start": "10:30", "end": "11:15", "status": "Travel" },
+                      { "title": "Trajet", "start": "10:30", "end": "11:15", "status": "Trajet" },
                       { "title": "Nova HQ", "start": "11:15", "end": "12:45", "status": "Sur site" },
                       { "title": "Site République", "start": "14:00", "end": "15:30", "status": "Planifié" }
                     ] },
@@ -148,60 +113,96 @@
                 </script>
             </lc-map>
             <!-- /SLOT: map -->
+
+            <!-- SLOT: parts ─ pièces & stock (lc-parts-inventory). Garde le <script JSON> ; ajuste parts. -->
+            <lc-parts-inventory>
+                <script type="application/json">
+                {
+                  "title": "Pièces requises", "meta": "Léa Durand · Camion 14",
+                  "parts": [
+                    { "sku": "FAN-420", "name": "Ventilateur", "required": 1, "vanStock": 1 },
+                    { "sku": "FLT-HEPA", "name": "Filtre HEPA", "required": 2, "vanStock": 4 },
+                    { "sku": "SNS-TEMP", "name": "Capteur température", "required": 1, "vanStock": 0 }
+                  ]
+                }
+                </script>
+            </lc-parts-inventory>
+            <!-- /SLOT: parts -->
         </div>
-    </section>
 
-    <section class="fs-detail">
-        <!-- SLOT: workorder ─ ordre de travail + checklist (lc-work-order). Garde le <script JSON> ; ajuste fields/checklist. -->
-        <lc-work-order>
-            <script type="application/json">
-            {
-              "title": "Remplacer le ventilateur de refroidissement", "number": "WO-0004721", "priority": "Haute",
-              "fields": [
-                { "label": "Équipement", "value": "Unité CRAC DC-A-04" },
-                { "label": "Compte", "value": "Data Center Alpha" },
-                { "label": "Code panne", "value": "FAN-OVERHEAT" },
-                { "label": "Durée estimée", "value": "90 min" }
-              ],
-              "checklist": [
-                { "label": "Valider consignation et périmètre", "done": true },
-                { "label": "Relever le diagnostic initial", "done": true },
-                { "label": "Remplacer le ventilateur", "done": false },
-                { "label": "Test de température", "done": false },
-                { "label": "Signature client", "done": false }
-              ]
-            }
-            </script>
-        </lc-work-order>
-        <!-- /SLOT: workorder -->
+        <!-- Colonne 1/3 : contexte technicien + intervention + Einstein -->
+        <aside class="fs-rail">
+            <!-- SLOT: roster ─ liste des techniciens (lc-technician-roster). Garde le <script JSON> ; ajuste technicians. -->
+            <lc-technician-roster>
+                <script type="application/json">
+                {
+                  "title": "Techniciens", "meta": "4 ressources · Île-de-France",
+                  "technicians": [
+                    { "initials": "LD", "name": "Léa Durand", "skills": ["CVC", "Électricité"], "status": "Sur site", "workload": "3/4 interv." },
+                    { "initials": "ML", "name": "Marc Leroy", "skills": ["Réseau", "Fibre"], "status": "En route", "workload": "2/4 interv." },
+                    { "initials": "SB", "name": "Sofia Benali", "skills": ["Solaire", "Batterie"], "status": "Disponible", "workload": "1/4 interv." },
+                    { "initials": "HM", "name": "Hugo Martin", "skills": ["CVC", "Sécurité"], "status": "Terminé", "workload": "4/4 interv." }
+                  ]
+                }
+                </script>
+            </lc-technician-roster>
+            <!-- /SLOT: roster -->
 
-        <!-- SLOT: parts ─ pièces & stock (lc-parts-inventory). Garde le <script JSON> ; ajuste parts. -->
-        <lc-parts-inventory>
-            <script type="application/json">
-            {
-              "title": "Pièces requises", "meta": "Léa Durand · Camion 14",
-              "parts": [
-                { "sku": "FAN-420", "name": "Ventilateur", "required": 1, "vanStock": 1 },
-                { "sku": "FLT-HEPA", "name": "Filtre HEPA", "required": 2, "vanStock": 4 },
-                { "sku": "SNS-TEMP", "name": "Capteur température", "required": 1, "vanStock": 0 }
-              ]
-            }
-            </script>
-        </lc-parts-inventory>
-        <!-- /SLOT: parts -->
+            <!-- SLOT: appointment ─ résumé de rendez-vous (lc-service-appointment). Garde le <script JSON> ; ajuste details. -->
+            <lc-service-appointment>
+                <script type="application/json">
+                {
+                  "title": "Data Center Alpha · Refroidissement", "number": "SA-0001842",
+                  "status": "Sur site", "time": "09:00", "duration": "90 minutes",
+                  "address": "12 rue de la Data, 93200 Saint-Denis",
+                  "primaryAction": "Clôturer l'intervention",
+                  "details": [
+                    { "label": "Technicien", "value": "Léa Durand" },
+                    { "label": "Territoire", "value": "Paris Centre" },
+                    { "label": "Priorité", "value": "Haute" },
+                    { "label": "SLA", "value": "2 h restantes" }
+                  ]
+                }
+                </script>
+            </lc-service-appointment>
+            <!-- /SLOT: appointment -->
 
-        <!-- SLOT: assistant ─ CLIN D'ŒIL PRODUIT (lc-ai-recommendation = Einstein optimisation). Garde ce panneau : c'est la valeur Salesforce de l'écran. -->
-        <lc-ai-recommendation>
-            <script type="application/json">
-            {
-              "title": "Einstein · Optimisation", "label": "Conflit détecté",
-              "suggestion": "Sofia Benali a 2 rendez-vous qui se chevauchent (11:30 et 13:00). Réaffecter l'échange batterie à Marc Leroy, disponible à 13:00 à 4 km.",
-              "acceptLabel": "Réaffecter", "editLabel": "Voir les options",
-              "draft": "Impact : 0 SLA dépassé, +6 min de trajet pour Marc, tournée de Sofia rééquilibrée."
-            }
-            </script>
-        </lc-ai-recommendation>
-        <!-- /SLOT: assistant -->
+            <!-- SLOT: workorder ─ ordre de travail + checklist (lc-work-order). Garde le <script JSON> ; ajuste fields/checklist. -->
+            <lc-work-order>
+                <script type="application/json">
+                {
+                  "title": "Remplacer le ventilateur de refroidissement", "number": "WO-0004721", "priority": "Haute",
+                  "fields": [
+                    { "label": "Équipement", "value": "Unité CRAC DC-A-04" },
+                    { "label": "Compte", "value": "Data Center Alpha" },
+                    { "label": "Code panne", "value": "FAN-OVERHEAT" },
+                    { "label": "Durée estimée", "value": "90 min" }
+                  ],
+                  "checklist": [
+                    { "label": "Valider consignation et périmètre", "done": true },
+                    { "label": "Relever le diagnostic initial", "done": true },
+                    { "label": "Remplacer le ventilateur", "done": false },
+                    { "label": "Test de température", "done": false },
+                    { "label": "Signature client", "done": false }
+                  ]
+                }
+                </script>
+            </lc-work-order>
+            <!-- /SLOT: workorder -->
+
+            <!-- SLOT: assistant ─ CLIN D'ŒIL PRODUIT (lc-ai-recommendation = Einstein optimisation). Garde ce panneau : c'est la valeur Salesforce de l'écran. -->
+            <lc-ai-recommendation>
+                <script type="application/json">
+                {
+                  "title": "Einstein · Optimisation", "label": "Conflit détecté",
+                  "suggestion": "Sofia Benali a 2 rendez-vous qui se chevauchent (11:30 et 13:00). Réaffecter l'échange batterie à Marc Leroy, disponible à 13:00 à 4 km.",
+                  "acceptLabel": "Réaffecter", "editLabel": "Voir les options",
+                  "draft": "Impact : 0 SLA dépassé, +6 min de trajet pour Marc, tournée de Sofia rééquilibrée."
+                }
+                </script>
+            </lc-ai-recommendation>
+            <!-- /SLOT: assistant -->
+        </aside>
     </section>
 </main>
 

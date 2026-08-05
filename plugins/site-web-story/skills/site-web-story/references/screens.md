@@ -97,6 +97,23 @@ roadmap : la *chrome* (header Lightning) et *chaque composant* restent verrouill
   `lightning-kit.css` — mais **uniquement si un écran pose des `<lc-*>`**. Chargés en `<script>`/`<link>`
   classiques → **marchent en `file://`** (double-clic, zéro serveur), comme le reste de la skill.
 - Le panneau `lc-ai-recommendation` (Agentforce/Einstein) est **le clin d'œil produit** de ces écrans : garde-le.
+- **Mise en page** : chaque template est une **grille SLDS** (colonnes de largeurs définies), pas des blocs
+  qui se répartissent librement. Une page est une pile de **rangées**, chaque rangée suivant un des patrons
+  autorisés : **1/1** (plein largeur — bandeau, tableau, grand graphique), **1/3-2/3** (ou 2/3-1/3), ou
+  **1/3-1/3-1/3**. On combine les rangées : `lightning-dashboard` empile ainsi un bandeau **1/1** (filtres + KPI),
+  une rangée 2/3-1/3 (charts / Einstein) et un grand graphique **1/1** ; `lightning-record` et
+  `lightning-fieldservice` = **2/3-1/3** (canvas à gauche, contexte + IA à droite). Les composants vivent
+  **dans** une colonne (`.fs-main`/`.fs-rail`, `.lr-stack`, `.db-grid`) ou une rangée 1/1. Si tu ajoutes un bloc,
+  mets-le dans une colonne/rangée existante (ou ajoute une rangée 1/1) — ne crée pas une grille imbriquée qui décroche.
+
+**Francisation (shim au build) :** le kit vendoré est un **miroir exact de la source amont** (re-sync l'écrase),
+donc ses libellés EN codés en dur (`Optimize Schedule`, `View Details`, en-têtes `SKU/Part…`, `Draft`, `Reset`,
+légendes `Scheduled/Travel/…`) sont traduits **au moment du bundle** par le dico `KIT_I18N` de `build_site.py`.
+Idem `statusClass()` : les statuts FR du manifest (`Terminé`, `Critique`, `Trajet`…) y sont mappés vers les
+couleurs (vert/rouge/orange). **Quand tu ajoutes un composant** avec de nouveaux libellés EN, ajoute une ligne
+`(EN, FR)` à `KIT_I18N` (chaque clé porte son contexte `>`/`</span>` pour rester unique) — c'est le **seul**
+endroit du français, verrouillé au `--selfcheck`. Le build **lève** si une clé EN a disparu du kit (libellé
+déplacé à la source) : signe qu'il faut mettre `KIT_I18N` à jour. Ne traduis pas les fichiers du kit à la main.
 
 ## Neutralisation déjà faite
 

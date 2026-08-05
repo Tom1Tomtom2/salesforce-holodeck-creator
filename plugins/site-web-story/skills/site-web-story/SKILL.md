@@ -16,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.7.0"
+version: "1.7.2"
 ---
 
 # Site Web Story
