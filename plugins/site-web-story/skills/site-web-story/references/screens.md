@@ -29,6 +29,9 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | App conseiller / clienteling (vue 360) | `client-app.html` | mobile | Data Cloud — historique réconcilié | — (statique) |
 | Console conseiller — appel vocal + IA | `service-console.html` | desktop | Service Assistant / Agentforce (panneau + guidage pas-à-pas) | point d'enregistrement + minuteur qui pulse |
 | Caisse / TPV boutique (retour, vente) | `tpv-pos.html` | desktop | MuleSoft → Data Cloud & Salesforce | dot de sync qui pulse |
+| Fiche client CRM 360 (Lightning composable) | `lightning-record.html` | desktop | Agentforce — meilleure action suivante (`lc-ai-recommendation`) | interactions du kit (toast, checklist) |
+| Tableau de bord CRM Analytics | `lightning-dashboard.html` | desktop | Einstein — insight sur les indicateurs | graphiques SVG (donut/jauge/courbe) |
+| Field Service (répartition, interventions) | `lightning-fieldservice.html` | desktop | Einstein — optimisation de tournée / conflit | carte + Gantt de dispatch |
 
 `datacloud-pipeline.html` couvre 3 scènes du même gabarit (acquisition « lookalike »,
 activation d'audience vers Meta, re-segmentation post-événement) : n'adapte que les SLOTs
@@ -66,6 +69,34 @@ c'est ce qui fait reconnaître Salesforce. Seuls 3 SLOTs se remplissent :
   **Cohérence** : c'est un personnage de l'histoire (souvent la conseillère/l'employé) → réutilise SA photo, pas un visage inédit.
 La recherche, le bouton « Ask » et le cluster d'icônes (droite) sont **verrouillés** — n'y touche pas.
 - **tpv-pos.html** — `title`, `act-tag`, `pos-name`, `store`, `scan`, `refund` (garde `.sync`)
+
+### Écrans Lightning composables (kit `<lc-*>`)
+Ces 3 templates sont **composés de web components** `<lc-*>` (voir la section « Kit de composants » plus bas).
+Chaque SLOT de contenu enveloppe un composant + son `<script type="application/json">` : **ne modifie
+que le JSON, jamais la structure du composant**. Le header Lightning (`sf-*`) est le même que les autres écrans SF.
+- **lightning-record.html** (fiche client 360) — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `header` (`lc-record-header`), `customer` (`lc-customer-360`), `related` (`lc-related-list`), `feed` (`lc-engagement-feed`), `assistant` (`lc-ai-recommendation` = **Agentforce, clin d'œil produit, garde-le**)
+- **lightning-dashboard.html** (tableau de bord) — `title`, `act-tag`, `sf-*`, `heading`, `filters` (`lc-dashboard-filters`), `kpis` (`lc-kpi-grid`), `donut` (`lc-chart-donut`), `gauge` (`lc-chart-gauge`), `trend` (`lc-chart-line`), `bars` (`lc-chart-bar`), `leaderboard` (`lc-leaderboard`), `insight` (`lc-ai-recommendation` = **Einstein, clin d'œil, garde-le**)
+- **lightning-fieldservice.html** (Field Service) — `title`, `act-tag`, `sf-*`, `heading`, `roster` (`lc-technician-roster`), `appointment` (`lc-service-appointment`), `dispatch` (`lc-dispatch-console`), `map` (`lc-map`), `workorder` (`lc-work-order`), `parts` (`lc-parts-inventory`), `assistant` (`lc-ai-recommendation` = **Einstein optimisation, clin d'œil, garde-le**)
+
+## Kit de composants Lightning (`assets/lightning-kit/`)
+
+Les 3 templates `lightning-*` sont **composables** : au lieu d'une chrome figée, leur corps est fait de
+web components `<lc-*>` (record header, customer 360, charts, dispatch console, carte…) qui lisent chacun
+leur configuration dans un `<script type="application/json">` enfant. C'est le **niveau 2 composable** de la
+roadmap : la *chrome* (header Lightning) et *chaque composant* restent verrouillés et crédibles ; seule la
+**donnée** se compose depuis le manifest. Un catalogue complet des composants est dans `assets/lightning-kit/`
+(fichier source `SOURCE.md`).
+
+**Règles pour ces templates :**
+- Le SLOT enveloppe **tout le composant + son `<script>`** : dans le manifest, tu reprends le bloc d'exemple
+  du template et **n'ajustes que le JSON** (valeurs). Ne réécris pas la balise `<lc-*>`, ne change pas les clés
+  que le composant attend (regarde l'exemple).
+- **Marqueur SLOT AUTOUR du `<script>`, jamais dedans** : un commentaire HTML à l'intérieur d'un `<script>`
+  casse `JSON.parse` (le contenu d'un `<script>` est du texte brut). Les templates sont déjà écrits ainsi.
+- `build_site.py` **bundle** le JS du kit (retire `import`/`export`, concatène) en `lightning-kit.js` et copie
+  `lightning-kit.css` — mais **uniquement si un écran pose des `<lc-*>`**. Chargés en `<script>`/`<link>`
+  classiques → **marchent en `file://`** (double-clic, zéro serveur), comme le reste de la skill.
+- Le panneau `lc-ai-recommendation` (Agentforce/Einstein) est **le clin d'œil produit** de ces écrans : garde-le.
 
 ## Neutralisation déjà faite
 

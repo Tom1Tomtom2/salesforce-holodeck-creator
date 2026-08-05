@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Lightning : fiche client 360 (desktop, COMPOSABLE)         │
+     │ CHROME VERROUILLÉE : header Lightning (shared.css) + composants <lc-*> │
+     │ du kit vendoré (assets/lightning-kit/). On ne redessine PAS un écran : │
+     │ chaque bloc est un web component qui lit sa config d'un <script JSON>. │
+     │ NE MODIFIE QUE le JSON entre les marqueurs SLOT (autour des <script>,  │
+     │ jamais dedans : un commentaire dans un <script> casse JSON.parse).     │
+     │ Le panneau lc-ai-recommendation (Agentforce) EST le clin d'œil produit.│
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Lightning — Fiche client 360<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1360px; }
+    .lr-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
+    .lr-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); gap: 16px; align-items: start; }
+    .lr-stack { display: grid; gap: 16px; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 1 · Lightning — fiche client 360<!-- /SLOT --></div>
+
+<!-- ═══ Header Salesforce Lightning (chrome verrouillée, couleurs SF). Ne modifie que sf-logo / sf-app / sf-tabs / sf-avatar. ═══ -->
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo ─ logo du CLIENT (remplace le cloud Salesforce) : wordmark .brand, ou une balise img de classe brand-logo pointant sur le logo fourni. -->
+        <span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Nova</span></span>
+        <!-- /SLOT: sf-logo -->
+        <div class="ln-search">
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>
+            Search…
+        </div>
+        <span class="ln-ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg> Ask</span>
+        <div class="ln-icons">
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="m274 31 46 150c2 6 8 9 14 9h150c15 0 21 20 9 29l-122 90c-5 4-7 11-5 17l58 154c4 14-11 26-23 17l-131-98c-5-4-12-4-18 0l-132 98c-12 9-28-3-23-17l56-154c2-6 0-13-5-17L26 219c-12-9-5-29 9-29h150c7 0 12-2 14-9l47-151c4-14 24-13 28 1"/></svg>
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="M284 380h-50c-8 0-14-6-14-14v-15c0-42 27-80 67-94a80 80 0 0 0-24-155c-22-1-43 7-59 22a70.4 70.4 0 0 0-23 44c-1 6-7 11-15 11h-50c-9 0-16-7-15-16 4-38 21-72 48-99 32-30 73-46 117-45 83 3 151 71 154 154 3 70-40 133-105 157-9 4-15 11-15 20v15c0 9-8 15-16 15m16 105c0 8-7 15-15 15h-50c-8 0-15-7-15-15v-50c0-8 7-15 15-15h50c8 0 15 7 15 15z"/></svg>
+            <svg viewBox="0 0 520 520" fill="currentColor"><path d="M261 191c-39 0-70 31-70 70s31 70 70 70 70-31 70-70-31-70-70-70m210 133-37-31a195 195 0 0 0 0-68l37-31c12-10 16-28 8-42l-16-28a34 34 0 0 0-40-14l-46 17a168 168 0 0 0-59-34l-8-47c-3-16-17-25-33-25h-32c-16 0-30 9-33 25l-8 46a180 180 0 0 0-60 34l-46-17-11-2c-12 0-23 6-29 16l-16 28c-8 14-5 32 8 42l37 31a195 195 0 0 0 0 68l-37 31a34 34 0 0 0-8 42l16 28a34 34 0 0 0 40 14l46-17c18 16 38 27 59 34l8 48a33 33 0 0 0 33 27h32c16 0 30-12 33-28l8-48a170 170 0 0 0 62-37l43 17 12 2c12 0 23-6 29-16l15-26c9-11 5-29-7-39m-210 47c-61 0-110-49-110-110s49-110 110-110 110 49 110 110-49 110-110 110"/></svg>
+            <span class="ln-bell"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M460 330h-5a35 35 0 0 1-35-35V180A160 160 0 0 0 252 20c-86 4-152 78-152 165v111c0 19-16 34-35 34h-5c-22 0-40 19-40 41v15c0 7 7 14 15 14h450c8 0 15-7 15-15v-15a40 40 0 0 0-40-40M309 440h-98a10 10 0 0 0-10 12c5 28 30 48 59 48s54-21 59-48a10 10 0 0 0-10-12"/></svg><span class="badge">8</span></span>
+            <!-- SLOT: sf-avatar ─ photo de l'utilisateur SF (haut droite). <img class="ln-avatar" src="people/…" alt="">, ou <span class="ln-avatar"></span> pour le dégradé. -->
+            <img class="ln-avatar" src="people/femme-2.jpg" alt="">
+            <!-- /SLOT: sf-avatar -->
+        </div>
+    </div>
+    <div class="ln-nav">
+        <span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <!-- SLOT: sf-app ─ nom de l'app Salesforce (ex. Sales, Service, Data Cloud). -->
+        <span class="ln-app">Sales</span>
+        <!-- /SLOT: sf-app -->
+        <!-- SLOT: sf-tabs ─ onglets. Le 1er en .ln-tab.on = actif (souligné bleu). Ajoute la <svg class="caret"> pour un menu déroulant. -->
+        <div class="ln-tabs">
+            <span class="ln-tab on">Contacts</span>
+            <span class="ln-tab">Comptes <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="ln-tab">Opportunités <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="ln-tab">Cases</span>
+        </div>
+        <!-- /SLOT: sf-tabs -->
+    </div>
+</div>
+
+<main class="lr-page">
+    <!-- SLOT: header ─ en-tête de fiche (lc-record-header). Garde le <script type="application/json"> et n'ajuste que ses valeurs (type, title, highlights, actions). -->
+    <lc-record-header>
+        <script type="application/json">
+        {
+          "type": "Contact", "icon": "contact", "title": "Camille Dubois",
+          "actions": [
+            { "label": "Suivre", "action": "follow" },
+            { "label": "Modifier", "action": "edit" },
+            { "label": "Démarrer une conversation", "action": "conversation", "primary": true }
+          ],
+          "highlights": [
+            { "label": "Compte", "value": "Nova France", "href": "#" },
+            { "label": "Fonction", "value": "Directrice Expérience Client" },
+            { "label": "Téléphone", "value": "+33 1 42 55 12 12" },
+            { "label": "Canal préféré", "value": "E-commerce" }
+          ]
+        }
+        </script>
+    </lc-record-header>
+    <!-- /SLOT: header -->
+
+    <div class="lr-layout">
+        <div class="lr-stack">
+            <!-- SLOT: customer ─ profil unifié (lc-customer-360). Garde le <script JSON> ; ajuste name, fields, badges. -->
+            <lc-customer-360>
+                <script type="application/json">
+                {
+                  "heading": "Customer 360", "meta": "Web · Commerce · CRM · Service",
+                  "initials": "CD", "name": "Camille Dubois",
+                  "subtitle": "Cliente depuis 2021 · profil unifié",
+                  "badges": [ { "label": "VIP" }, { "label": "Engagement élevé", "tone": "success" } ],
+                  "fields": [
+                    { "label": "Valeur vie client", "value": "1 840 €" },
+                    { "label": "Commandes", "value": "7" },
+                    { "label": "Canal préféré", "value": "E-commerce" },
+                    { "label": "Dernier achat", "value": "Votre article" },
+                    { "label": "Résolution d'identité", "value": "3 sources → 1 profil" }
+                  ]
+                }
+                </script>
+            </lc-customer-360>
+            <!-- /SLOT: customer -->
+
+            <!-- SLOT: related ─ liste liée (lc-related-list). Garde le <script JSON> ; ajuste columns/rows. -->
+            <lc-related-list>
+                <script type="application/json">
+                {
+                  "title": "Commandes liées", "icon": "case",
+                  "meta": "3 éléments · Triées par date",
+                  "columns": [
+                    { "key": "ref", "label": "Référence", "link": true, "width": "26%" },
+                    { "key": "item", "label": "Article", "width": "40%" },
+                    { "key": "amount", "label": "Montant", "width": "16%" },
+                    { "key": "status", "label": "Statut", "width": "18%" }
+                  ],
+                  "rows": [
+                    { "ref": "#9021", "item": "Votre article", "amount": "115 €", "status": "En livraison", "href": "#" },
+                    { "ref": "#7731", "item": "Votre pièce favorite", "amount": "325 €", "status": "Livrée", "href": "#" },
+                    { "ref": "#5540", "item": "Accessoire", "amount": "60 €", "status": "Livrée", "href": "#" }
+                  ],
+                  "footer": "Tout afficher"
+                }
+                </script>
+            </lc-related-list>
+            <!-- /SLOT: related -->
+        </div>
+
+        <aside class="lr-stack">
+            <!-- SLOT: feed ─ timeline d'activités (lc-engagement-feed). Garde le <script JSON> ; ajuste groups/items. -->
+            <lc-engagement-feed>
+                <script type="application/json">
+                {
+                  "title": "Flux d'engagement", "meta": "Toutes activités",
+                  "groups": [
+                    { "label": "À venir & en retard", "items": [
+                      { "icon": "task", "tone": "success", "title": "Préparer le rendez-vous conseil", "description": "Tâche · Nova France", "time": "2 août" }
+                    ] },
+                    { "label": "Juillet · 2026", "hint": "Ce mois-ci", "items": [
+                      { "icon": "email", "tone": "email", "title": "Email : nouvelle collection", "description": "Ouvert · fort engagement", "time": "18 juil." },
+                      { "icon": "event", "title": "Visite boutique", "description": "Parcours magasin", "time": "12 juil." }
+                    ] }
+                  ]
+                }
+                </script>
+            </lc-engagement-feed>
+            <!-- /SLOT: feed -->
+
+            <!-- SLOT: assistant ─ CLIN D'ŒIL PRODUIT (lc-ai-recommendation = Agentforce). Garde ce panneau : c'est la valeur Salesforce de l'écran. -->
+            <lc-ai-recommendation>
+                <script type="application/json">
+                {
+                  "title": "Agentforce · Assistance", "label": "Meilleure action suivante",
+                  "suggestion": "Camille a consulté 3 fois la nouvelle collection sans convertir. Proposer un rendez-vous privé + livraison express offerte.",
+                  "acceptLabel": "Appliquer", "editLabel": "Modifier",
+                  "draft": "Bonjour Camille, la collection que vous avez consultée est disponible pour un rendez-vous privé cette semaine."
+                }
+                </script>
+            </lc-ai-recommendation>
+            <!-- /SLOT: assistant -->
+        </aside>
+    </div>
+</main>
+
+<lc-toast-region></lc-toast-region>
+<!-- Kit de composants <lc-*> bundlé en script classique (marche en file://, zéro serveur). -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

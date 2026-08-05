@@ -22,6 +22,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent  # dossier de la skill
 TPL = ROOT / "templates"
 ASSETS = ROOT / "assets"
+KIT = ASSETS / "lightning-kit"
+KIT_JS = ("lightning-components.js", "field-service-components.js")  # base avant field-service
+
+
+def bundle_kit_js() -> str:
+    """Concatène les modules du kit <lc-*> en UN script CLASSIQUE (chargeable en file://).
+    Les ES modules (import/export) et fetch() sont bloqués en file:// ; le contrat de la skill
+    est le double-clic. On retire donc `import`/`export` : une fois concaténés, les 2 fichiers se
+    partagent la même portée globale (aucune collision de noms entre eux — vérifié). scenario-loader
+    est exclu exprès (il fait fetch()) : la config passe en JSON inline dans le markup, pas au runtime."""
+    parts = []
+    for f in KIT_JS:
+        src = (KIT / f).read_text(encoding="utf-8")
+        src = re.sub(r"^\s*import\s.*?;\s*$", "", src, flags=re.M)  # lignes `import … ;`
+        src = re.sub(r"^export\s+", "", src, flags=re.M)            # mot-clé `export`
+        parts.append(f"/* {f} */\n{src}")
+    return "\n\n".join(parts)
 
 
 def _first_tag(s: str) -> str | None:
@@ -183,6 +200,13 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
         rendered[s["file"]] = markup
         written.append(s["file"])
 
+    # 2a. kit de composants Lightning : copié UNIQUEMENT si un écran pose des <lc-*>.
+    # Bundle JS classique + CSS → chargés en <script>/<link> par les templates lightning-* (file:// OK).
+    if any("<lc-" in mk for mk in rendered.values()):
+        (out / "lightning-kit.js").write_text(bundle_kit_js(), encoding="utf-8")
+        shutil.copy(KIT / "lightning-components.css", out / "lightning-kit.css")
+        written += ["lightning-kit.js", "lightning-kit.css"]
+
     # 2b. portraits fictifs de la banque assets/people/ RÉELLEMENT référencés (src="people/xxx").
     # On ne copie que ceux utilisés → aucun poids mort dans le site généré. Le hub (cast[].image)
     # peut aussi y pointer, donc on scanne écrans + manifest sérialisé.
@@ -272,6 +296,11 @@ def selfcheck():
             # à l'inverse, avec le bon wrapper → aucun warning
             warns2, _ = inject_slots(tpl, {"why": '<div class="why">ok</div>'}, "instagram")
             assert not warns2, "faux positif : wrapper correct signalé"
+            # kit Lightning : le bundle retire import/export et NE copie que si un écran pose des <lc-*>
+            js = bundle_kit_js()
+            assert "export " not in js and not re.search(r"^\s*import\s", js, re.M), "import/export non retiré du bundle"
+            assert "customElements.define" in js, "définitions de composants absentes du bundle"
+            assert not (out / "lightning-kit.js").exists(), "kit copié alors qu'aucun écran n'utilise <lc-*>"
         finally:
             os.chdir(prev)
     print("selfcheck OK")

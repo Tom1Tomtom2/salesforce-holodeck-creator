@@ -16,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.6.0"
+version: "1.7.0"
 ---
 
 # Site Web Story
@@ -36,6 +36,9 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
   d'intro (personnages + frise), puis une section par acte (récit + vrai écran en iframe live).
 - `templates/*.html` — **bibliothèque d'écrans complets, chrome verrouillée + SLOTs.**
   C'est le cœur : tu pars TOUJOURS d'un template, tu ne redessines jamais un écran.
+- `assets/lightning-kit/` — **kit de composants `<lc-*>`** (record 360, charts, dispatch, carte…)
+  utilisé par les templates `lightning-record` / `lightning-dashboard` / `lightning-fieldservice`.
+  Écrans Salesforce **composables** : chaque bloc lit sa config d'un `<script JSON>` slotté. Détails dans `references/screens.md`.
 - `references/screens.md` — table canal → template + liste des SLOTs de chaque template.
 - `references/fidelite-salesforce.md` — grille de relecture des écrans **desktop Salesforce**
   (crédibilité du shell Lightning, dimensions de référence, pièges à éviter). Passe-la sur ces écrans.
@@ -190,6 +193,12 @@ Règles pour le manifest :
   **bloc d'exemple du template** (lis-le dans `templates/<canal>.html`) et n'ajuste que
   le texte / le nombre de sous-blocs. Ne fabrique pas de nouvelle structure ni de
   nouvelles classes — la chrome est verrouillée.
+- **Écrans Lightning composables** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`) :
+  leurs SLOTs enveloppent un composant `<lc-*>` + un `<script type="application/json">`. Reprends le bloc
+  d'exemple et **n'ajuste que le JSON** (valeurs), jamais la balise ni les clés attendues. Le marqueur SLOT
+  est **autour** du `<script>` (un commentaire dedans casserait `JSON.parse`) — c'est déjà le cas, n'y touche pas.
+  Ces écrans couvrent les cas Salesforce riches (CRM 360, dashboards, Field Service). `build_site.py` embarque
+  automatiquement le kit (JS+CSS) dans le site, chargé en `file://`. Voir `references/screens.md` § « Kit de composants ».
 - **Garde toujours l'encart `.why`** (ou le panneau produit : Einstein, Agentforce,
   beacon Data Cloud…) : c'est la valeur Salesforce, signature de la démo.
 - **`tokens`** : accent de marque (Phase 1). `font_import` seulement si tu changes de typo.
