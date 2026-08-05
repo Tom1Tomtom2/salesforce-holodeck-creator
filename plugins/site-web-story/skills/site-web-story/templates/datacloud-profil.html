@@ -17,10 +17,6 @@
     body { background: var(--off-white); min-height: 100vh; --sf-w: 1180px; }
     .wrap { max-width: 1180px; margin: 0 auto; padding: 30px 30px 60px; }
 
-    .topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
-    .topbar .sep { color: var(--grey-light); }
-    .topbar .prod { font-family: var(--sans); font-weight: 600; letter-spacing: 0.5px; color: var(--accent); }
-
     .grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
     .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
     .card h2 { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); padding: 18px 22px 0; }
@@ -101,13 +97,6 @@
 </div>
 
 <div class="wrap">
-    <div class="topbar">
-        <span class="brand"><!-- SLOT: brand --><span class="brand-mark">N</span> Nova<!-- /SLOT --></span>
-        <span class="sep">›</span>
-        <span class="prod">Data Cloud — Profil unifié</span>
-        <span class="chip chip--live" style="margin-left:auto">Temps réel</span>
-    </div>
-
     <div class="grid">
         <!-- SLOT: identity ─ colonne identité : avatar, nom, indicateurs clés, résolution d'identité. -->
         <div>

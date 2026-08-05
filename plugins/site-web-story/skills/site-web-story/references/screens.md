@@ -44,7 +44,7 @@ activation d'audience vers Meta, re-segmentation post-événement) : n'adapte qu
 - **site-ecommerce.html** — `title`, `act-tag`, `order-confirm` (retirable), `nav`, `pdp`, `beacon`
 - **landing-capture.html** — `title`, `act-tag`, `url`, `landing`, `resolve`
   (garde les `id` cur/sub/resolve/f1/f2/mrg/uni : le `<script>` en bas les anime)
-- **datacloud-profil.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `brand`, `identity`, `stream`, `segments`
+- **datacloud-profil.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `identity`, `stream`, `segments`
   (garde `.live-2`/`.live-1` en tête du flux, une seule pastille `.seg.on`)
 - **datacloud-pipeline.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `brand`, `prod-label`, `status-chip`, `intro`, `flow`, `cards`, `status`
   (garde le 3e nœud en `.node.dest`)
