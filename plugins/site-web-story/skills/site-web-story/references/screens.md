@@ -96,12 +96,14 @@ est **partielle** — voici l'état honnête, à annoncer à l'utilisateur en Ph
 | **Prévision (forecast) Sales Cloud** | — | ❌ **à créer** (`lc-forecast-summary/-categories/-hierarchy`, `lc-team-attainment`, `lc-pipeline-velocity`, `lc-win-rate-heatmap`) |
 | **Devis (CPQ / Revenue Cloud)** | — | ❌ **à créer** (`lc-quote-builder`, `lc-quote-approval`) |
 | Portail partenaire / Experience Cloud | — | ❌ **à créer** (aucun composant dédié — chrome à dessiner) |
+| **Marketing Cloud (campagne, parcours, e-mail studio)** | — | ❌ **à créer** (`lc-marketing-header`, `lc-campaign-workspace`, `lc-journey-builder`, `lc-email-studio`, `lc-segment-builder`, `lc-marketing-performance`) — utile B2C **et** B2B (nurturing) |
 
-**Règle** : si le brief B2B réclame un écran ❌, ne l'improvise pas — signale-le et prends le ⚠️ le plus
+**Règle** : si le brief réclame un écran ❌, ne l'improvise pas — signale-le et prends le ⚠️ le plus
 proche en attendant. Les composants `<lc-*>` cités existent DÉJÀ dans le kit (re-syncés) mais **ne sont
-câblés à aucun template** : créer un template B2B = les envelopper (comme les autres `lightning-*`) +
-ajouter leurs libellés EN à `KIT_I18N` dans `build_site.py`. On le fait **à partir du cahier des charges**
-(on ne construit pas d'écran spéculatif).
+câblés à aucun template** : créer le template = les envelopper (comme les autres `lightning-*`) +
+ajouter leurs libellés EN à `KIT_I18N` dans `build_site.py` (ces fichiers `sales`/`dashboard`/`marketing`
+ne sont PAS encore francisés — on le fait au moment de créer leur template). On construit **à partir du
+cahier des charges**, jamais d'écran spéculatif.
 
 ## Kit de composants Lightning (`assets/lightning-kit/`)
 

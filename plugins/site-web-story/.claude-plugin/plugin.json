@@ -1,6 +1,6 @@
 {
   "name": "site-web-story",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Construit un site web de démo narratif — parcours client de marque en actes, HTML/CSS artisanal. Crawl de marque (logo, images produit, palette) via navigateur headless, puis génération d'un site statique navigable depuis un manifest JSON.",
   "author": {
     "name": "Thomas Damiens"
