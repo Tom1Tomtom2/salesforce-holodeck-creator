@@ -8,12 +8,16 @@ le JS → il passe. Le script PROPOSE (couleurs, produits) et TÉLÉCHARGE (logo
 c'est toujours l'utilisateur qui valide l'ambiance en chat (Phase 1).
 
 Sortie dans ./<slug>-brand/ :
-    brand.json     — couleurs proposées, typo, secteur/produits détectés, images téléchargées
-    logo.(svg|png) — logo de la marque (DOM header, sinon icon.horse)
+    brand.json     — couleurs proposées, typo, secteur/produits détectés, images, logo_source
+    logo.(svg|png) — logo de la marque, cascade : DOM → SVG inline → Wikidata/Commons → icon.horse
     product-N.*    — les plus grandes images produit rendues (og:image en premier)
+
+Le logo passe par une cascade de sources : même quand un site bloque le crawl, son vrai
+logo officiel est souvent récupérable via Wikidata (propriété P154), non bloqué par anti-bot.
 
 Usage :
     python3 scripts/crawl_brand.py https://www.audi.fr --brand Audi --slug audi
+    python3 scripts/crawl_brand.py --fetch <url…> --slug audi   # backup : images produit par URL
     python3 scripts/crawl_brand.py --selfcheck
 """
 import argparse
@@ -22,7 +26,7 @@ import re
 import sys
 import urllib.request
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import quote, urlencode, urljoin, urlparse
 
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
@@ -122,6 +126,15 @@ def pick_accent(data: dict) -> str:
     return data.get("theme") or data.get("bg") or "#1c2b4a"
 
 
+def _is_valid_download(body: bytes, suffix: str) -> bool:
+    """Un SVG est un vecteur : souvent < 1 Ko et pourtant valide (logo Nike = 966 o) →
+    on le valide sur la présence de la balise <svg, pas sur la taille. Un raster < 1 Ko
+    est presque toujours un pixel espion ou une erreur déguisée → on le rejette."""
+    if suffix.lower() == ".svg":
+        return b"<svg" in body[:4096].lower()
+    return len(body) > 1024
+
+
 def download(url: str, dest: Path, referer: str) -> bool:
     """Télécharge une URL (UA navigateur + referer, sinon le CDN re-bloque). True si OK."""
     try:
@@ -129,8 +142,9 @@ def download(url: str, dest: Path, referer: str) -> bool:
         with urllib.request.urlopen(req, timeout=20) as r:
             if r.status != 200:
                 return False
-            dest.write_bytes(r.read())
-        return dest.stat().st_size > 1024  # < 1 Ko = pixel espion / erreur déguisée
+            body = r.read()
+        dest.write_bytes(body)
+        return _is_valid_download(body, dest.suffix)
     except Exception as e:
         print(f"  ⚠ échec téléchargement {url} : {e}")
         return False
@@ -139,6 +153,43 @@ def download(url: str, dest: Path, referer: str) -> bool:
 def _ext(url: str, default: str = ".jpg") -> str:
     m = re.search(r"\.(jpe?g|png|webp|avif|gif|svg)", urlparse(url).path, re.I)
     return "." + m.group(1).lower().replace("jpeg", "jpg") if m else default
+
+
+def _json_get(url: str):
+    """GET JSON avec UA (Wikimedia exige un UA non vide). None si échec réseau/parse."""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        print(f"  ⚠ Wikidata : {e}")
+        return None
+
+
+def wikidata_logo_url(brand: str) -> str | None:
+    """Cherche le logo officiel de la marque via Wikidata (propriété P154 « logo image »)
+    hébergé sur Wikimedia Commons. Source robuste, légale, non bloquée par anti-bot —
+    complément du crawl DOM quand le site de marque bloque. None si rien trouvé."""
+    # 1. brand → entité Q… (wbsearchentities, biais 'fr' puis 'en')
+    entity = None
+    for lang in ("fr", "en"):
+        q = urlencode({"action": "wbsearchentities", "search": brand, "language": lang,
+                       "format": "json", "limit": "1", "type": "item"})
+        d = _json_get("https://www.wikidata.org/w/api.php?" + q)
+        if d and d.get("search"):
+            entity = d["search"][0]["id"]
+            break
+    if not entity:
+        return None
+    # 2. entité → claims P154 → nom de fichier Commons
+    d = _json_get(f"https://www.wikidata.org/wiki/Special:EntityData/{entity}.json")
+    try:
+        claim = d["entities"][entity]["claims"]["P154"][0]
+        filename = claim["mainsnak"]["datavalue"]["value"]
+    except (TypeError, KeyError, IndexError):
+        return None
+    # 3. nom de fichier → URL de téléchargement (Special:FilePath résout vers le binaire Commons)
+    return "https://commons.wikimedia.org/wiki/Special:FilePath/" + quote(filename.replace(" ", "_"))
 
 
 def crawl(url: str, brand: str, slug: str, max_images: int = 6) -> Path:
@@ -162,38 +213,49 @@ def crawl(url: str, brand: str, slug: str, max_images: int = 6) -> Path:
         page = ctx.new_page()
         # ponytail: 'networkidle' ne se déclenche jamais sur un site à télémétrie continue
         # (audi.fr) → on attend le DOM, puis un <img> produit hydraté, plafonné par timeout.
-        page.goto(url, wait_until="domcontentloaded", timeout=45000)
-        for sel in CONSENT:  # best-effort : ferme le bandeau si présent
+        # Un blocage DUR (goto qui lève) ne doit PAS avorter le reste : on garde data={} et
+        # on tombera sur les fallbacks (logo Wikidata, message d'échec) au lieu de crasher.
+        data = {}
+        try:
+            page.goto(url, wait_until="domcontentloaded", timeout=45000)
+            for sel in CONSENT:  # best-effort : ferme le bandeau si présent
+                try:
+                    page.locator(sel).first.click(timeout=1500)
+                    break
+                except Exception:
+                    pass
             try:
-                page.locator(sel).first.click(timeout=1500)
-                break
+                page.wait_for_selector("img[src]:not([src^='data:'])", timeout=8000)
             except Exception:
                 pass
-        try:
-            page.wait_for_selector("img[src]:not([src^='data:'])", timeout=8000)
-        except Exception:
-            pass
-        # scroll par paliers : la home d'une marque lazy-load ses visuels produit ;
-        # sans scroll leur naturalWidth reste à 0 et le filtre taille les écarte.
-        for frac in (0.25, 0.5, 0.75, 1.0):
-            page.evaluate("f => scrollTo(0, document.body.scrollHeight*f)", frac)
-            page.wait_for_timeout(700)
-        page.evaluate("scrollTo(0, 0)")
-        page.wait_for_timeout(800)
-        data = page.evaluate(EXTRACT_JS)
+            # scroll par paliers : la home d'une marque lazy-load ses visuels produit ;
+            # sans scroll leur naturalWidth reste à 0 et le filtre taille les écarte.
+            for frac in (0.25, 0.5, 0.75, 1.0):
+                page.evaluate("f => scrollTo(0, document.body.scrollHeight*f)", frac)
+                page.wait_for_timeout(700)
+            page.evaluate("scrollTo(0, 0)")
+            page.wait_for_timeout(800)
+            data = page.evaluate(EXTRACT_JS)
+        except Exception as e:
+            print(f"  ⚠ page non chargée ({e}) → fallbacks (logo Wikidata) et status=failed")
         browser.close()
 
-    # --- logo : DOM, sinon SVG inline, sinon icon.horse (keyless, testé OK sur audi.fr) ---
-    logo_file = None
+    # --- logo : cascade DOM → SVG inline → Wikidata/Commons → icon.horse (favicon) ---
+    # Wikidata AVANT le favicon : c'est le logo officiel de la marque, pas une icône d'onglet.
+    logo_file, logo_source = None, None
     if data.get("logo") and download(data["logo"], out / ("logo" + _ext(data["logo"], ".png")), url):
-        logo_file = "logo" + _ext(data["logo"], ".png")
+        logo_file, logo_source = "logo" + _ext(data["logo"], ".png"), "site (DOM)"
     elif data.get("logoSvg"):
         (out / "logo.svg").write_text(data["logoSvg"], encoding="utf-8")
-        logo_file = "logo.svg"
+        logo_file, logo_source = "logo.svg", "site (SVG inline)"
     else:
-        host = urlparse(url).netloc
-        if download(f"https://icon.horse/icon/{host}", out / "logo.png", url):
-            logo_file = "logo.png"
+        wd = wikidata_logo_url(brand)
+        if wd and download(wd, out / ("logo" + _ext(wd, ".png")), "https://commons.wikimedia.org/"):
+            logo_file, logo_source = "logo" + _ext(wd, ".png"), "Wikidata/Commons"
+        else:
+            host = urlparse(url).netloc
+            if download(f"https://icon.horse/icon/{host}", out / "logo.png", url):
+                logo_file, logo_source = "logo.png", "favicon (icon.horse)"
 
     # --- images produit : og:image en tête (dédupliquées), puis les plus grandes ---
     seen, candidates = set(), []
@@ -223,6 +285,7 @@ def crawl(url: str, brand: str, slug: str, max_images: int = 6) -> Path:
         },
         "proposed_tokens": {"--accent": accent},
         "logo": logo_file,
+        "logo_source": logo_source,
         "product_images": products,
     }
     (out / "brand.json").write_text(json.dumps(brand_json, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -230,10 +293,15 @@ def crawl(url: str, brand: str, slug: str, max_images: int = 6) -> Path:
     if failure:
         print(f"✗ crawl {brand} ÉCHOUÉ : {failure}")
         print(f"  (brand.json écrit avec status=failed dans {out}/)")
+        if logo_source == "Wikidata/Commons":
+            print(f"  ✓ logo tout de même récupéré via Wikidata → {logo_file}")
         print("\n→ Fallback :")
         print("  1. navigateur manquant ?  → pip install -r requirements.txt && playwright install chromium")
-        print("  2. site trop protégé      → remplis les tokens/logo/images du manifest à la main (Phase 1),")
-        print("     ou déduis l'ambiance du nom + secteur et signale-le à l'utilisateur.")
+        print("  2. site trop protégé :")
+        print("     · logo → déjà tenté via Wikidata (ci-dessus) ;")
+        print("     · images produit → demande à l'utilisateur les URL + noms, puis :")
+        print(f"       python3 scripts/crawl_brand.py --fetch <url1> <url2>… --slug {slug}")
+        print("     · ou déduis l'ambiance du nom + secteur et signale-le à l'utilisateur.")
         return out
 
     print(f"✓ crawl {brand} → {out}/")
@@ -242,6 +310,26 @@ def crawl(url: str, brand: str, slug: str, max_images: int = 6) -> Path:
     print(f"  accent proposé : {accent}   (CTA détectés : {data.get('ctaColors')})")
     print(f"  typo           : {data.get('titleFont','?')[:60]}")
     print(f"\n→ relis {out}/brand.json, propose l'ambiance en Phase 1, puis valide avec l'utilisateur.")
+    return out
+
+
+def fetch_urls(urls: list, slug: str) -> Path:
+    """Backup manuel : télécharge des URL d'images fournies par l'utilisateur (produits) en
+    product-N.* dans <slug>-brand/. Utile quand le site de marque bloque le crawl mais que
+    l'utilisateur a les URL des visuels (marketplace, presse, réseaux). Referer neutralisé."""
+    out = Path.cwd() / f"{slug}-brand"
+    out.mkdir(exist_ok=True)
+    saved = []
+    for u in urls:
+        ref = f"{urlparse(u).scheme}://{urlparse(u).netloc}/"  # referer = origine de l'image
+        name = f"product-{len(saved)+1}{_ext(u)}"
+        if download(u, out / name, ref):
+            saved.append(name)
+            print(f"  ✓ {name}  ← {u}")
+        else:
+            print(f"  ✗ échec : {u}")
+    print(f"\n{len(saved)}/{len(urls)} image(s) dans {out}/ — référence-les dans le manifest "
+          f"(clé assets, par basename) comme au Plan B.")
     return out
 
 
@@ -274,10 +362,40 @@ def selfcheck():
     # fallback quand aucun CTA coloré → theme-color
     assert pick_accent({"ctaColors": ["#333333"], "theme": "#0a5"}) == "#0a5"
     assert _ext("https://x/a.JPEG?v=2") == ".jpg" and _ext("https://x/b") == ".jpg"
+    # _is_valid_download : SVG minuscule mais valide (logo Nike = 966 o) OK ; raster < 1 Ko rejeté
+    assert _is_valid_download(b'<?xml version="1.0"?><svg xmlns="...">...</svg>', ".svg")
+    assert not _is_valid_download(b"pas du svg", ".svg")
+    assert not _is_valid_download(b"x" * 500, ".png") and _is_valid_download(b"x" * 2000, ".png")
+    # _ext sur une URL Commons FilePath (extension dans le nom de fichier)
+    assert _ext("https://commons.wikimedia.org/wiki/Special:FilePath/Audi_logo.svg") == ".svg"
     # diagnose : titre anti-bot → échec ; page vide → échec ; crawl normal → None
     assert diagnose({"title": "Site currently not available"}, [])
     assert diagnose({"title": "OK", "logo": None}, [])
     assert diagnose({"title": "Accueil | Audi", "logo": "x"}, ["product-1.jpg"]) is None
+
+    # --- wikidata_logo_url sans réseau : on mocke _json_get selon l'URL demandée ---
+    global _json_get
+    real = _json_get
+    def fake(url):
+        if "wbsearchentities" in url:
+            return {"search": [{"id": "Q123"}]}
+        if "EntityData/Q123" in url:
+            return {"entities": {"Q123": {"claims":
+                {"P154": [{"mainsnak": {"datavalue": {"value": "ACME logo.svg"}}}]}}}}
+        return None
+    _json_get = fake
+    try:
+        u = wikidata_logo_url("ACME")
+        assert u == "https://commons.wikimedia.org/wiki/Special:FilePath/ACME_logo.svg", u
+        # pas d'entité trouvée → None
+        _json_get = lambda url: {"search": []} if "wbsearchentities" in url else None
+        assert wikidata_logo_url("Inconnue") is None
+        # entité sans claim P154 → None
+        _json_get = lambda url: ({"search": [{"id": "Q9"}]} if "wbsearchentities" in url
+                                 else {"entities": {"Q9": {"claims": {}}}})
+        assert wikidata_logo_url("SansLogo") is None
+    finally:
+        _json_get = real
     print("selfcheck OK")
 
 
@@ -287,12 +405,18 @@ def main():
     ap.add_argument("--brand", help="nom de la marque")
     ap.add_argument("--slug", help="slug (dossier de sortie <slug>-brand/)")
     ap.add_argument("--max-images", type=int, default=6)
+    ap.add_argument("--fetch", nargs="+", metavar="URL",
+                    help="backup manuel : télécharge ces URL d'images produit (avec --slug)")
     ap.add_argument("--selfcheck", action="store_true")
     a = ap.parse_args()
     if a.selfcheck:
         selfcheck(); return
+    if a.fetch:
+        if not a.slug:
+            ap.error("--fetch nécessite --slug (dossier <slug>-brand/)")
+        fetch_urls(a.fetch, a.slug); return
     if not (a.url and a.brand):
-        ap.error("fournis une URL et --brand (ou --selfcheck)")
+        ap.error("fournis une URL et --brand (ou --selfcheck, ou --fetch)")
     crawl(a.url, a.brand, a.slug or urlparse(a.url).netloc.split(".")[-2], a.max_images)
 
 

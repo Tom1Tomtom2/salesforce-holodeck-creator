@@ -16,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.5.1"
+version: "1.6.0"
 ---
 
 # Site Web Story
@@ -60,8 +60,14 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    Il écrit `./<slug>-brand/` : `brand.json` (accent proposé, typo, secteur, CTA détectés),
    `logo.*`, et `product-N.*` (visuels produit HD). **Lis `brand.json`** pour l'ambiance.
    Regarde les `product-N.*` (`Read`) pour repérer les modèles/produits réels.
+   - **Logo — cascade de sources** (le champ `brand.json.logo_source` dit laquelle a servi) :
+     DOM du site → SVG inline → **Wikidata/Commons** (logo officiel, propriété P154, non bloqué
+     par les anti-bot) → favicon `icon.horse`. Un site bloqué rend souvent quand même son **vrai
+     logo** via Wikidata — regarde `logo_source` avant de conclure à un échec de logo.
    - **Vérifie `brand.json.status`** : si `"failed"`, le crawl a été bloqué (anti-bot) ou n'a
      rien récupéré — le champ `error` dit quoi. Ne te sers PAS des valeurs par défaut.
+     (Un `status:"failed"` avec `logo_source:"Wikidata/Commons"` = seules les **images produit**
+     manquent, le logo est bon — enchaîne sur le `--fetch` du Plan B pour les seules images.)
    - **Plan B quand le crawl échoue — demande les visuels à l'utilisateur.** Dis-lui que
      le crawl automatique n'a pas abouti, et **demande-lui de fournir en local** :
      1. **le logo de la marque** (fichier image : png/svg/jpg) ;
@@ -72,6 +78,14 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
      Demande les **chemins des fichiers** (ex. `~/Desktop/logo.png`, `~/Desktop/manteau.jpg`).
      Tu les embarqueras dans le site en Phase 3 (clé `assets` du manifest + `.brand-logo` /
      `<img>` dans les slots). Déduis quand même l'accent/typo du nom + secteur (et signale-le).
+   - **Backup par URL** — si l'utilisateur a des **URL** d'images produit (fiche marketplace,
+     presse, réseaux) plutôt que des fichiers locaux, télécharge-les d'un coup :
+     ```bash
+     python3 scripts/crawl_brand.py --fetch <url1> <url2>… --slug <slug>
+     ```
+     Elles atterrissent en `product-N.*` dans `<slug>-brand/` (referer = origine de l'image,
+     pour passer le CDN) : réfère-les ensuite par **basename** dans la clé `assets` du manifest,
+     comme des fichiers fournis.
    - Si l'utilisateur ne peut/veut pas fournir d'images : **déduis l'ambiance du nom + secteur**
      (et signale-le) — le site reste en dégradés d'accent (contrat « zéro image »).
    - Première utilisation : `pip install -r requirements.txt && playwright install chromium`
