@@ -71,33 +71,80 @@ def rewrite_tokens(css: str, tokens: dict, font_import: str | None) -> str:
     return css
 
 
-def build_hub(template: str, brand: str, story_title: str, screens: list) -> str:
-    """Regénère les blocs .act/.screen depuis screens[], groupés par libellé d'acte."""
-    blocks, i = [], 0
-    while i < len(screens):
-        act = screens[i].get("act", "")
-        cards = []
-        while i < len(screens) and screens[i].get("act", "") == act:
-            s = screens[i]
-            gif = '<span class="gif">▶ animé</span>' if s.get("animated") else ""
-            cards.append(
-                f'<a class="screen" href="{html.escape(s["file"])}">'
-                f'<div class="n">{html.escape(s.get("channel", s.get("template", "")))}</div>'
-                f'<div class="t">{html.escape(s.get("title", ""))}</div>'
-                f'<div class="d">{html.escape(s.get("desc", ""))}</div>{gif}</a>'
-            )
-            i += 1
-        blocks.append(
-            f'    <div class="act">\n        <h2>{html.escape(act)}</h2>\n'
-            f'        <div class="screens">\n            '
-            + "\n            ".join(cards)
-            + "\n        </div>\n    </div>"
+# Templates qui dessinent DÉJÀ leur propre coque de téléphone (.phone) → cadre .frame.phone,
+# sinon cadre navigateur .frame.desktop. (cf. references/screens.md)
+PHONE_TEMPLATES = {"instagram", "whatsapp", "landing-capture", "client-app"}
+
+
+def _intro_block(intro: dict, screens: list) -> str:
+    """Section .intro : kicker + titre + lede, cartes personnages (cast[]), frise du parcours (1 pas/écran)."""
+    if not intro:
+        return ""
+    cast = []
+    for p in intro.get("cast", []):
+        img = p.get("image")
+        face = (f'<img class="face" src="{html.escape(img)}" alt="{html.escape(p.get("name",""))}">'
+                if img else f'<span class="face letter">{html.escape(p.get("name","?")[:1])}</span>')
+        cast.append(
+            f'        <div class="who">{face}<div>'
+            f'<div class="nm">{html.escape(p.get("name",""))}</div>'
+            f'<div class="rl">{html.escape(p.get("role",""))}</div>'
+            f'<div class="bio">{html.escape(p.get("bio",""))}</div></div></div>'
         )
-    # remplace le bloc .act d'exemple (entre le commentaire repère et </div></body>)
-    head = template.split('<!-- Répéter ce bloc .act par acte de la story -->')[0]
-    hub = head + "\n".join(blocks) + "\n\n</div>\n</body>\n</html>\n"
-    hub = hub.replace("{{BRAND}}", html.escape(brand)).replace("{{STORY_TITLE}}", html.escape(story_title))
-    return hub
+    steps = []
+    for n, s in enumerate(screens, 1):
+        steps.append(
+            f'        <div class="step"><span class="dot"></span>'
+            f'<div class="sn">{n:02d}</div><div class="sl">{html.escape(s.get("title",""))}</div></div>'
+        )
+    return (
+        '<section class="intro">\n'
+        f'    <div class="kicker">{html.escape(intro.get("kicker", "L\'histoire"))}</div>\n'
+        f'    <h2>{html.escape(intro.get("title", ""))}</h2>\n'
+        f'    <p class="lede">{html.escape(intro.get("lede", ""))}</p>\n'
+        + ('    <div class="cast">\n' + "\n".join(cast) + "\n    </div>\n" if cast else "")
+        + '    <div class="journey">\n' + "\n".join(steps) + "\n    </div>\n"
+        "</section>\n\n"
+    )
+
+
+def _act_section(s: dict, index: int) -> str:
+    """Une section .act : récit (num/titre/desc/lien) + écran réel en iframe (cadre phone ou desktop)."""
+    side = " right" if index % 2 else ""
+    f = html.escape(s["file"])
+    phone = s["template"] in PHONE_TEMPLATES
+    open_link = f'<a class="open" href="{f}" target="_blank" aria-label="Ouvrir en plein écran"></a>'
+    iframe = f'<div class="vp"><iframe src="{f}" loading="lazy" scrolling="no" title="{html.escape(s.get("title",""))}"></iframe></div>'
+    if phone:
+        frame = f'<div class="frame phone">{open_link}{iframe}</div>'
+    else:
+        url = html.escape(s.get("url", s.get("channel", "")))
+        bar = f'<div class="bar"><i></i><i></i><i></i><span class="url">{url}</span></div>'
+        frame = f'<div class="frame desktop">{open_link}{bar}{iframe}</div>'
+    return (
+        f'<section class="act{side}">\n'
+        '    <div class="story">\n'
+        f'        <div class="num">{html.escape(s.get("act",""))}</div>\n'
+        f'        <h2>{html.escape(s.get("title",""))}</h2>\n'
+        f'        <p class="desc">{html.escape(s.get("desc",""))}</p>\n'
+        f'        <a class="go" href="{f}" target="_blank">Ouvrir l\'écran '
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">'
+        '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>\n'
+        '    </div>\n'
+        f'    <div class="stage">{frame}</div>\n'
+        '</section>\n'
+    )
+
+
+def build_hub(template: str, brand: str, story_title: str, screens: list,
+              tagline: str = "", intro: dict | None = None) -> str:
+    """Assemble la page story : hero (placeholders) + intro + une section .act par écran."""
+    body = _intro_block(intro or {}, screens) + "\n".join(_act_section(s, i) for i, s in enumerate(screens))
+    head, _, _ = template.partition("<!-- BUILD:")
+    hub = head + body + "\n</body>\n</html>\n"
+    return (hub.replace("{{BRAND}}", html.escape(brand))
+               .replace("{{STORY_TITLE}}", html.escape(story_title))
+               .replace("{{TAGLINE}}", html.escape(tagline or "")))
 
 
 def build(manifest: dict, root: Path = ROOT) -> Path:
@@ -136,7 +183,8 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
 
     # 3. hub
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
-    hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""), manifest["screens"])
+    hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""),
+                    manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"))
     (out / "index.html").write_text(hub, encoding="utf-8")
     written.append("index.html")
 
@@ -160,11 +208,17 @@ def selfcheck():
     m = {
         "brand": "TestCo", "slug": "__selfcheck", "story_title": "Parcours test",
         "tokens": {"--accent": "#ff0000"},
-        "screens": [{
-            "file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
-            "act": "Acte 1 · Test", "title": "Pub test", "desc": "desc test", "animated": True,
-            "slots": {"title": "TITRE_INJECTE", "why": "POURQUOI_INJECTE"},
-        }],
+        "tagline": "TAGLINE_INJECTEE",
+        "intro": {"title": "INTRO_TITRE", "lede": "intro lede",
+                  "cast": [{"name": "Camille", "role": "La cliente", "bio": "bio", "image": "camille.jpg"}]},
+        "screens": [
+            {"file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
+             "act": "Acte 1 · Test", "title": "Pub test", "desc": "desc test", "animated": True,
+             "slots": {"title": "TITRE_INJECTE", "why": "POURQUOI_INJECTE"}},
+            {"file": "acte2-site.html", "template": "site-ecommerce", "channel": "sezane.com",
+             "act": "Acte 2 · Test", "title": "Fiche", "desc": "desc2", "url": "test.com/produit",
+             "slots": {}},
+        ],
     }
     prev = Path.cwd()
     with tempfile.TemporaryDirectory() as tmp:
@@ -181,8 +235,13 @@ def selfcheck():
             assert "TITRE_INJECTE" in screen, "SLOT title non injecté"
             assert "POURQUOI_INJECTE" in screen, "SLOT why non injecté"
             hub = (out / "index.html").read_text(encoding="utf-8")
-            assert "acte1-instagram.html" in hub and "Pub test" in hub, "carte hub manquante"
-            assert "▶ animé" in hub, "badge animé manquant"
+            assert "TAGLINE_INJECTEE" in hub, "tagline hero non injectée"
+            assert "INTRO_TITRE" in hub and 'src="camille.jpg"' in hub, "section intro/personnage manquante"
+            assert '<span class="sl">Pub test</span>' or "Pub test" in hub, "titre écran absent du récit"
+            # écran 1 (instagram) = cadre téléphone ; écran 2 (site-ecommerce) = cadre desktop, côté alterné
+            assert 'class="frame phone"' in hub, "cadre téléphone manquant"
+            assert 'class="frame desktop"' in hub and 'class="act right"' in hub, "cadre desktop / alternance manquant"
+            assert 'src="acte1-instagram.html"' in hub, "iframe de l'écran manquante dans la story"
             # SLOT inconnu → doit lever
             try:
                 inject_slots("<x/>", {"nope": "y"}, "instagram")

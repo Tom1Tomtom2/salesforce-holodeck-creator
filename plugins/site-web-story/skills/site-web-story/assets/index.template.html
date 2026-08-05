@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<!-- HUB / SOMMAIRE — remplace les {{placeholders}}, duplique .act et .screen selon la story.
-     Une carte .screen par écran ; ajoute <span class="gif">▶ animé</span> si l'écran a une animation CSS. -->
+<!-- STORY / SCROLLYTELLING — page d'accueil du site de démo.
+     build_site.py remplit {{BRAND}} {{STORY_TITLE}} {{TAGLINE}} puis GÉNÈRE, après le
+     marqueur BUILD ci-dessous, la section .intro (personnages + frise) et une section
+     .act par écran (récit + vrai écran en iframe). Ne touche pas au <style> à la main :
+     c'est la chrome de la story, verrouillée. Zéro JS. -->
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -8,40 +11,123 @@
 <title>{{BRAND}} — {{STORY_TITLE}}</title>
 <link rel="stylesheet" href="shared.css">
 <style>
-    body { background: var(--off-white); min-height: 100vh; }
-    .wrap { max-width: 900px; margin: 0 auto; padding: 70px 30px; }
-    .head { text-align: center; margin-bottom: 50px; }
-    .head .brand { font-size: 2rem; }
-    .head h1 { font-family: var(--sans); font-weight: 300; font-size: 1.6rem; margin: 14px 0 6px; }
-    .head p { color: var(--grey); font-size: 0.9rem; }
-    .act { margin-bottom: 34px; }
-    .act > h2 { font-family: var(--sans); font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-    .screens { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-    .screen { display: block; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s; }
-    .screen:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-    .screen .n { font-size: 0.7rem; color: var(--grey-light); }
-    .screen .t { font-weight: 600; font-size: 0.92rem; margin: 6px 0 4px; }
-    .screen .d { font-size: 0.78rem; color: var(--grey); line-height: 1.4; }
-    .screen .gif { display: inline-block; margin-top: 8px; font-size: 0.66rem; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; }
+    html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
+    body { background: var(--off-white); }
+
+    /* ---------- HERO ---------- */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; scroll-snap-align: start; position: relative; padding: 30px; }
+    .hero .brand { font-size: clamp(2.4rem, 6vw, 4rem); }
+    .hero h1 { font-family: var(--sans); font-weight: 200; font-size: clamp(1.6rem, 4vw, 2.6rem);
+        margin: 22px 0 10px; line-height: 1.15; max-width: 14ch; }
+    .hero p { color: var(--grey); font-size: 0.95rem; max-width: 40ch; }
+    .cue { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+        color: var(--grey-light); font-family: var(--sans); font-size: 0.72rem; letter-spacing: 2px;
+        text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .cue svg { width: 22px; height: 22px; animation: bob 1.8s ease-in-out infinite; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+    /* ---------- INTRO : personnages + frise du parcours ---------- */
+    .intro { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        scroll-snap-align: start; padding: 10vh 6vw; text-align: center; }
+    .intro .kicker { font-family: var(--sans); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+    .intro h2 { font-family: var(--serif, var(--sans)); font-weight: 300; font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin: 14px 0 8px; }
+    .intro .lede { color: var(--grey); font-size: 1.02rem; max-width: 46ch; line-height: 1.6; margin-bottom: 46px; }
+
+    .cast { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 56px; }
+    .who { display: flex; align-items: center; gap: 16px; text-align: left; background: #fff;
+        border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 24px 18px 18px; }
+    .who .face { width: 58px; height: 58px; border-radius: 50%; flex-shrink: 0; object-fit: cover;
+        background: var(--off-white); }
+    .who .face.letter { display: flex; align-items: center; justify-content: center;
+        font-family: var(--sans); font-weight: 700; font-size: 1.3rem; color: #fff; background: var(--accent); }
+    .who .nm { font-family: var(--sans); font-weight: 700; font-size: 1rem; }
+    .who .rl { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin: 1px 0 4px; }
+    .who .bio { font-size: 0.82rem; color: var(--grey); max-width: 24ch; line-height: 1.4; }
+
+    /* frise horizontale (mobile : passe en vertical) */
+    .journey { display: flex; align-items: flex-start; justify-content: center; gap: 0; max-width: 900px; width: 100%; position: relative; }
+    .journey .step { flex: 1; position: relative; padding-top: 30px; }
+    .journey .step::before { content: ''; position: absolute; top: 8px; left: 0; right: 0; height: 2px; background: var(--border); }
+    .journey .step:first-child::before { left: 50%; }
+    .journey .step:last-child::before { right: 50%; }
+    .journey .dot { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px;
+        border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--off-white); }
+    .journey .sn { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; color: var(--accent); }
+    .journey .sl { font-size: 0.76rem; color: var(--grey); line-height: 1.3; margin-top: 3px; padding: 0 6px; }
+
+    /* ---------- ACTE (section : récit + écran) ---------- */
+    .act { min-height: 100vh; display: flex; align-items: center; scroll-snap-align: start; padding: 8vh 6vw; gap: 5vw; }
+    .act.right { flex-direction: row-reverse; }
+    .act .story { flex: 1; max-width: 30rem; }
+    .act .num { font-family: var(--sans); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+        color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+    .act h2 { font-family: var(--serif, var(--sans)); font-weight: 300; font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        line-height: 1.1; margin-bottom: 18px; }
+    .act .desc { color: var(--grey); font-size: 1.05rem; line-height: 1.6; margin-bottom: 26px; }
+    .act .go { display: inline-flex; align-items: center; gap: 8px; font-family: var(--sans);
+        font-weight: 600; font-size: 0.85rem; color: var(--accent); text-decoration: none;
+        border-bottom: 1px solid currentColor; padding-bottom: 3px; transition: gap 0.2s; }
+    .act .go:hover { gap: 14px; }
+
+    /* ---------- CADRE + iframe live ---------- */
+    .stage { flex: 1; display: flex; justify-content: center; }
+    .frame { position: relative; box-shadow: var(--shadow-md); border-radius: 14px; overflow: hidden; background: #fff; }
+    .frame a.open { position: absolute; inset: 0; z-index: 3; }              /* clic → plein écran */
+    .frame .vp { overflow: hidden; position: relative; }
+    .frame iframe { border: 0; position: absolute; left: 0; transform-origin: top left; pointer-events: none; } /* scroll passe à la page */
+    /* top négatif = on remonte l'iframe pour clipper le bandeau .act-tag de l'écran (shift = hauteur_bandeau × échelle) */
+
+    /* Téléphone : le template DESSINE DÉJÀ sa coque (.phone + notch + biseau 12px via box-shadow).
+       On ne dessine donc PAS de cadre : on recadre l'iframe sur cette coque.
+       Coque = 390 + 2×12 biseau = 414 large. Échelle 300/414 = 0.7246 ; shift 35px amène le biseau en haut. */
+    .frame.phone { width: 300px; box-shadow: none; background: transparent; }
+    .frame.phone .vp { width: 300px; height: 597px; border-radius: 40px; }
+    .frame.phone iframe { top: -35px; width: 414px; height: 880px; transform: scale(0.7246); }
+
+    /* Desktop : chrome navigateur ; écran rendu à 1440 de large. Échelle 660/1440 = 0.4583 ; shift 12px clippe l'act-tag (~26px). */
+    .frame.desktop { width: 660px; }
+    .frame.desktop .bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: #e8e8ea; }
+    .frame.desktop .bar i { width: 11px; height: 11px; border-radius: 50%; background: #c9c7c5; }
+    .frame.desktop .bar i:nth-child(1){background:#ff5f57} .frame.desktop .bar i:nth-child(2){background:#febc2e} .frame.desktop .bar i:nth-child(3){background:#28c840}
+    .frame.desktop .bar .url { flex: 1; margin-left: 8px; background: #fff; border-radius: 6px; padding: 4px 12px;
+        font-family: var(--sans); font-size: 0.72rem; color: var(--grey); }
+    .frame.desktop .vp { width: 660px; height: 449px; }
+    .frame.desktop iframe { top: -12px; width: 1440px; height: 1006px; transform: scale(0.4583); }
+
+    /* ---------- reveal au scroll (Chrome/Edge ; ailleurs = visible d'emblée) ---------- */
+    @supports (animation-timeline: view()) {
+        .act .story, .act .stage { animation: reveal linear both; animation-timeline: view(); animation-range: entry 5% cover 38%; }
+        .act .stage { animation-name: revealScale; }
+    }
+    @keyframes reveal { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: none; } }
+    @keyframes revealScale { from { opacity: 0; transform: translateY(46px) scale(0.94); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 780px) {
+        .act, .act.right { flex-direction: column; text-align: center; gap: 34px; padding: 10vh 8vw; }
+        .act .story { max-width: none; }
+        /* ponytail: sur mobile les cadres desktop sont approximatifs (scale figée) ; les démos se pitchent sur desktop/projecteur. */
+        .frame.desktop { width: 92vw; overflow: hidden; } .frame.desktop .vp { width: 92vw; height: 62vw; }
+        .journey { flex-direction: column; align-items: flex-start; gap: 0; max-width: 420px; margin: 0 auto; }
+        .journey .step { width: 100%; padding: 0 0 22px 30px; text-align: left; }
+        .journey .step::before { top: 0; bottom: 0; left: 6px; right: auto; width: 2px; height: auto; }
+        .journey .step:first-child::before { top: 8px; left: 6px; }
+        .journey .step:last-child::before { bottom: 50%; left: 6px; }
+        .journey .dot { top: 4px; left: 6px; transform: none; }
+    }
 </style>
 </head>
 <body>
-<div class="wrap">
-    <div class="head">
-        <div class="brand">{{BRAND}}</div>
-        <h1>{{STORY_TITLE}}</h1>
-        <p>Écrans de démo · mockups statiques (aucune donnée réelle)</p>
-    </div>
 
-    <!-- Répéter ce bloc .act par acte de la story -->
-    <div class="act">
-        <h2>{{ACT_LABEL}}</h2>
-        <div class="screens">
-            <a class="screen" href="{{SCENE_FILE}}"><div class="n">{{SCENE_N}}</div><div class="t">{{SCENE_TITLE}}</div><div class="d">{{SCENE_DESC}}</div><span class="gif">▶ animé</span></a>
-            <!-- … autres .screen … -->
-        </div>
+<section class="hero">
+    <div class="brand">{{BRAND}}</div>
+    <h1>{{STORY_TITLE}}</h1>
+    <p>{{TAGLINE}}</p>
+    <div class="cue">Défiler
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+</section>
 
-</div>
+<!-- BUILD: intro + actes générés ici par build_site.py -->
 </body>
 </html>

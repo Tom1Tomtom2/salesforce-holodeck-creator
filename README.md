@@ -7,21 +7,27 @@ WhatsApp → Data Cloud → console SAV…), en HTML/CSS artisanal. Zéro serveu
 Elle crawle le site de la marque avec un vrai navigateur (logo, images produit HD,
 palette, typo), puis génère un site statique navigable depuis un manifest JSON.
 
-## Installation (pour tes collègues)
+## Installation sur une nouvelle machine
+
+**1. Installer le plugin** (dans Claude Code) :
 
 ```
-/plugin marketplace add <URL-du-repo-git>
-/plugin install site-web-story
+/plugin marketplace add https://github.com/Tom1Tomtom2/site-web-story-plugin
+/plugin install site-web-story@site-web-story-marketplace
+/reload-plugins
 ```
 
-Puis, **une fois par machine**, pour activer le crawler de marque :
+**2. Installer le navigateur du crawler** — **une seule fois par machine**, dans un terminal :
 
 ```
-pip install -r ~/.claude/plugins/**/site-web-story/requirements.txt
+pip install playwright
 playwright install chromium
 ```
 
-> Le crawler utilise Google Chrome système s'il est présent, sinon le Chromium ci-dessus.
+> ⚠️ Ne saute pas la 2ᵉ commande : `playwright install chromium` télécharge le **navigateur**
+> lui-même (le moteur de crawl). `pip install playwright` seul n'installe que la lib Python — le
+> crawl échouera sans navigateur. Chrome système est utilisé en priorité s'il est présent.
+>
 > Sans cette étape, la **génération** du site fonctionne quand même (stdlib pure) ; seul le
 > crawl automatique de la marque est indisponible — on remplit alors le manifest à la main.
 

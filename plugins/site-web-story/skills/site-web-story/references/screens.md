@@ -8,6 +8,12 @@ Le `<style>` et la structure hors SLOT sont verrouillés.
 Chaque template est autonome, lié à `shared.css` (déjà dans le `<link>`), et embarque
 déjà son animation CSS et son clin d'œil produit Salesforce (le `.why` de l'écran).
 
+**Format & page story.** La colonne *Format* pilote l'affichage de l'écran dans `index.html`
+(scrollytelling) : `mobile` → coque téléphone, `desktop` → cadre navigateur avec barre d'adresse
+(SLOT `url` du manifest). Les templates *mobile* — `instagram`, `whatsapp`, `landing-capture`,
+`client-app` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
+ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur cette colonne).
+
 ## Table canal → template
 
 | Canal / besoin | Template | Format | Clin d'œil produit | Animation |
@@ -37,12 +43,21 @@ activation d'audience vers Meta, re-segmentation post-événement) : n'adapte qu
 - **site-ecommerce.html** — `title`, `act-tag`, `order-confirm` (retirable), `nav`, `pdp`, `beacon`
 - **landing-capture.html** — `title`, `act-tag`, `url`, `landing`, `resolve`
   (garde les `id` cur/sub/resolve/f1/f2/mrg/uni : le `<script>` en bas les anime)
-- **datacloud-profil.html** — `title`, `act-tag`, `brand`, `identity`, `stream`, `segments`
+- **datacloud-profil.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `brand`, `identity`, `stream`, `segments`
   (garde `.live-2`/`.live-1` en tête du flux, une seule pastille `.seg.on`)
-- **datacloud-pipeline.html** — `title`, `act-tag`, `brand`, `prod-label`, `status-chip`, `intro`, `flow`, `cards`, `status`
+- **datacloud-pipeline.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `brand`, `prod-label`, `status-chip`, `intro`, `flow`, `cards`, `status`
   (garde le 3e nœud en `.node.dest`)
 - **client-app.html** — `title`, `act-tag`, `brand`, `advisor`, `client-hero`, `appointment` (retirable), `history`, `cta`
-- **service-console.html** — `title`, `act-tag`, `tabbar`, `contact`, `case`, `agent`
+- **service-console.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `tabbar`, `contact`, `case`, `agent`
+
+### Header Salesforce Lightning (3 écrans desktop : datacloud-profil, datacloud-pipeline, service-console)
+Ces 3 écrans portent en haut le **header Lightning** (défini dans `shared.css` : `.lightning`).
+Il reste **aux couleurs Salesforce** (fond blanc, bleu `#0176d3`) — NE le repeins PAS à `--accent`,
+c'est ce qui fait reconnaître Salesforce. Seuls 3 SLOTs se remplissent :
+- `sf-logo` — **le logo du CLIENT** (remplace le cloud Salesforce) : wordmark `.brand` ou `<img class="brand-logo" src="logo.png" alt="Marque">`.
+- `sf-app` — le nom de l'app (ex. « Sales », « Service - Console », « Data Cloud »).
+- `sf-tabs` — les onglets ; le 1er en `.ln-tab.on` = actif (souligné bleu). `<svg class="caret">` pour un menu déroulant.
+La recherche, le bouton « Ask » et le cluster d'icônes (droite) sont **verrouillés** — n'y touche pas.
 - **tpv-pos.html** — `title`, `act-tag`, `pos-name`, `store`, `scan`, `refund` (garde `.sync`)
 
 ## Neutralisation déjà faite

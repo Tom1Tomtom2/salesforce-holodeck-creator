@@ -16,7 +16,7 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.1.0"
+version: "1.2.0"
 ---
 
 # Site Web Story
@@ -32,7 +32,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 ## Assets de la skill (chemins relatifs à ce dossier)
 - `assets/shared.css` — design tokens + composants (`.chip` `.btn` `.phone` `.act-tag`
   `.why` `.accent-band` `.brand` `.brand-mark`). **Base de tout écran.**
-- `assets/index.template.html` — squelette du hub/sommaire.
+- `assets/index.template.html` — squelette de la **page story** (scrollytelling) : hero, écran
+  d'intro (personnages + frise), puis une section par acte (récit + vrai écran en iframe live).
 - `templates/*.html` — **bibliothèque d'écrans complets, chrome verrouillée + SLOTs.**
   C'est le cœur : tu pars TOUJOURS d'un template, tu ne redessines jamais un écran.
 - `references/screens.md` — table canal → template + liste des SLOTs de chaque template.
@@ -114,13 +115,23 @@ Structure :
   "brand": "Nova",
   "slug": "nova",
   "story_title": "De la découverte à la fidélité",
+  "tagline": "Le parcours de Camille, écran après écran. Descendez pour le suivre.",
   "tokens": { "--accent": "#1c2b4a", "--accent-dark": "#12203b", "--accent-soft": "#eaf0f8" },
   "font_import": "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');",
+  "intro": {
+    "kicker": "L'histoire",
+    "title": "Une cliente, une conseillère, un parcours unifié",
+    "lede": "De la publicité au conseil en boutique, chaque étape est reliée par Salesforce Data Cloud.",
+    "cast": [
+      { "name": "Camille", "role": "La cliente", "bio": "Repère un manteau, hésite, revient.", "image": "camille.jpg" },
+      { "name": "Léa", "role": "La conseillère", "bio": "Accueille Camille avec une vue 360°." }
+    ]
+  },
   "screens": [
     {
       "file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
       "act": "Acte 1 · Acquisition", "title": "Publicité ciblée",
-      "desc": "Résumé court affiché sur la carte du hub.", "animated": true,
+      "desc": "Récit affiché à côté de l'écran dans la story (2–3 phrases).", "animated": true,
       "slots": {
         "title": "Nova — Publicité ciblée",
         "act-tag": "Acte 1 · Instagram — publicité ciblée (Data Cloud → Meta)",
@@ -145,7 +156,19 @@ Règles pour le manifest :
 - **Garde toujours l'encart `.why`** (ou le panneau produit : Einstein, Agentforce,
   beacon Data Cloud…) : c'est la valeur Salesforce, signature de la démo.
 - **`tokens`** : accent de marque (Phase 1). `font_import` seulement si tu changes de typo.
-- **`animated: true`** sur les écrans à animation CSS → badge `▶ animé` sur le hub.
+- **`desc`** = le **récit** affiché à côté de l'écran dans la story (2–3 phrases, incarnées par le
+  persona) — c'est ce que le visiteur lit en scrollant, pas un simple résumé technique.
+- **`url`** (écrans desktop) : ce qui s'affiche dans la barre d'adresse du cadre navigateur
+  (ex. `sezane.com/le-manteau-will`, ou un libellé d'app `Data Cloud · Profil unifié`). Optionnel.
+- **`tagline`** : sous-titre du hero (1 phrase d'accroche sous le titre). Optionnel.
+- **`intro`** : l'écran de mise en situation entre le hero et le 1ᵉʳ acte. `title` + `lede`, et
+  `cast[]` = les personnages (`name`, `role`, `bio`, `image` optionnelle). La **frise du parcours**
+  (une étape par écran, titres repris des `screens`) est générée automatiquement — ne la liste pas.
+  - `image` = **basename d'un fichier de `assets`** (portrait humain fourni par l'utilisateur ou
+    crawlé). Sans `image`, l'initiale du prénom s'affiche dans une pastille. **Un agent Agentforce
+    n'est pas un humain** : si un personnage est l'agent, utilise une image de robot/agent, pas un
+    portrait. Ne fabrique jamais un faux visage ni une fausse identité (contrat « données réelles »).
+- **`animated: true`** : marque un écran animé (métadonnée ; plus de badge sur l'index scrollytelling).
 - **`assets`** (Plan B, crawl échoué) : liste de chemins de fichiers fournis par l'utilisateur
   (logo + photos produit). Le script les copie dans `<slug>-story/` ; réfère-les par **basename** :
   - logo dans un slot `nav`/`brand` → `<img class="brand-logo" src="logo.png" alt="Marque">`
@@ -159,7 +182,10 @@ Règles pour le manifest :
 python3 scripts/build_site.py manifest.json
 ```
 Il copie chaque template dans `./<slug>-story/`, injecte les SLOTs entre les marqueurs,
-réécrit les tokens `:root` de `shared.css`, et génère `index.html` (hub groupé par acte).
+réécrit les tokens `:root` de `shared.css`, et génère `index.html` : la **page story** en
+scrollytelling (hero → intro personnages/frise → une section par acte avec l'écran en iframe).
+Les écrans « téléphone » (instagram, whatsapp, landing-capture, client-app) sont affichés dans une
+coque mobile ; les autres dans un cadre navigateur. Un clic sur un écran l'ouvre en plein écran.
 Un SLOT mal orthographié → **erreur explicite** : corrige le nom dans le manifest
 (noms valides dans `references/screens.md`) et relance. **Ne recopie jamais un template
 toi-même**, même en cas d'erreur.
@@ -182,5 +208,8 @@ Le script imprime la liste des fichiers. Invite l'utilisateur à ouvrir
 - Chaque écran garde son encart pédagogique `.why` (c'est la signature de la démo).
 
 ## Vérification
-Ouvre `index.html` : le hub liste les actes, chaque carte ouvre son écran, le chrome est
-crédible et à la marque, au moins une animation tourne, chaque écran a son encart `.why`.
+Ouvre `index.html` : le hero porte la marque, l'écran d'intro présente les personnages et la frise,
+puis on descend acte par acte — chaque section montre le vrai écran (iframe) à côté de son récit,
+le chrome est crédible et à la marque, au moins une animation tourne, chaque écran a son encart `.why`.
+Un clic sur un écran l'ouvre en plein écran. (Le défilement « accroché » et les apparitions au scroll
+ne s'affichent qu'en Chrome/Edge ; ailleurs tout reste visible, sans animation.)

@@ -69,6 +69,54 @@ img { max-width: 100%; display: block; }
     opacity: 0.9;
 }
 
+/* =========================================================
+   Header Salesforce Lightning — écrans desktop « produit »
+   (Data Cloud, Service Console). Chrome VERROUILLÉE, aux
+   COULEURS SALESFORCE (fond blanc, bleu #0176d3) : ne PAS
+   repeindre à --accent, c'est ce qui fait reconnaître SF.
+   Seuls changent : le logo (SLOT sf-logo ← logo du client),
+   le nom d'app (sf-app) et les onglets (sf-tabs).
+   ========================================================= */
+/* Police FIGÉE (Salesforce Sans / système) — surtout PAS var(--sans) qui est repeint
+   à la police de marque : le header doit rester neutre pour ressembler à Salesforce. */
+/* Valeurs figées d'après une vraie org (SLDS 2) : header 50px, context-bar 40px,
+   icônes #5c5c5c, bleu actif #0176d3 (info-50), badge #ea001e, base 13px. */
+.lightning { background: #fff; border-bottom: 1px solid #dddbda; position: sticky; top: 0; z-index: 200;
+    font-size: 0.8125rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+.lightning, .lightning * { font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+.ln-top { display: flex; align-items: center; gap: 16px; padding: 0 16px; min-height: 50px; }
+.ln-logo { display: flex; align-items: center; height: 34px; flex-shrink: 0; }
+.ln-logo .brand-mark { width: 30px; height: 30px; font-size: 0.9rem; }
+.ln-logo .brand-logo { height: 30px; }
+.ln-search { flex: 1; max-width: 620px; margin: 0 auto; display: flex; align-items: center; gap: 9px;
+    background: #fff; border: 1px solid #c9c9c9; border-radius: 6px; padding: 8px 13px;
+    color: #706e6b; font-size: 0.82rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+.ln-search svg { width: 15px; height: 15px; color: #706e6b; flex-shrink: 0; }
+.ln-ask { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #c9c9c9;
+    border-radius: 18px; padding: 7px 15px; color: #0176d3; font-weight: 600; font-size: 0.82rem; flex-shrink: 0; }
+.ln-icons { display: flex; align-items: center; gap: 17px; flex-shrink: 0; color: #5c5c5c; }
+.ln-icons svg { width: 19px; height: 19px; }
+.ln-bell { position: relative; display: inline-flex; }
+.ln-bell .badge { position: absolute; top: -7px; right: -7px; background: #ea001e; color: #fff;
+    font-size: 0.58rem; font-weight: 700; border-radius: 999px; min-width: 15px; height: 15px;
+    display: flex; align-items: center; justify-content: center; padding: 0 3px; }
+.ln-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#8a8a8a,#3a3a3a); flex-shrink: 0; }
+/* align-items: center → tout est centré verticalement (logo d'app, waffle).
+   Seuls les onglets s'étirent (align-self: stretch) pour que le trait bleu de
+   l'onglet actif touche le bas de la barre. */
+.ln-nav { display: flex; align-items: center; padding: 0 16px; border-top: 1px solid #f3f2f2; min-height: 40px; }
+.ln-waffle { display: grid; grid-template-columns: repeat(3, 3px); gap: 2px; margin: 0 12px 0 0; padding: 14px 4px; flex-shrink: 0; }
+.ln-waffle i { width: 3px; height: 3px; background: #aeacab; border-radius: 1px; }
+.ln-app { font-weight: 700; font-size: 1.05rem; color: #080707; padding-right: 22px; flex-shrink: 0; white-space: nowrap; }
+.ln-tabs { align-self: stretch; display: flex; align-items: stretch; gap: 0; overflow: hidden; }
+.ln-tab { padding: 0 11px; font-size: 0.8125rem; font-weight: 500; color: #444444; white-space: nowrap;
+    position: relative; display: inline-flex; align-items: center; gap: 4px; }
+.ln-tab .caret { width: 12px; height: 12px; opacity: 0.55; }
+.ln-tab.on { color: #0176d3; font-weight: 600; }
+.ln-tab.on::after { content: ''; position: absolute; left: 6px; right: 6px; bottom: 0; height: 3px;
+    background: #0176d3; border-radius: 2px 2px 0 0; }
+
 /* --- Chips / badges --- */
 .chip {
     display: inline-flex; align-items: center; gap: 6px;
