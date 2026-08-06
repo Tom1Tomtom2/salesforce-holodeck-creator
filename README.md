@@ -1,11 +1,14 @@
 # site-web-story
 
-Skill Claude Code qui construit un **site de démo narratif** : un parcours client de
+Skill Claude Code qui construit un **site de démo Salesforce narratif** : un parcours client de
 marque raconté en plusieurs « actes » (pub Instagram → configurateur → landing →
 WhatsApp → Data Cloud → console SAV…), en HTML/CSS artisanal. Zéro serveur, zéro clé API.
 
 Elle crawle le site de la marque avec un vrai navigateur (logo, images produit HD,
 palette, typo), puis génère un site statique navigable depuis un manifest JSON.
+Un brief complémentaire peut préciser l'audience, l'objectif, la durée et les produits
+Salesforce ; il reste facultatif. Le build produit aussi des notes présentateur et une
+planche de revue visuelle.
 
 ## Installation sur une nouvelle machine
 
@@ -42,9 +45,12 @@ La skill est conversationnelle en 3 phases (ambiance → story validée en chat 
 |---|---|---|
 | `scripts/build_site.py` | génère le site depuis un manifest | aucune (stdlib, Python 3.10+) |
 | `scripts/crawl_brand.py` | crawle logo + images + palette | playwright + un navigateur |
+| `scripts/review_site.py` | capture le hub et contrôle le rendu | playwright + un navigateur |
 | `templates/*.html` | bibliothèque d'écrans à chrome verrouillée | — |
 
 Vérification rapide après install :
 ```
-python3 <chemin>/scripts/build_site.py --selfcheck   # doit afficher "selfcheck OK"
+python3 <chemin>/scripts/build_site.py --selfcheck
+python3 <chemin>/scripts/crawl_brand.py --selfcheck
+python3 <chemin>/scripts/review_site.py --selfcheck
 ```

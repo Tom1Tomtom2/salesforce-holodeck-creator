@@ -2,6 +2,7 @@
 #
 # build_site.py (génération du site) : AUCUNE dépendance — stdlib pure, Python 3.10+.
 # crawl_brand.py (crawl de marque)   : playwright, ci-dessous.
+# review_site.py (revue visuelle)    : playwright, ci-dessous.
 #
 # Installation du crawler (une fois par machine) :
 #   pip install -r requirements.txt

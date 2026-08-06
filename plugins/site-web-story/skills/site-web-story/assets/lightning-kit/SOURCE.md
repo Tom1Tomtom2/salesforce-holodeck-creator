@@ -1,7 +1,7 @@
 # Instantané vendoré du Lightning Demo Component Kit
 
-Ces fichiers sont une **copie** du kit de composants `<lc-*>` maintenu ailleurs :
-`~/.aisuite/notebook/.agents/artifacts/lightning-component-kit/`.
+Ces fichiers sont un **instantané autonome** du kit de composants `<lc-*>` utilisé
+par la skill. Le plugin Claude n'a besoin d'aucun chemin externe pour les charger.
 
 Ils sont vendorés ici pour que la skill soit **distribuable via le marketplace Git**
 (un chemin hors-repo ne se partagerait pas). `build_site.py` les bundle (retire
@@ -13,8 +13,11 @@ Fichiers actuels : `lightning-components.{js,css}` (base : `JsonComponent`, `esc
 `sales-components.js`, `marketing-components.js`. `kit_js_files()` fait de la **découverte
 auto par glob** → un nouveau `*-components.js` déposé ici est bundlé sans toucher au code.
 
-## Re-sync quand le kit source évolue
-    KIT=~/.aisuite/notebook/.agents/artifacts/lightning-component-kit
+## Re-sync pour les mainteneurs quand le kit source évolue
+
+Depuis une copie locale du kit amont :
+
+    KIT=/chemin/vers/lightning-component-kit
     cp "$KIT"/*-components.js ./          # tous les fichiers de composants
     cp "$KIT/lightning-components.js" ./   # + le fichier base (pas suffixé -components)
     cp "$KIT/lightning-components.css" ./

@@ -1,11 +1,11 @@
 {
   "name": "site-web-story",
-  "version": "1.8.1",
-  "description": "Construit un site web de démo narratif — parcours client de marque en actes, HTML/CSS artisanal. Crawl de marque (logo, images produit, palette) via navigateur headless, puis génération d'un site statique navigable depuis un manifest JSON.",
+  "version": "1.9.0",
+  "description": "Construit des démonstrations client Salesforce narratives à partir de templates HTML/CSS, avec brief facultatif, chapitres, notes présentateur et revue visuelle automatisée.",
   "author": {
     "name": "Thomas Damiens"
   },
   "license": "MIT",
-  "keywords": ["demo", "storytelling", "salesforce", "crawler", "holodeck"],
+  "keywords": ["demo", "storytelling", "salesforce", "crawler", "presenter-notes", "visual-review"],
   "skills": "./skills/"
 }

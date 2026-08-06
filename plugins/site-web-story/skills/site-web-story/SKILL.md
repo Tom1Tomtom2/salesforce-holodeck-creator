@@ -1,8 +1,8 @@
 ---
 name: site-web-story
 description: |
-  Construit un site web de démo narratif — un parcours client de marque en
-  plusieurs "actes" — 100% écrit à la main par Claude en HTML/CSS artisanal
+  Construit un site web de démo Salesforce narratif — un parcours client de
+  marque en plusieurs "actes" — à partir d'une bibliothèque HTML/CSS artisanale
   (chrome Instagram/WhatsApp/console/email dessinée en markup, animations CSS).
   Mode conversationnel en 3 phases : marque + URL → ambiance + story validée en
   chat → génération d'un dossier de site statique navigable (hub + une page par
@@ -16,15 +16,16 @@ description: |
   DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
   vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
   production ; simple diagramme ou slide unique.
-version: "1.8.1"
+version: "1.9.0"
 ---
 
 # Site Web Story
 
 Skill conversationnelle. **Tu es l'orchestrateur.** Le livrable est un dossier de
-site statique où chaque écran est du HTML/CSS que **tu écris à la main** — pas
-d'images générées, pas de serveur. Suis les 3 phases dans l'ordre. N'avance pas à
-la phase suivante sans validation de l'utilisateur.
+site statique assemblé depuis des templates HTML/CSS artisanaux. Tu écris le brief,
+la narration et le manifest ; `build_site.py` assemble les écrans. Pas d'images
+générées, pas de serveur applicatif. Suis les 3 phases dans l'ordre. N'avance pas
+à la phase suivante sans validation de l'utilisateur.
 
 Cette skill est le pendant "artisanal" du holodeck `app.py` (qui, lui, reskine des
 captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
@@ -42,6 +43,9 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `references/screens.md` — table canal → template + liste des SLOTs de chaque template.
 - `references/fidelite-salesforce.md` — grille de relecture des écrans **desktop Salesforce**
   (crédibilité du shell Lightning, dimensions de référence, pièges à éviter). Passe-la sur ces écrans.
+- `references/story-recipes.md` — recettes narratives prêtes à adapter (acquisition,
+  service, vente B2B, Field Service, marketing, pilotage). Utilise-les comme accélérateur,
+  jamais comme catalogue automatique.
 - `scripts/build_site.py` — assemble le site depuis un manifest JSON (copie les
   templates, injecte les SLOTs, réécrit les tokens, génère le hub). **C'est lui qui
   écrit le HTML, pas toi.**
@@ -49,6 +53,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
   (Chromium/Chrome headless furtif) et pré-remplit la Phase 1 : logo, images produit
   HD, palette, typo, secteur. **À lancer avant de proposer l'ambiance.** WebFetch/curl
   échouent sur les sites de marque (anti-bot CDN → 503) ; ce script exécute le JS et passe.
+- `scripts/review_site.py` — ouvre le build dans Chromium, capture chaque écran et le
+  hub, produit une planche contact et remonte les erreurs visibles avant restitution.
 
 ---
 
@@ -78,6 +84,18 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    cahier des charges dit **quoi** démontrer, le crawl + la recherche disent **à quoi ça ressemble**.
 
 1. Demande **le nom de la marque** et **l'URL du site** (si pas déjà donnés).
+   Propose ensuite un **brief facultatif**, dans le même message, sans bloquer la suite :
+   - audience du pitch (direction, métier, IT, mixte),
+   - objectif du rendez-vous,
+   - durée cible de la démo,
+   - tension métier à illustrer,
+   - produits Salesforce imposés ou à éviter,
+   - faits/chiffres fournis et sujets sensibles à ne pas inventer.
+
+   Formulation attendue : « Si tu veux mieux cibler la démo, tu peux aussi me donner
+   l'audience, l'objectif, la durée et les produits à mettre en avant. C'est facultatif ;
+   sinon je les déduis de la marque et je te soumets mes hypothèses. » Ne pose pas six
+   questions successives et ne retarde jamais le crawl en attendant ces réponses.
 2. **Crawle le site** (n'utilise PAS WebFetch : les sites de marque renvoient 503 à un
    client sans JS) :
    ```bash
@@ -85,7 +103,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    ```
    Il écrit `./<slug>-brand/` : `brand.json` (accent proposé, typo, secteur, CTA détectés),
    `logo.*`, et `product-N.*` (visuels produit HD). **Lis `brand.json`** pour l'ambiance.
-   Regarde les `product-N.*` (`Read`) pour repérer les modèles/produits réels.
+   Inspecte les `product-N.*` avec l'outil de lecture de fichiers/images disponible
+   dans Claude Code pour repérer les modèles/produits réels.
    - **Ce 1er crawl est « à l'aveugle »** (il tourne AVANT qu'on sache quels produits l'histoire va
      montrer) : il ramasse le logo, la palette, et quelques visuels de la home pour l'ambiance. Les
      **images produit EXACTES** se récupèrent en 2e passe, après la story validée (voir Phase 3 §1bis).
@@ -125,14 +144,14 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    pas juste à son catalogue). C'est de la synthèse — pas de parsing : tu lis et tu résumes.
    - **Google News (source de tête, passe l'anti-bot)** — presse récente et datée :
      ```
-     WebFetch https://news.google.com/rss/search?q=<Marque>+stratégie&hl=fr&gl=FR&ceid=FR:fr
+     Ouvre https://news.google.com/rss/search?q=<Marque>+stratégie&hl=fr&gl=FR&ceid=FR:fr
      ```
      Demande dans le prompt : les titres/sources/dates récents + 3 puces d'enjeux
      (croissance, international, retail vs digital, positionnement prix, durabilité, levée de fonds).
    - **Wikipédia en complément** (`fr.wikipedia.org/wiki/<Marque>`) : création, fondateur·rice,
      modèle éco (DTC / digital-first / boutiques), extensions de gamme, présence internationale, chiffres clés.
-   - **Le site de marque lui-même** (pages `/à-propos`, `/engagements`, `/mission`) est souvent en **403
-     sur WebFetch** (même anti-bot que le crawl). N'insiste pas : Google News + Wikipédia suffisent.
+    - **Le site de marque lui-même** (pages `/à-propos`, `/engagements`, `/mission`) est souvent en **403
+      avec les outils web simples** (même anti-bot que le crawl). N'insiste pas : Google News + Wikipédia suffisent.
    - **Contrat données réelles** : ne cite que ce que les sources disent ; date les faits ; si une source
      manque (marque confidentielle, pas de page Wikipédia), dis-le et déduis prudemment du secteur — n'invente
      pas de chiffre ni de levée de fonds. Voir la règle « données réelles » de la mémoire projet.
@@ -143,7 +162,13 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    - typo : mappe la `title_font` détectée sur la Google Font la plus proche (une police
      propriétaire type « AudiType » n'est pas sur Google Fonts → prends l'équivalent : ici Inter),
    - 1 phrase de positionnement, appuyée sur le secteur/produits vus dans les images **et sur la lecture stratégique**.
-5. Demande validation / ajustement (couleur **et** angle stratégique) avant de continuer.
+5. Montre aussi une **planche d'usage des assets** : pour chaque logo/photo retenu,
+   indique l'écran pressenti et le cadrage (hero, carré, portrait, fond). Signale les
+   visuels manquants ou mal adaptés plutôt que de forcer une image médiocre.
+6. Reformule les éventuelles réponses au brief en une fiche courte. Quand le brief est
+   absent, écris explicitement 2-4 hypothèses de travail faciles à corriger.
+7. Demande validation / ajustement (couleur, assets, angle stratégique et hypothèses)
+   avant de continuer.
 
 ## Phase 2 — Story (validée en chat, pas de formulaire web)
 
@@ -155,14 +180,32 @@ le mapping de valeur Salesforce répondent à la tension clé de la marque (ex. 
 des boutiques → unification web↔magasin par Data Cloud ; positionnement premium/prix juste →
 fidélité plutôt que promo ; expansion internationale → activation multi-marché). Structure :
 
-- **Persona** : prénom, profil en 1 ligne (âge, contexte, ce qu'il cherche).
-- **N actes** (vise 5–8), chacun :
+- **Thèse de démo** : une phrase causale qui résume toute l'histoire (« Parce que X,
+  le client fait Y ; Salesforce détecte Z, déclenche A et produit B. »).
+- **Persona** : prénom, profil en 1 ligne (âge, contexte, ce qu'il cherche). Vise un
+  protagoniste principal ; deux maximum sauf si la démo comporte des chapitres explicites.
+- **N actes** (vise 5–7, ou 3–4 pour une démo express), chacun :
   - `acte` (libellé, ex. « Acte 1 · Réengagement »),
   - `titre` court de l'écran,
   - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard · **lightning-sales / lightning-record / lightning-dashboard / lightning-fieldservice** (écrans Salesforce riches),
   - `moment` (1 phrase : ce qui se passe),
+  - `trigger` (ce qui déclenche l'acte),
   - `valeur` Salesforce (le produit mis en avant : Data Cloud, Marketing Cloud,
-    Agentforce, Service Cloud, MuleSoft, Commerce…).
+    Agentforce, Service Cloud, MuleSoft, Commerce…),
+  - `result` (le résultat visible pour le client ou l'employé),
+  - `transition` (la phrase qui rend l'acte suivant inévitable).
+
+Si l'histoire change de persona, de marché (B2C → B2B) ou de temporalité, crée des
+**chapitres nommés**. Ne masque jamais une seconde histoire derrière un simple « bascule
+côté… ». Chaque chapitre doit avoir un enjeu et une sortie clairs.
+
+Avant de demander la validation, passe la story dans cette revue :
+- chaque écran fait progresser l'enjeu central ;
+- chaque acte produit un résultat observable ;
+- chaque transition prépare réellement l'acte suivant ;
+- aucun écran n'existe seulement pour cocher un produit Salesforce ;
+- les noms, dates, montants, photos et statuts restent cohérents d'un écran à l'autre ;
+- les faits vérifiés, hypothèses et données fictives de démonstration sont distingués.
 
 **B2C ou B2B — adapte la grammaire de la story.** Le brief (ou le secteur) dit si la démo vise le
 grand public (B2C) ou l'entreprise (B2B). Ce n'est pas qu'un ton, ça change la structure :
@@ -212,7 +255,7 @@ plus précis que les visuels « à l'aveugle » de la Phase 1. **Uniquement si `
    demande l'URL/le fichier à l'utilisateur. Un visuel générique vaut mieux qu'une URL inventée.
 
 ### 1. Écris `manifest.json`
-Ton seul livrable créatif = les **textes de la story** répartis dans les SLOTs.
+Ton livrable créatif = la narration, les données et le cadrage répartis dans le manifest.
 Structure :
 
 ```json
@@ -221,6 +264,14 @@ Structure :
   "slug": "nova",
   "story_title": "De la découverte à la fidélité",
   "tagline": "Le parcours de Camille, écran après écran. Descendez pour le suivre.",
+  "brief": {
+    "audience": "Direction marketing et service client",
+    "objective": "Montrer la continuité acquisition → service",
+    "duration_minutes": 8,
+    "business_tension": "Les signaux web et service restent fragmentés",
+    "salesforce_focus": ["Data Cloud", "Agentforce"]
+  },
+  "thesis": "Parce que ses signaux sont réconciliés, Camille reçoit une réponse cohérente du premier clic au SAV.",
   "tokens": { "--accent": "#1c2b4a", "--accent-dark": "#12203b", "--accent-soft": "#eaf0f8" },
   "font_import": "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');",
   "intro": {
@@ -235,8 +286,19 @@ Structure :
   "screens": [
     {
       "file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
+      "chapter": "Acquérir et comprendre",
       "act": "Acte 1 · Acquisition", "title": "Publicité ciblée",
       "desc": "Récit affiché à côté de l'écran dans la story (2–3 phrases).", "animated": true,
+      "trigger": "Camille montre un intérêt pour la catégorie.",
+      "result": "Le clic est rattaché à une audience connue.",
+      "transition": "Il faut maintenant transformer cet intérêt en demande qualifiée.",
+      "presenter": {
+        "duration_seconds": 40,
+        "message": "L'acquisition est déjà reliée au profil client.",
+        "show": "L'audience Data Cloud et la source du clic.",
+        "question": "Comment mesurez-vous aujourd'hui la continuité entre média et CRM ?"
+      },
+      "display": { "mode": "phone" },
       "slots": {
         "title": "Nova — Publicité ciblée",
         "act-tag": "Acte 1 · Instagram — publicité ciblée (Data Cloud → Meta)",
@@ -269,6 +331,21 @@ Règles pour le manifest :
 - **`tokens`** : accent de marque (Phase 1). `font_import` seulement si tu changes de typo.
 - **`desc`** = le **récit** affiché à côté de l'écran dans la story (2–3 phrases, incarnées par le
   persona) — c'est ce que le visiteur lit en scrollant, pas un simple résumé technique.
+- **`thesis`** = la promesse causale de la démo. Elle apparaît dans les notes présentateur
+  et sert de test de cohérence ; ne la remplace pas par une liste de produits.
+- **`brief`** = facultatif. Reprends uniquement les informations fournies ou les hypothèses
+  validées. Son absence n'empêche jamais le build.
+- **`chapter`** = facultatif. Quand sa valeur change, le hub insère un séparateur narratif.
+  Utilise-le pour les changements de persona, de marché ou de temporalité.
+- **`trigger` / `result` / `transition`** = contrat causal de l'acte. Ils alimentent les
+  notes présentateur ; `transition` peut aussi apparaître discrètement dans le récit du hub.
+- **`presenter`** = notes facultatives de l'acte : `duration_seconds`, `message`, `show`,
+  `question`. Le builder génère `presenter-notes.md` même si certaines valeurs manquent.
+- **`display`** = cadrage facultatif dans le hub :
+  - `{"mode":"phone"}` pour la coque mobile (déduit automatiquement du template),
+  - `{"mode":"full","scale":0.53}` pour agrandir/réduire un écran desktop,
+  - `{"mode":"crop","scale":0.65,"x":120,"y":60,"height":560}` pour cadrer la zone
+    importante. `x`/`y` sont des pixels source retirés avant mise à l'échelle.
 - **`url`** (écrans desktop) : ce qui s'affiche dans la barre d'adresse du cadre navigateur
   (ex. `sezane.com/le-manteau-will`, ou un libellé d'app `Data Cloud · Profil unifié`). Optionnel.
 - **`tagline`** : sous-titre du hero (1 phrase d'accroche sous le titre). Optionnel.
@@ -310,8 +387,18 @@ Un SLOT mal orthographié → **erreur explicite** : corrige le nom dans le mani
 toi-même**, même en cas d'erreur.
 
 ### 3. Restitue
-Le script imprime la liste des fichiers. Invite l'utilisateur à ouvrir
-`./<slug>-story/index.html` (ou propose `preview_start` si dispo).
+Avant la restitution, lance la revue visuelle :
+```bash
+python3 scripts/review_site.py ./<slug>-story
+```
+Elle capture le hub et chaque écran dans `./<slug>-story/review/`, produit une planche
+contact `contact-sheet.html` et un rapport `review-report.json` (console, erreurs de page,
+assets cassés, débordements horizontaux). Lis le rapport et ouvre la planche contact.
+Corrige le manifest puis rebuild au moins une fois si un défaut visible ou une erreur est
+signalé. Ne présente pas un build que tu n'as pas regardé.
+
+Le script imprime la liste des fichiers. Invite ensuite l'utilisateur à ouvrir
+`./<slug>-story/index.html`. Mentionne aussi `presenter-notes.md` et la planche contact.
 
 ### Règles de qualité (ne pas simplifier)
 - Une page = un écran autonome, ouvrable seul.
@@ -327,8 +414,16 @@ Le script imprime la liste des fichiers. Invite l'utilisateur à ouvrir
 - Chaque écran garde son encart pédagogique `.why` (c'est la signature de la démo).
 
 ## Vérification
-Ouvre `index.html` : le hero porte la marque, l'écran d'intro présente les personnages et la frise,
-puis on descend acte par acte — chaque section montre le vrai écran (iframe) à côté de son récit,
-le chrome est crédible et à la marque, au moins une animation tourne, chaque écran a son encart `.why`.
-Un clic sur un écran l'ouvre en plein écran. (Le défilement « accroché » et les apparitions au scroll
-ne s'affichent qu'en Chrome/Edge ; ailleurs tout reste visible, sans animation.)
+Vérifie le rendu, pas seulement les fichiers :
+- le hero porte la marque et exprime la thèse de démo ;
+- l'intro présente les personnages et la frise ;
+- les chapitres rendent les changements de fil narratif explicites ;
+- chaque acte montre un écran lisible, un résultat métier et une transition ;
+- le chrome est crédible, les assets sont bien cadrés et aucun contenu « Nova » ne fuit ;
+- aucun texte essentiel n'est coupé dans la planche contact ;
+- `review-report.json` ne contient aucune erreur de page, console ou asset ;
+- `presenter-notes.md` permet de pitcher la démo sans réinventer les transitions ;
+- au moins une animation tourne et chaque écran conserve son encart `.why` ou panneau produit.
+
+Un clic sur un écran l'ouvre en plein écran. Le défilement « accroché » et les apparitions
+au scroll ne s'affichent qu'en Chrome/Edge ; ailleurs tout reste visible, sans animation.

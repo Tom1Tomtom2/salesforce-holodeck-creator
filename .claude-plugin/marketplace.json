@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "site-web-story",
-      "description": "Construit un site de démo narratif (parcours client de marque en actes) : crawl de marque (logo + images produit + palette via navigateur headless), puis génération d'un site statique navigable depuis un manifest. Zéro serveur, zéro clé API.",
+      "description": "Construit une démo Salesforce narrative depuis une marque et un brief facultatif, avec notes présentateur et revue visuelle automatisée.",
       "category": "productivity",
       "author": {
         "name": "Thomas Damiens"

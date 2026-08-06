@@ -1,0 +1,135 @@
+{
+  "brand": "Atelier Horizon",
+  "slug": "atelier-horizon",
+  "story_title": "Du premier signal à la relation durable",
+  "tagline": "Une démonstration courte, conçue pour un pitch direction marketing et service.",
+  "thesis": "Parce que les signaux d'intérêt et de service sont réconciliés, Léa reçoit une réponse cohérente du premier clic jusqu'au suivi conseiller.",
+  "brief": {
+    "audience": "Direction marketing et service client",
+    "objective": "Montrer la continuité entre acquisition, connaissance client et accompagnement",
+    "duration_minutes": 5,
+    "business_tension": "Les interactions média et CRM restent fragmentées",
+    "salesforce_focus": [
+      "Data Cloud",
+      "Marketing Cloud",
+      "Agentforce"
+    ]
+  },
+  "tokens": {
+    "--accent": "#8A3D5D",
+    "--accent-dark": "#542238",
+    "--accent-soft": "#F7EAF0"
+  },
+  "intro": {
+    "kicker": "La démonstration",
+    "title": "Une cliente reconnue, une équipe mieux guidée",
+    "lede": "Léa découvre une collection, partage son intention puis retrouve une expérience cohérente quand elle échange avec la marque.",
+    "cast": [
+      {
+        "name": "Léa",
+        "role": "La cliente",
+        "bio": "Cherche une pièce durable et hésite avant de prendre rendez-vous.",
+        "image": "people/femme-1.jpg"
+      },
+      {
+        "name": "Maya",
+        "role": "La conseillère",
+        "bio": "Prépare le rendez-vous à partir du contexte unifié de Léa.",
+        "image": "people/femme-2.jpg"
+      }
+    ]
+  },
+  "screens": [
+    {
+      "file": "acte1-instagram.html",
+      "template": "instagram",
+      "channel": "Instagram",
+      "chapter": "Comprendre l'intention",
+      "act": "Acte 1 · Découverte",
+      "title": "Une création qui résonne",
+      "desc": "Léa découvre une création Atelier Horizon dans son fil. La publicité n'est pas isolée : la campagne, l'audience et le clic sont déjà reliés au même parcours.",
+      "trigger": "Léa manifeste un intérêt pour une collection durable.",
+      "result": "Le clic est rattaché à la bonne campagne et à une intention exploitable.",
+      "transition": "La marque doit maintenant transformer cet intérêt en demande explicite.",
+      "presenter": {
+        "duration_seconds": 35,
+        "message": "L'acquisition devient le premier signal d'une relation, pas une métrique isolée.",
+        "show": "L'encart Data Cloud et la provenance du clic.",
+        "question": "Pouvez-vous aujourd'hui relier un clic média à la suite du parcours ?"
+      },
+      "slots": {
+        "title": "Atelier Horizon — Découverte ciblée",
+        "act-tag": "Acte 1 · Acquisition — Data Cloud vers Meta",
+        "stories": "<div class=\"stories\"><div class=\"story\"><div class=\"ring\"><div class=\"in\"></div></div><div class=\"lbl\">Votre story</div></div><div class=\"story brand\"><div class=\"ring\"><div class=\"in\">A</div></div><div class=\"lbl\">atelier.horizon</div></div><div class=\"story\"><div class=\"ring\"><div class=\"in\"></div></div><div class=\"lbl\">design</div></div><div class=\"story\"><div class=\"ring\"><div class=\"in\"></div></div><div class=\"lbl\">matières</div></div></div>",
+        "post": "<div class=\"post-head\"><div class=\"av\">A</div><div><div class=\"nm\">atelier.horizon</div><div class=\"sp\">Sponsorisé</div></div></div><div class=\"post-img\"><div class=\"veil\"></div><div class=\"cap-in\"><div class=\"eyebrow\">Collection Horizon · série limitée</div><h2>Une pièce durable,<br>pensée pour vous.</h2></div></div><div class=\"cta-strip\"><span class=\"t\">Découvrir la collection →</span><span class=\"go\">En savoir plus</span></div><div class=\"post-actions\"><span>♡</span><span>○</span><span>⌁</span><span class=\"spacer\"></span><span>⌑</span></div><div class=\"post-meta\"><span class=\"likes\">1 284 j'aime</span></div><div class=\"post-caption\"><span class=\"nm\">atelier.horizon</span> Des matières choisies, une coupe faite pour durer.</div>",
+        "why": "<div class=\"why\"><span class=\"q\">?</span><div class=\"t\">Léa appartient à une audience d'intérêt activée depuis <b>Salesforce Data Cloud</b>. Le clic reste rattaché à la campagne et au parcours.</div></div>"
+      }
+    },
+    {
+      "file": "acte2-landing.html",
+      "template": "landing-capture",
+      "channel": "Site",
+      "chapter": "Comprendre l'intention",
+      "act": "Acte 2 · Identification",
+      "title": "Une demande sans doublon",
+      "desc": "Léa demande un rendez-vous. Son appareil anonyme et son adresse email sont réconciliés en un profil unique, sans créer une nouvelle fiche incohérente.",
+      "trigger": "Le clic média devient une demande de rendez-vous.",
+      "result": "La demande enrichit le profil existant et conserve sa provenance.",
+      "transition": "Cette identité unifiée peut maintenant guider une communication réellement utile.",
+      "presenter": {
+        "duration_seconds": 45,
+        "message": "Data Cloud évite le doublon au moment où l'intention devient identifiable.",
+        "show": "La fusion appareil anonyme + email en un seul profil."
+      },
+      "slots": {
+        "title": "Atelier Horizon — Rendez-vous",
+        "act-tag": "Acte 2 · Résolution d'identité — Data Cloud",
+        "url": "atelier-horizon.example/rendez-vous",
+        "landing": "<div class=\"lp\"><span class=\"brand\"><span class=\"brand-mark\">A</span> Atelier Horizon</span><h1>Découvrez la collection en atelier.</h1><div class=\"p\">Choisissez un créneau avec une conseillère qui préparera les pièces qui vous correspondent.</div><div class=\"field filled\" id=\"f-email\">lea.martin@example.com<span class=\"cursor\" id=\"cur\"></span></div><button class=\"btn-sub\" id=\"sub\">Je choisis mon rendez-vous</button><div class=\"consent\">Consentement enregistré · préférences modifiables à tout moment.</div></div>",
+        "resolve": "<div class=\"resolve\" id=\"resolve\"><span class=\"tag\">Salesforce Data Cloud · résolution d'identité</span><h2>Une seule cliente, un parcours continu.</h2><div class=\"frag\" id=\"f1\"><div class=\"fi\">1</div><div class=\"ft\"><b>Appareil anonyme</b><div class=\"s\">a vu la campagne · a consulté la collection</div></div></div><div class=\"frag\" id=\"f2\"><div class=\"fi\">2</div><div class=\"ft\"><b>Email reconnu</b><div class=\"s\">lea.martin@example.com · demande de rendez-vous</div></div></div><div class=\"merge\" id=\"mrg\">↕</div><div class=\"unified\" id=\"uni\"><div class=\"av\"><img src=\"people/femme-1.jpg\" alt=\"Léa Martin\"></div><div class=\"u\"><b>Profil unifié — Léa Martin</b><div class=\"r\">Provenance conservée · aucun doublon</div></div><span class=\"chk\">✓</span></div></div>"
+      }
+    },
+    {
+      "file": "acte3-email.html",
+      "template": "email-marketing",
+      "channel": "Marketing Cloud",
+      "chapter": "Transformer le contexte en attention",
+      "act": "Acte 3 · Personnalisation",
+      "title": "Le bon message, au bon moment",
+      "desc": "Léa reçoit une confirmation utile qui reprend sa collection préférée et prépare son rendez-vous. Einstein aide l'équipe à formuler un message cohérent avec la marque.",
+      "trigger": "Le profil unifié entre dans le scénario de préparation du rendez-vous.",
+      "result": "Léa reçoit une communication contextualisée plutôt qu'un email générique.",
+      "transition": "La conseillère peut enfin reprendre ce contexte sans faire répéter Léa.",
+      "display": {
+        "mode": "crop",
+        "scale": 0.56,
+        "x": 80,
+        "y": 20,
+        "width": 1240,
+        "height": 760
+      },
+      "presenter": {
+        "duration_seconds": 40,
+        "message": "La personnalisation réutilise le même contexte que l'acquisition.",
+        "show": "La recommandation Einstein et le contenu du rendez-vous."
+      },
+      "slots": {
+        "title": "Atelier Horizon — Confirmation personnalisée",
+        "act-tag": "Acte 3 · Marketing Cloud — préparation du rendez-vous",
+        "email": "<div class=\"mailapp\"><div class=\"mail-top\"><div class=\"from-av\">A</div><div><div class=\"subj\">Votre rendez-vous se prépare <em>✨ objet généré par IA</em></div><div class=\"frm\">Atelier Horizon &lt;bonjour@atelier-horizon.example&gt; · à Léa</div></div></div><div class=\"email\"><div class=\"hero\"></div><div class=\"content\"><span class=\"brand\"><span class=\"brand-mark\">A</span> Atelier Horizon</span><p>Bonjour Léa,</p><p>Nous avons retenu la <span class=\"hl\">collection Horizon</span> que vous avez découverte. Maya préparera une sélection de matières et de coupes à essayer.</p><div class=\"pairing\"><div class=\"it\"><div class=\"thumb\"></div><div class=\"cap\"><b>Votre sélection</b>collection Horizon</div></div><div class=\"plus\">+</div><div class=\"it\"><div class=\"thumb\"></div><div class=\"cap\"><b>Votre rendez-vous</b>avec Maya</div></div></div><div class=\"cta-wrap\"><span class=\"btn btn--accent\">Voir mon rendez-vous</span></div></div><div class=\"footer\"><span class=\"brand\"><span class=\"brand-mark\">A</span> Atelier Horizon</span><br>Préférences · Se désabonner</div></div></div>",
+        "einstein": "<div class=\"einstein\"><div class=\"eh\"><b>Einstein Copy Insights</b></div><div class=\"eb\"><h3>Message adapté au moment</h3><p>L'objet privilégie la préparation et le conseil plutôt qu'une remise générique.</p><div class=\"chip chip--green\">Ton de marque respecté</div></div></div>"
+      }
+    }
+  ],
+  "facts": [
+    {
+      "statement": "La marque et les personnages de cet exemple sont fictifs.",
+      "source": "Exemple de validation de la skill"
+    }
+  ],
+  "assumptions": [
+    {
+      "statement": "Le rendez-vous en atelier est utilisé comme scénario illustratif."
+    }
+  ]
+}

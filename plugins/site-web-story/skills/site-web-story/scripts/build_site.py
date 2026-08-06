@@ -261,6 +261,41 @@ def _intro_block(intro: dict, screens: list) -> str:
     )
 
 
+def _chapter_section(title: str, number: int) -> str:
+    """Séparateur narratif quand la story change de persona, de marché ou de temporalité."""
+    return (
+        '<section class="chapter">\n'
+        f'    <div class="chapter-num">Chapitre {number:02d}</div>\n'
+        f'    <h2>{html.escape(title)}</h2>\n'
+        '</section>\n'
+    )
+
+
+def _desktop_frame_style(screen: dict) -> str:
+    """Variables CSS du cadrage hub. Les valeurs restent facultatives et ont des défauts pitch-friendly."""
+    display = screen.get("display") or {}
+    mode = display.get("mode", "full")
+    scale = float(display.get("scale", 0.5))
+    x = float(display.get("x", 0))
+    y = float(display.get("y", 0))
+    source_width = float(display.get("source_width", 1440))
+    source_height = float(display.get("source_height", 1100))
+    crop_width = float(display.get("width", source_width if mode == "crop" else 1440))
+    crop_height = float(display.get("height", 900 if mode == "crop" else 900))
+    frame_width = float(display.get("frame_width", min(820, crop_width * scale)))
+    frame_height = float(display.get("frame_height", crop_height * scale))
+    values = {
+        "--frame-w": f"{frame_width:g}px",
+        "--frame-h": f"{frame_height:g}px",
+        "--screen-left": f"{-x * scale:g}px",
+        "--screen-top": f"{-13 - y * scale:g}px",
+        "--screen-w": f"{source_width:g}px",
+        "--screen-h": f"{source_height:g}px",
+        "--screen-scale": f"{scale:g}",
+    }
+    return ";".join(f"{name}:{value}" for name, value in values.items())
+
+
 def _act_section(s: dict, index: int) -> str:
     """Une section .act : récit (num/titre/desc/lien) + écran réel en iframe (cadre phone ou desktop)."""
     side = " right" if index % 2 else ""
@@ -273,13 +308,20 @@ def _act_section(s: dict, index: int) -> str:
     else:
         url = html.escape(s.get("url", s.get("channel", "")))
         bar = f'<div class="bar"><i></i><i></i><i></i><span class="url">{url}</span></div>'
-        frame = f'<div class="frame desktop">{open_link}{bar}{iframe}</div>'
+        frame = f'<div class="frame desktop" style="{_desktop_frame_style(s)}">{open_link}{bar}{iframe}</div>'
+    transition = s.get("transition", "")
+    transition_block = (
+        f'        <div class="transition"><b>Et maintenant</b>{html.escape(transition)}</div>\n'
+        if transition else ""
+    )
     return (
         f'<section class="act{side}">\n'
         '    <div class="story">\n'
         f'        <div class="num">{html.escape(s.get("act",""))}</div>\n'
         f'        <h2>{html.escape(s.get("title",""))}</h2>\n'
         f'        <p class="desc">{html.escape(s.get("desc",""))}</p>\n'
+        + transition_block
+        +
         f'        <a class="go" href="{f}" target="_blank">Ouvrir l\'écran '
         '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">'
         '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>\n'
@@ -290,14 +332,98 @@ def _act_section(s: dict, index: int) -> str:
 
 
 def build_hub(template: str, brand: str, story_title: str, screens: list,
-              tagline: str = "", intro: dict | None = None) -> str:
+              tagline: str = "", intro: dict | None = None, thesis: str = "") -> str:
     """Assemble la page story : hero (placeholders) + intro + une section .act par écran."""
-    body = _intro_block(intro or {}, screens) + "\n".join(_act_section(s, i) for i, s in enumerate(screens))
+    sections = []
+    previous_chapter = None
+    chapter_number = 0
+    for index, screen in enumerate(screens):
+        chapter = screen.get("chapter")
+        if chapter and chapter != previous_chapter:
+            chapter_number += 1
+            sections.append(_chapter_section(chapter, chapter_number))
+            previous_chapter = chapter
+        sections.append(_act_section(screen, index))
+    body = _intro_block(intro or {}, screens) + "\n".join(sections)
     head, _, _ = template.partition("<!-- BUILD:")
     hub = head + body + "\n</body>\n</html>\n"
+    thesis_block = f'<p class="thesis">{html.escape(thesis)}</p>' if thesis else ""
     return (hub.replace("{{BRAND}}", html.escape(brand))
                .replace("{{STORY_TITLE}}", html.escape(story_title))
-               .replace("{{TAGLINE}}", html.escape(tagline or "")))
+               .replace("{{TAGLINE}}", html.escape(tagline or ""))
+               .replace("{{THESIS_BLOCK}}", thesis_block))
+
+
+def build_presenter_notes(manifest: dict) -> str:
+    """Notes internes prêtes à pitcher, dérivées du même contrat causal que le hub."""
+    lines = [
+        f'# Notes présentateur — {manifest.get("brand", "")}',
+        "",
+        f'## {manifest.get("story_title", "Story")}',
+        "",
+    ]
+    if manifest.get("thesis"):
+        lines += [f'**Thèse de démo :** {manifest["thesis"]}', ""]
+    brief = manifest.get("brief") or {}
+    if brief:
+        labels = {
+            "audience": "Audience",
+            "objective": "Objectif",
+            "duration_minutes": "Durée cible",
+            "business_tension": "Tension métier",
+            "salesforce_focus": "Produits Salesforce",
+        }
+        lines += ["## Brief validé", ""]
+        for key, label in labels.items():
+            value = brief.get(key)
+            if value in (None, "", []):
+                continue
+            if isinstance(value, list):
+                value = ", ".join(str(item) for item in value)
+            suffix = " min" if key == "duration_minutes" else ""
+            lines.append(f'- **{label} :** {value}{suffix}')
+        lines.append("")
+    current_chapter = None
+    total_seconds = 0
+    for index, screen in enumerate(manifest.get("screens", []), 1):
+        chapter = screen.get("chapter")
+        if chapter and chapter != current_chapter:
+            lines += [f'## Chapitre — {chapter}', ""]
+            current_chapter = chapter
+        presenter = screen.get("presenter") or {}
+        duration = int(presenter.get("duration_seconds", 45))
+        total_seconds += duration
+        lines += [
+            f'### {screen.get("act", f"Acte {index}")} — {screen.get("title", "")}',
+            "",
+            f'**Durée indicative :** {duration} s',
+            "",
+        ]
+        fields = [
+            ("Déclencheur", screen.get("trigger")),
+            ("Message clé", presenter.get("message") or screen.get("result")),
+            ("À montrer", presenter.get("show")),
+            ("Résultat visible", screen.get("result")),
+            ("Transition", screen.get("transition")),
+            ("Question client", presenter.get("question")),
+        ]
+        for label, value in fields:
+            if value:
+                lines += [f'**{label} :** {value}', ""]
+    lines += ["---", "", f'**Durée commentée estimée :** {total_seconds // 60} min {total_seconds % 60:02d} s', ""]
+    assumptions = manifest.get("assumptions") or []
+    facts = manifest.get("facts") or []
+    if facts or assumptions:
+        lines += ["## Faits et hypothèses", ""]
+        for fact in facts:
+            statement = fact.get("statement", "") if isinstance(fact, dict) else str(fact)
+            source = fact.get("source") if isinstance(fact, dict) else None
+            lines.append(f'- **Vérifié :** {statement}' + (f' — {source}' if source else ""))
+        for assumption in assumptions:
+            statement = assumption.get("statement", "") if isinstance(assumption, dict) else str(assumption)
+            lines.append(f'- **Hypothèse de démo :** {statement}')
+        lines.append("")
+    return "\n".join(lines)
 
 
 def build(manifest: dict, root: Path = ROOT) -> Path:
@@ -360,9 +486,30 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     # 3. hub
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
     hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""),
-                    manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"))
+                    manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
+                    manifest.get("thesis", ""))
     (out / "index.html").write_text(hub, encoding="utf-8")
     written.append("index.html")
+
+    # 4. notes présentateur : livrable interne séparé, jamais affiché au client dans le hub.
+    (out / "presenter-notes.md").write_text(build_presenter_notes(manifest), encoding="utf-8")
+    written.append("presenter-notes.md")
+    (out / "build-manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    written.append("build-manifest.json")
+
+    # Les champs narratifs restent rétrocompatibles, mais leur absence doit être visible :
+    # ils ont un impact direct sur le pitch, contrairement à une simple validation technique.
+    narrative_warnings = []
+    if not manifest.get("thesis"):
+        narrative_warnings.append("thèse de démo absente")
+    for index, screen in enumerate(manifest.get("screens", []), 1):
+        missing = [key for key in ("trigger", "result", "transition") if not screen.get(key)]
+        if missing:
+            narrative_warnings.append(
+                f'acte {index} « {screen.get("title", "sans titre")} » : ' + ", ".join(missing) + " absent(s)"
+            )
 
     print(f"✓ {len(written)} fichiers écrits dans {out}/")
     for f in written:
@@ -375,6 +522,11 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
         for w in wrap_warn:
             print(f"  - {w}")
         print("  → reprends le bloc d'exemple du template : garde son <div class=\"…\"> d'ouverture.")
+    if narrative_warnings:
+        print("\n⚠ contrat narratif incomplet (le build reste autorisé) :")
+        for warning in narrative_warnings:
+            print(f"  - {warning}")
+        print("  → complète thesis + trigger/result/transition pour obtenir une démo plus facile à pitcher.")
     print(f"\nOuvre {out}/index.html dans un navigateur.")
     return out
 
@@ -385,14 +537,21 @@ def selfcheck():
         "brand": "TestCo", "slug": "__selfcheck", "story_title": "Parcours test",
         "tokens": {"--accent": "#ff0000"},
         "tagline": "TAGLINE_INJECTEE",
+        "thesis": "THESE_INJECTEE",
+        "brief": {"audience": "Direction", "duration_minutes": 5,
+                  "salesforce_focus": ["Data Cloud", "Agentforce"]},
         "intro": {"title": "INTRO_TITRE", "lede": "intro lede",
                   "cast": [{"name": "Camille", "role": "La cliente", "bio": "bio", "image": "people/femme-1.jpg"}]},
         "screens": [
             {"file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
-             "act": "Acte 1 · Test", "title": "Pub test", "desc": "desc test", "animated": True,
+             "chapter": "CHAPITRE_TEST", "act": "Acte 1 · Test", "title": "Pub test", "desc": "desc test",
+             "trigger": "DECLENCHEUR_TEST", "result": "RESULTAT_TEST", "transition": "TRANSITION_TEST",
+             "presenter": {"duration_seconds": 30, "show": "MONTRER_TEST"}, "animated": True,
              "slots": {"title": "TITRE_INJECTE", "why": "POURQUOI_INJECTE"}},
             {"file": "acte2-site.html", "template": "site-ecommerce", "channel": "sezane.com",
              "act": "Acte 2 · Test", "title": "Fiche", "desc": "desc2", "url": "test.com/produit",
+             "trigger": "trigger2", "result": "result2", "transition": "transition2",
+             "display": {"mode": "crop", "scale": 0.6, "x": 100, "y": 50, "height": 600},
              "slots": {}},
         ],
     }
@@ -413,12 +572,21 @@ def selfcheck():
             assert "POURQUOI_INJECTE" in screen, "SLOT why non injecté"
             hub = (out / "index.html").read_text(encoding="utf-8")
             assert "TAGLINE_INJECTEE" in hub, "tagline hero non injectée"
+            assert "THESE_INJECTEE" in hub, "thèse hero non injectée"
             assert "INTRO_TITRE" in hub and 'src="people/femme-1.jpg"' in hub, "section intro/personnage manquante"
+            assert "CHAPITRE_TEST" in hub and "Chapitre 01" in hub, "séparateur de chapitre manquant"
+            assert "TRANSITION_TEST" in hub, "transition narrative manquante du hub"
             assert '<span class="sl">Pub test</span>' or "Pub test" in hub, "titre écran absent du récit"
             # écran 1 (instagram) = cadre téléphone ; écran 2 (site-ecommerce) = cadre desktop, côté alterné
             assert 'class="frame phone"' in hub, "cadre téléphone manquant"
             assert 'class="frame desktop"' in hub and 'class="act right"' in hub, "cadre desktop / alternance manquant"
+            assert "--screen-scale:0.6" in hub and "--screen-left:-60px" in hub, "cadrage desktop non appliqué"
             assert 'src="acte1-instagram.html"' in hub, "iframe de l'écran manquante dans la story"
+            notes = (out / "presenter-notes.md").read_text(encoding="utf-8")
+            assert "THESE_INJECTEE" in notes and "MONTRER_TEST" in notes, "notes présentateur incomplètes"
+            assert "0 min 75 s" not in notes and "1 min 15 s" in notes, "durée présentateur mal calculée"
+            saved_manifest = json.loads((out / "build-manifest.json").read_text(encoding="utf-8"))
+            assert saved_manifest["thesis"] == "THESE_INJECTEE", "manifest de build absent ou altéré"
             # SLOT inconnu → doit lever
             try:
                 inject_slots("<x/>", {"nope": "y"}, "instagram")

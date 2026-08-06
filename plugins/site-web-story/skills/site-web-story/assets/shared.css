@@ -38,6 +38,10 @@ body {
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
 img { max-width: 100%; display: block; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid #0176d3;
+    outline-offset: 3px;
+}
 
 /* --- Wordmark texte (remplace le logo de la marque) --- */
 .brand {
@@ -193,3 +197,12 @@ img { max-width: 100%; display: block; }
 /* --- Utilitaires --- */
 .muted { color: var(--grey); }
 .mono  { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
