@@ -1,6 +1,6 @@
 {
   "name": "site-web-story",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "Crée automatiquement les holodecks et démonstrations client Salesforce narratives, avec brief facultatif, notes présentateur et revue visuelle.",
   "author": {
     "name": "Thomas Damiens"

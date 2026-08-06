@@ -109,6 +109,70 @@ KIT_I18N = [
     ("'Nothing here yet'", "'Rien pour l’instant'"),
     ("'Edit record'", "'Modifier l’enregistrement'"),
     ("|| 'Save'", "|| 'Enregistrer'"),
+    # — Marketing Cloud (marketing-components.js) : câblé par lightning-marketing.html —
+    # campaign-workspace
+    (">Open Flow</button>", ">Ouvrir le flux</button>"),
+    (">Activate</button>", ">Activer</button>"),
+    ("<span>Status</span>", "<span>Statut</span>"),
+    ("<span>Owner</span>", "<span>Propriétaire</span>"),
+    ("<span>Flow Type</span>", "<span>Type de flux</span>"),
+    ("<h3>Start: Segments (", "<h3>Départ : segments ("),
+    (" people</small>", " personnes</small>"),
+    # statut du message → couleur "Ready" ; le manifest FR utilise "Prêt", on aligne la sentinelle
+    ("message.status === 'Ready'", "message.status === 'Prêt'"),
+    # journey-builder
+    (">Debug</button>", ">Déboguer</button>"),
+    (">Save As New Version</button>", ">Enregistrer comme nouvelle version</button>"),
+    (">Save</button>", ">Enregistrer</button>"),        # aussi email-studio (2 occurrences)
+    ("<strong>Add Element</strong>", "<strong>Ajouter un élément</strong>"),
+    ('placeholder="Search..."', 'placeholder="Rechercher..."'),
+    ('aria-label="Add element after ', 'aria-label="Ajouter un élément après '),
+    ('aria-label="Search journey elements"', 'aria-label="Rechercher des éléments de parcours"'),
+    ('aria-label="Close element picker"', 'aria-label="Fermer le sélecteur d’éléments"'),
+    ('aria-label="Zoom out"', 'aria-label="Dézoomer"'),
+    ('aria-label="Fit journey"', 'aria-label="Ajuster le parcours"'),
+    ('aria-label="Zoom in"', 'aria-label="Zoomer"'),
+    # email-studio (panneau Agentforce = clin d'œil produit)
+    ("<span>Last saved a few seconds ago</span>", "<span>Enregistré il y a quelques secondes</span>"),
+    ("View Mode <select", "Mode d’affichage <select"),
+    ("<h2>Components</h2>", "<h2>Composants</h2>"),
+    ('placeholder="Search"', 'placeholder="Rechercher"'),
+    ('aria-label="Search email components"', 'aria-label="Rechercher des composants email"'),
+    ("<span>Subject Line</span>", "<span>Objet</span>"),
+    ("<span>Preheader</span>", "<span>Pré-en-tête</span>"),
+    (">Apply</button>", ">Appliquer</button>"),
+    (">Try Again</button>", ">Réessayer</button>"),
+    ('placeholder="Describe your task or ask a question..."', 'placeholder="Décrivez votre tâche ou posez une question..."'),
+    (">Ask Agentforce</span>", ">Demander à Agentforce</span>"),
+    # segment-builder (panneau Einstein = clin d'œil produit)
+    ("<span>Segment On</span>", "<span>Segmenter sur</span>"),
+    (">Save Segment</button>", ">Enregistrer le segment</button>"),
+    (">Attributes</button>", ">Attributs</button>"),
+    ('aria-label="Search segment attributes"', 'aria-label="Rechercher des attributs de segment"'),
+    ("<h3>Related Attributes</h3>", "<h3>Attributs liés</h3>"),
+    ('aria-label="Refresh segment population"', 'aria-label="Actualiser la population du segment"'),
+    ("<span>Segment Population</span>", "<span>Population du segment</span>"),
+    ("% of ${Number(data.totalPopulation)", "% de ${Number(data.totalPopulation)"),
+    (" total population</small>", " de population totale</small>"),
+    (".toLocaleString('en-US')", ".toLocaleString('fr-FR')"),   # nombres au format FR (espaces)
+    (">+ Add condition</button>", ">+ Ajouter une condition</button>"),
+    ("<span>Count</span>", "<span>Nombre</span>"),
+    (">Include</button>", ">Inclure</button>"),
+    (">Exclude</button>", ">Exclure</button>"),
+    (">Regenerate</button>", ">Régénérer</button>"),
+    (">Explain Attributes</button>", ">Expliquer les attributs</button>"),
+    (">Ask Einstein about this segment</span>", ">Demander à Einstein à propos de ce segment</span>"),
+    # marketing-performance
+    ("Content <select", "Contenu <select"),
+    ("<option>All</option>", "<option>Tout</option>"),
+    ("<option>Campaign</option>", "<option>Campagne</option>"),
+    ("<option>Transactional</option>", "<option>Transactionnel</option>"),
+    ("<h3>Successful Send Details</h3>", "<h3>Détail des envois réussis</h3>"),
+    ("<th>Campaign Name</th><th>Channel</th><th>Sent</th><th>Delivered</th><th>Opens</th><th>Clicks</th><th>CTR</th><th>Revenue</th>",
+     "<th>Nom de la campagne</th><th>Canal</th><th>Envoyés</th><th>Délivrés</th><th>Ouvertures</th><th>Clics</th><th>Taux de clic</th><th>Revenu</th>"),
+    # valeurs par DÉFAUT (fuient si le manifest omet le champ)
+    ("|| 'Campaign'", "|| 'Campagne'"),
+    ("|| 'Marketing Campaign'", "|| 'Campagne marketing'"),
 ]
 
 

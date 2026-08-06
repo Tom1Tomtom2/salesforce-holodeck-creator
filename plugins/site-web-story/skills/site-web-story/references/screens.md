@@ -32,6 +32,7 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Fiche client CRM 360 (Lightning composable) | `lightning-record.html` | desktop | Agentforce — meilleure action suivante (`lc-ai-recommendation`) | interactions du kit (toast, checklist) |
 | Tableau de bord CRM Analytics | `lightning-dashboard.html` | desktop | Einstein — insight sur les indicateurs | graphiques SVG (donut/jauge/courbe) |
 | Field Service (répartition, interventions) | `lightning-fieldservice.html` | desktop | Einstein — optimisation de tournée / conflit | carte + Gantt de dispatch |
+| Marketing Cloud (campagne, parcours, e-mail, segment) | `lightning-marketing.html` | desktop | Agentforce (email studio) / Einstein (segment) | canvas de parcours + sparklines |
 
 `datacloud-pipeline.html` couvre 3 scènes du même gabarit (acquisition « lookalike »,
 activation d'audience vers Meta, re-segmentation post-événement) : n'adapte que les SLOTs
@@ -77,6 +78,8 @@ que le JSON, jamais la structure du composant**. Le header Lightning (`sf-*`) es
 - **lightning-record.html** (fiche client 360) — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `header` (`lc-record-header`), `customer` (`lc-customer-360`), `related` (`lc-related-list`), `feed` (`lc-engagement-feed`), `assistant` (`lc-ai-recommendation` = **Agentforce, clin d'œil produit, garde-le**)
 - **lightning-dashboard.html** (tableau de bord) — `title`, `act-tag`, `sf-*`, `heading`, `filters` (`lc-dashboard-filters`), `kpis` (`lc-kpi-grid`), `donut` (`lc-chart-donut`), `gauge` (`lc-chart-gauge`), `trend` (`lc-chart-line`), `bars` (`lc-chart-bar`), `leaderboard` (`lc-leaderboard`), `insight` (`lc-ai-recommendation` = **Einstein, clin d'œil, garde-le**)
 - **lightning-fieldservice.html** (Field Service) — `title`, `act-tag`, `sf-*`, `heading`, `roster` (`lc-technician-roster`), `appointment` (`lc-service-appointment`), `dispatch` (`lc-dispatch-console`), `map` (`lc-map`), `workorder` (`lc-work-order`), `parts` (`lc-parts-inventory`), `assistant` (`lc-ai-recommendation` = **Einstein optimisation, clin d'œil, garde-le**)
+- **lightning-marketing.html** (Marketing Cloud) — `title`, `act-tag`, `sf-*`, `header` (`lc-marketing-header`), `campaign` (`lc-campaign-workspace`), `journey` (`lc-journey-builder`), `email` (`lc-email-studio`), `segment` (`lc-segment-builder`), `performance` (`lc-marketing-performance`)
+  (**6 surfaces empilées en 1/1, chacune RETIRABLE** : un acte MC montre en général UNE surface — vide les SLOTs des autres pour les masquer. Ex. acte « je construis mon parcours » → garde `header`+`campaign`+`journey`, vide `email`/`segment`/`performance`. Le panneau **Agentforce** de `email` et le panneau **Einstein** de `segment` sont les clins d'œil produit : garde-les quand la surface est affichée. `journey` : les nœuds se placent sur une grille `row`/`column` reliée par un connecteur SVG **fixe** — garde le schéma start→email→wait→decision→3 branches→…→end, n'ajuste que les libellés.)
 
 ## B2B vs B2C — quels écrans existent
 
@@ -96,14 +99,14 @@ est **partielle** — voici l'état honnête, à annoncer à l'utilisateur en Ph
 | **Prévision (forecast) Sales Cloud** | — | ❌ **à créer** (`lc-forecast-summary/-categories/-hierarchy`, `lc-team-attainment`, `lc-pipeline-velocity`, `lc-win-rate-heatmap`) |
 | **Devis (CPQ / Revenue Cloud)** | — | ❌ **à créer** (`lc-quote-builder`, `lc-quote-approval`) |
 | Portail partenaire / Experience Cloud | — | ❌ **à créer** (aucun composant dédié — chrome à dessiner) |
-| **Marketing Cloud (campagne, parcours, e-mail studio)** | — | ❌ **à créer** (`lc-marketing-header`, `lc-campaign-workspace`, `lc-journey-builder`, `lc-email-studio`, `lc-segment-builder`, `lc-marketing-performance`) — utile B2C **et** B2B (nurturing) |
+| **Marketing Cloud (campagne, parcours, e-mail studio, segment)** | `lightning-marketing` | ✅ (câblé — 6 surfaces masquables) — utile B2C **et** B2B (nurturing) |
 
 **Règle** : si le brief réclame un écran ❌, ne l'improvise pas — signale-le et prends le ⚠️ le plus
 proche en attendant. Les composants `<lc-*>` cités existent DÉJÀ dans le kit (re-syncés) mais **ne sont
 câblés à aucun template** : créer le template = les envelopper (comme les autres `lightning-*`) +
-ajouter leurs libellés EN à `KIT_I18N` dans `build_site.py` (ces fichiers `sales`/`dashboard`/`marketing`
-ne sont PAS encore francisés — on le fait au moment de créer leur template). On construit **à partir du
-cahier des charges**, jamais d'écran spéculatif.
+ajouter leurs libellés EN à `KIT_I18N` dans `build_site.py` (les fichiers `sales`/`dashboard` ne sont
+PAS encore francisés — on le fait au moment de créer leur template ; `marketing` l'est, cf.
+`lightning-marketing`). On construit **à partir du cahier des charges**, jamais d'écran spéculatif.
 
 ## Kit de composants Lightning (`assets/lightning-kit/`)
 
