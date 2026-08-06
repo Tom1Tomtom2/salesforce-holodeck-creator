@@ -1,22 +1,24 @@
 ---
 name: site-web-story
 description: |
-  Construit un site web de démo Salesforce narratif — un parcours client de
-  marque en plusieurs "actes" — à partir d'une bibliothèque HTML/CSS artisanale
-  (chrome Instagram/WhatsApp/console/email dessinée en markup, animations CSS).
-  Mode conversationnel en 3 phases : marque + URL → ambiance + story validée en
-  chat → génération d'un dossier de site statique navigable (hub + une page par
-  écran). Zéro image générée, zéro serveur, zéro clé API. Si le crawl est bloqué,
-  demande à l'utilisateur le logo + N photos produit et embarque-les dans le site.
+  MUST TRIGGER quand l'utilisateur demande de créer, construire, préparer ou
+  générer un holodeck pour un client, une marque, un prospect, un compte ou un
+  rendez-vous commercial. Déclenche aussi pour les formulations « holodeck client »,
+  « démo holodeck », « customer demo », « démo pour le client X », « prépare-moi
+  une démo pour X », « parcours client Salesforce », « story de marque », « démo
+  comme agnès b. » ou des maquettes d'écrans Salesforce reliées par une narration.
 
-  TRIGGER quand : l'utilisateur veut un site de démo qui raconte un parcours
-  client (acquisition → boutique → SAV…), une "story de marque" cliquable,
-  "comme la démo agnès b.", des maquettes d'écrans navigables pour un pitch.
+  Construit une démonstration client Salesforce narrative depuis une marque, une
+  URL et, facultativement, un cahier des charges ou un brief. Assemble un site
+  statique en plusieurs actes à partir de templates HTML/CSS, puis génère des
+  notes présentateur et une revue visuelle automatisée. Le brief complémentaire
+  reste facultatif et ne doit jamais bloquer le démarrage.
 
-  DO NOT TRIGGER quand : holodeck à images Gemini reskinnées (c'est app.py) ;
-  vraie application Salesforce (LWC, Experience Cloud) ; site marchand réel en
-  production ; simple diagramme ou slide unique.
-version: "1.9.0"
+  DO NOT TRIGGER uniquement si l'utilisateur demande explicitement de reskinner
+  des captures avec Gemini, d'utiliser le holodeck app.py, de construire une vraie
+  application Salesforce/LWC/Experience Cloud, un site marchand de production,
+  ou un simple diagramme ou une slide unique.
+version: "1.9.1"
 ---
 
 # Site Web Story

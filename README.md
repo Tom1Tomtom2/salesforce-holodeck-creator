@@ -38,6 +38,8 @@ playwright install chromium
 
 Demande à Claude : « fais-moi un site-web-story pour la marque X, url https://… ».
 La skill est conversationnelle en 3 phases (ambiance → story validée en chat → génération).
+Elle s'active aussi automatiquement pour des demandes comme « prépare un holodeck pour
+le client X » ou « fais-moi une démo client Salesforce pour X ».
 
 ## Contenu
 

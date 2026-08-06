@@ -1,11 +1,11 @@
 {
   "name": "site-web-story",
-  "version": "1.9.0",
-  "description": "Construit des démonstrations client Salesforce narratives à partir de templates HTML/CSS, avec brief facultatif, chapitres, notes présentateur et revue visuelle automatisée.",
+  "version": "1.9.1",
+  "description": "Crée automatiquement les holodecks et démonstrations client Salesforce narratives, avec brief facultatif, notes présentateur et revue visuelle.",
   "author": {
     "name": "Thomas Damiens"
   },
   "license": "MIT",
-  "keywords": ["demo", "storytelling", "salesforce", "crawler", "presenter-notes", "visual-review"],
+  "keywords": ["holodeck", "customer-demo", "demo", "storytelling", "salesforce", "crawler", "presenter-notes", "visual-review"],
   "skills": "./skills/"
 }
