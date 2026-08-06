@@ -17,8 +17,10 @@ class LcB2bCommerceHome extends JsonComponent {
 class LcAgentOverlay extends JsonComponent {
   connectedCallback() {
     this.data = this.querySelector('script[type="application/json"]') ? JSON.parse(this.querySelector('script[type="application/json"]').textContent) : {};
+    this.mode = (this.dataset.mode || this.data.mode) === 'lightning' ? 'lightning' : 'external';
     this.dialogId = `${this.id || `lc-agent-overlay-${++cgAgentOverlayCount}`}-dialog`;
     this.render();
+    if (this.mode === 'lightning') this.mountLightningLauncher();
     if (this.data.open !== false) this.open(false);
   }
 
@@ -26,10 +28,13 @@ class LcAgentOverlay extends JsonComponent {
     const data = this.data;
     const messages = (data.messages || []).map(message => `<div class="lc-overlay-message is-${escapeHtml(message.role || 'assistant')}"><span aria-hidden="true">${message.role === 'user' ? '●' : '✦'}</span><div><strong>${escapeHtml(message.author || (message.role === 'user' ? 'Vous' : data.title || 'Agentforce'))}</strong><p>${escapeHtml(message.text)}</p>${message.bullets ? `<ul>${message.bullets.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}</div></div>`).join('');
     const actions = (data.actions || []).map((action, index) => `<button type="button" data-overlay-action="${index}"><span aria-hidden="true">›</span>${escapeHtml(action.label || action)}</button>`).join('');
-    this.innerHTML = `<button class="lc-agent-launcher" type="button" aria-haspopup="dialog" aria-controls="${this.dialogId}" aria-expanded="false" data-agent-launcher><span aria-hidden="true">✦</span> ${escapeHtml(data.launchLabel || 'Demander à Agentforce')}</button><section class="lc-agent-overlay" id="${this.dialogId}" role="dialog" aria-labelledby="${this.dialogId}-title" hidden><header><div><span aria-hidden="true">✦</span><h2 id="${this.dialogId}-title">${escapeHtml(data.title || 'Agentforce')}</h2></div><button type="button" data-agent-close aria-label="Fermer Agentforce">×</button></header><div class="lc-agent-overlay__messages" role="log" aria-live="polite">${messages}</div>${actions ? `<div class="lc-agent-overlay__actions"><h3>${escapeHtml(data.actionsTitle || 'Actions recommandées')}</h3>${actions}</div>` : ''}<form><label class="lc-sr-only" for="${this.dialogId}-prompt">${escapeHtml(data.promptLabel || 'Votre demande')}</label><textarea class="lc-textarea" id="${this.dialogId}-prompt" name="prompt" placeholder="${escapeHtml(data.placeholder || 'Décrivez votre tâche ou posez une question…')}"></textarea><button type="submit" aria-label="Envoyer la demande">↑</button></form><footer>${escapeHtml(data.footer || 'Propulsé par Agentforce')}</footer></section>`;
+    const launcherContent = this.mode === 'lightning'
+      ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.1 9l6.4 2.1-6.4 2.2L12 20l-2.1-6.7-6.4-2.2L9.9 9 12 2.5Zm6.2 1.2.8 2.4 2.3.8-2.3.8-.8 2.4-.8-2.4-2.3-.8 2.3-.8.8-2.4Z"/></svg><span class="lc-sr-only">${escapeHtml(data.launchLabel || 'Ouvrir Agentforce')}</span>`
+      : `<span aria-hidden="true">✦</span> ${escapeHtml(data.launchLabel || 'Demander à Agentforce')}`;
+    this.innerHTML = `<button class="lc-agent-launcher lc-agent-launcher--${this.mode}" type="button" aria-haspopup="dialog" aria-controls="${this.dialogId}" aria-expanded="false" data-agent-launcher>${launcherContent}</button><section class="lc-agent-overlay lc-agent-overlay--${this.mode}" id="${this.dialogId}" role="dialog" aria-labelledby="${this.dialogId}-title" hidden><header><div><span aria-hidden="true">✦</span><h2 id="${this.dialogId}-title">${escapeHtml(data.title || 'Agentforce')}</h2></div><button type="button" data-agent-close aria-label="Fermer Agentforce">×</button></header><div class="lc-agent-overlay__messages" role="log" aria-live="polite">${messages}</div>${actions ? `<div class="lc-agent-overlay__actions"><h3>${escapeHtml(data.actionsTitle || 'Actions recommandées')}</h3>${actions}</div>` : ''}<form><label class="lc-sr-only" for="${this.dialogId}-prompt">${escapeHtml(data.promptLabel || 'Votre demande')}</label><textarea class="lc-textarea" id="${this.dialogId}-prompt" name="prompt" placeholder="${escapeHtml(data.placeholder || 'Décrivez votre tâche ou posez une question…')}"></textarea><button type="submit" aria-label="Envoyer la demande">↑</button></form><footer>${escapeHtml(data.footer || 'Propulsé par Agentforce')}</footer></section>`;
     this.panel = this.querySelector('.lc-agent-overlay');
     this.launcher = this.querySelector('[data-agent-launcher]');
-    this.launcher.addEventListener('click', () => this.open(true));
+    this.launcher.addEventListener('click', () => this.panel.hidden ? this.open(true) : this.close());
     this.querySelector('[data-agent-close]').addEventListener('click', () => this.close());
     this.querySelectorAll('[data-overlay-action]').forEach(button => button.addEventListener('click', () => this.emitAction('agent-overlay-action', { index: Number(button.dataset.overlayAction), action: data.actions[Number(button.dataset.overlayAction)] })));
     this.querySelector('form').addEventListener('submit', event => {
@@ -40,9 +45,16 @@ class LcAgentOverlay extends JsonComponent {
     this.addEventListener('keydown', event => { if (event.key === 'Escape' && !this.panel.hidden) this.close(); });
   }
 
+  mountLightningLauncher() {
+    const target = document.querySelector('.lightning .ln-ask');
+    if (!target) return;
+    target.replaceWith(this.launcher);
+  }
+
   open(moveFocus = true) {
     this.panel.hidden = false;
-    this.launcher.hidden = true;
+    this.launcher.hidden = this.mode === 'external';
+    this.launcher.classList.add('is-active');
     this.launcher.setAttribute('aria-expanded', 'true');
     if (moveFocus) requestAnimationFrame(() => this.querySelector('[data-agent-close]')?.focus());
   }
@@ -50,6 +62,7 @@ class LcAgentOverlay extends JsonComponent {
   close() {
     this.panel.hidden = true;
     this.launcher.hidden = false;
+    this.launcher.classList.remove('is-active');
     this.launcher.setAttribute('aria-expanded', 'false');
     this.launcher.focus();
   }

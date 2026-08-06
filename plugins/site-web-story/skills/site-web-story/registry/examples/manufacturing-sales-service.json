@@ -1,0 +1,24 @@
+{
+  "brand": "Acme Industrie",
+  "slug": "manufacturing-sales-service",
+  "story_title": "De l’engagement commercial à la continuité industrielle",
+  "tagline": "Un accord, un objectif partagé et un parc d’actifs suivi jusqu’au service.",
+  "thesis": "Parce que les engagements, les objectifs et les actifs industriels partagent le même contexte, Acme Industrie protège le revenu prévu et la disponibilité de production de Durand Équipements.",
+  "license_selection": {"mode":"industry-cloud","label":"Expérience Manufacturing Cloud","confirmed":true},
+  "tokens": {"--accent":"#174a7e","--accent-dark":"#0b2f52","--accent-soft":"#eaf2f8"},
+  "intro": {
+    "kicker": "Manufacturing Cloud",
+    "title": "Deux équipes, un même engagement industriel",
+    "lede": "Claire sécurise l’accord et distribue l’objectif ; Sofia garantit la disponibilité de la presse Atlas P400 sur le site de Lyon.",
+    "cast": [
+      {"name":"Claire Martin","role":"Responsable grands comptes","bio":"Pilote la relation commerciale avec Durand Équipements.","image":"people/femme-2.jpg"},
+      {"name":"Sofia Leroy","role":"Responsable service industriel","bio":"Coordonne garanties, maintenance et actifs installés.","image":"people/femme-3.jpg"}
+    ]
+  },
+  "screens": [
+    {"file":"acte1-accord-commercial.html","template":"manufacturing-sales-agreement","channel":"Manufacturing Cloud","chapter":"Engager","act":"Acte 1 · Claire","title":"Sécuriser l’accord Atlas 2027","desc":"Claire confronte les quantités planifiées et réalisées de la presse Atlas P400 et de son kit hydraulique HX-40. L’assistant propose un rééquilibrage sans réduire la valeur annuelle.","trigger":"Durand Équipements finalise ses volumes 2027.","result":"L’écart de deux kits est identifié et compensable.","transition":"L’accord validé doit maintenant devenir un objectif partagé par l’équipe.","persona":"Claire Martin","display":{"mode":"full","scale":0.47,"height":940},"slots":{}},
+    {"file":"acte2-objectif-compte.html","template":"manufacturing-account-target","channel":"Manufacturing Cloud","chapter":"Distribuer","act":"Acte 2 · Claire","title":"Distribuer l’objectif Durand Équipements","desc":"Claire transforme les 4,86 M€ couverts par l’accord en objectifs lisibles pour la vente d’équipements et les services. Le reste à conquérir est visible, sans rompre la responsabilité collective.","trigger":"Le plan annuel doit être affecté avant la revue de territoire.","result":"Chaque membre connaît sa contribution et sa zone.","transition":"La part services dépend directement de la disponibilité du parc installé.","persona":"Claire Martin","display":{"mode":"full","scale":0.48,"height":900},"slots":{}},
+    {"file":"acte3-service-actif.html","template":"manufacturing-asset-service","channel":"Asset Service + Garanties","chapter":"Protéger","act":"Acte 3 · Sofia","title":"Confirmer la couverture de la presse Atlas P400","desc":"Sofia retrouve l’identité de la presse P400-FR-00842, sa garantie, son contrat Gold, le dossier de vibration et l’intervention planifiée. Le même actif relie revenu de service et continuité de la ligne 3.","trigger":"Une vibration de l’axe principal exige une maintenance préventive.","result":"La couverture est confirmée et l’intervention respecte le délai contractuel.","transition":"Pour intervenir sans risque, Sofia doit situer la presse dans l’installation complète.","persona":"Sofia Leroy","display":{"mode":"full","scale":0.45,"height":1080},"slots":{}},
+    {"file":"acte4-hierarchie-actifs.html","template":"manufacturing-asset-hierarchy","channel":"Asset Service","chapter":"Comprendre","act":"Acte 4 · Sofia","title":"Parcourir la hiérarchie du site de Lyon","desc":"Sofia recherche la presse puis parcourt au clavier le site, la ligne de formage et les équipements associés. Elle confirme que le convoyeur CX-90 et le kit HX-40 appartiennent au même ensemble opérationnel.","trigger":"La préparation technique exige une vue des dépendances de la ligne 3.","result":"Le périmètre d’intervention est compris avant l’arrivée du technicien.","transition":"L’équipe peut maintenir la ligne sans compromettre la production planifiée.","persona":"Sofia Leroy","display":{"mode":"full","scale":0.49,"height":900},"slots":{}}
+  ]
+}

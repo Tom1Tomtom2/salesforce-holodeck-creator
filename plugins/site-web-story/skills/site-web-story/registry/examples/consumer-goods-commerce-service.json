@@ -4,6 +4,7 @@
   "story_title": "Du réassort du magasin au service proactif",
   "tagline": "Commerce B2B, connaissance du compte et actifs connectés dans un même parcours.",
   "thesis": "Parce que les commandes, la performance commerciale et la télémétrie des équipements partagent le même contexte, Agentforce peut prévenir les ruptures, préparer les revues de compte et accélérer la résolution de service.",
+  "license_selection": {"mode":"industry-cloud","label":"Expérience Consumer Goods Cloud","confirmed":true},
   "tokens": {
     "--accent": "#087c69",
     "--accent-dark": "#063d54",
@@ -14,9 +15,9 @@
     "title": "Une relation continue entre la marque, le point de vente et le service",
     "lede": "Nadia commande pour son café ; Camille pilote le compte et le réseau ; Alex intervient avant que la machine ne tombe en panne.",
     "cast": [
-      {"name": "Nadia", "role": "Responsable de point de vente", "bio": "Réapprovisionne Café République."},
-      {"name": "Camille", "role": "Responsable de compte", "bio": "Développe Urban Coffee et son réseau."},
-      {"name": "Alex", "role": "Agent de service", "bio": "Diagnostique les incidents et coordonne les interventions."}
+      {"name": "Nadia", "role": "Responsable de point de vente", "bio": "Réapprovisionne Café République.", "image": "people/femme-1.jpg"},
+      {"name": "Camille", "role": "Responsable de compte", "bio": "Développe Urban Coffee et son réseau.", "image": "people/femme-2.jpg"},
+      {"name": "Alex", "role": "Agent de service", "bio": "Diagnostique les incidents et coordonne les interventions.", "image": "people/homme-1.jpg"}
     ]
   },
   "screens": [
@@ -59,6 +60,7 @@
       "trigger": "La revue hebdomadaire du réseau commence.",
       "result": "Trois magasins prioritaires sont identifiés avec une cause exploitable.",
       "transition": "Camille ouvre le compte Urban Coffee pour préparer la prochaine revue.",
+      "persona": "Camille",
       "display": {"mode": "full", "scale": 0.47, "height": 950},
       "slots": {}
     },
@@ -73,6 +75,7 @@
       "trigger": "La revue trimestrielle Urban Coffee approche.",
       "result": "Les risques et le potentiel commercial sont synthétisés.",
       "transition": "Une anomalie de machine devient simultanément un sujet de service prioritaire.",
+      "persona": "Camille",
       "display": {"mode": "full", "scale": 0.47, "height": 950},
       "slots": {}
     },
@@ -87,6 +90,7 @@
       "trigger": "Le plan commercial 2027 doit être préparé avec Urban Coffee.",
       "result": "Les promotions sont séquencées et leur mix optimisé.",
       "transition": "Le plan promotionnel peut maintenant être rapproché des engagements négociés.",
+      "persona": "Camille",
       "display": {"mode": "full", "scale": 0.47, "height": 950},
       "slots": {}
     },
@@ -101,6 +105,7 @@
       "trigger": "Urban Coffee et Northern Trail finalisent leurs engagements 2027.",
       "result": "Les ajustements nécessaires sont identifiés avant approbation.",
       "transition": "Le forecast consolidé doit réconcilier baseline, promotions et accord.",
+      "persona": "Camille",
       "display": {"mode": "full", "scale": 0.47, "height": 960},
       "slots": {}
     },
@@ -115,6 +120,7 @@
       "trigger": "Le scénario négocié doit être soumis au Sales Planner.",
       "result": "Le forecast couvre 99,5 % de l'accord avec deux arbitrages explicites.",
       "transition": "La croissance prévue augmente l'importance d'un service proactif sur les équipements.",
+      "persona": "Camille",
       "display": {"mode": "full", "scale": 0.47, "height": 960},
       "slots": {}
     },
@@ -129,6 +135,7 @@
       "trigger": "La pression dépasse le seuil sain.",
       "result": "Une intervention prioritaire est prête à être planifiée.",
       "transition": "Alex consulte la courbe de l'actif pour confirmer le diagnostic.",
+      "persona": "Alex",
       "display": {"mode": "full", "scale": 0.47, "height": 960},
       "slots": {}
     },
@@ -143,6 +150,7 @@
       "trigger": "Alex vérifie la cause probable de l'incident.",
       "result": "Le diagnostic, la pièce et le délai d'intervention sont alignés.",
       "transition": "Le magasin est pris en charge avant une interruption complète du service.",
+      "persona": "Alex",
       "display": {"mode": "full", "scale": 0.47, "height": 950},
       "slots": {}
     }

@@ -40,7 +40,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `templates/*.html` — **bibliothèque d'écrans complets, chrome verrouillée + SLOTs.**
   C'est le cœur : tu pars TOUJOURS d'un template, tu ne redessines jamais un écran.
 - `assets/lightning-kit/` — **kit de composants `<lc-*>`** (record 360, charts, dispatch, carte, parcours marketing…)
-  utilisé par les templates `lightning-record` / `lightning-dashboard` / `lightning-fieldservice` / `lightning-marketing`.
+  utilisé par les templates `lightning-record` / `lightning-dashboard` / `lightning-fieldservice` / `lightning-marketing`
+  et les écrans sectoriels Consumer Goods, Financial Services et Manufacturing.
   Écrans Salesforce **composables** : chaque bloc lit sa config d'un `<script JSON>` slotté. Détails dans `references/screens.md`.
 - `references/screens.md` — table canal → template + liste des SLOTs de chaque template.
 - `references/fidelite-salesforce.md` — grille de relecture des écrans **desktop Salesforce**
@@ -97,7 +98,16 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    - durée cible de la démo,
    - tension métier à illustrer,
    - produits Salesforce imposés ou à éviter,
-   - faits/chiffres fournis et sujets sensibles à ne pas inventer.
+    - faits/chiffres fournis et sujets sensibles à ne pas inventer.
+
+   **Choix des licences Salesforce — obligatoire dès qu'un écran sectoriel est envisagé.** Présente
+   explicitement deux options à l'utilisateur :
+   - expérience construite avec les Clouds déjà licenciés (par exemple Sales Cloud / Service Cloud) ;
+   - expérience sectorielle avec **Financial Services Cloud**, **Consumer Goods Cloud** ou
+     **Manufacturing Cloud**. Ces produits ont des licences et droits distincts de Sales Cloud.
+   Demande quel périmètre il souhaite utiliser avant de figer la story. Ne présente jamais un écran
+   sectoriel comme une simple fonctionnalité de Sales Cloud. Enregistre le choix dans
+   `license_selection` et garde `confirmed:false` tant que l'utilisateur ne l'a pas confirmé.
 
    Formulation attendue : « Si tu veux mieux cibler la démo, tu peux aussi me donner
    l'audience, l'objectif, la durée et les produits à mettre en avant. C'est facultatif ;
@@ -207,6 +217,14 @@ d'abord le `job` qui sert l'acte, puis vérifie `products`. Utilise par défaut 
 `cross_industry: true`. Ne filtre sur `industries` que si le workflow ou l'interaction est
 réellement sectoriel. Un simple changement de données ou de vocabulaire reste dans le manifest ;
 il ne justifie ni un nouveau composant ni un nouvel écran. Voir `references/registry.md`.
+
+Avant de soumettre la story, dresse la liste des `products` réellement utilisés par les écrans et
+affiche un avertissement licence. Pour `financial-services-cloud`, `consumer-goods-cloud` et
+`manufacturing-cloud`, écris explicitement « licence sectorielle distincte de Sales Cloud ».
+Le manifest doit contenir :
+`"license_selection":{"mode":"industry-cloud","label":"Expérience Manufacturing Cloud","confirmed":true}`
+(adapte le label au choix utilisateur). Le hub et les notes présentateur afficheront automatiquement
+les produits et avertissements associés.
 
 Si l'histoire change de persona, de marché (B2C → B2B) ou de temporalité, crée des
 **chapitres nommés**. Ne masque jamais une seconde histoire derrière un simple « bascule
@@ -336,7 +354,7 @@ Règles pour le manifest :
   nouvelles classes — la chrome est verrouillée.
 - **Écrans composables `<lc-*>`** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`,
   `lightning-marketing`, `financial-loan-portal`, `financial-loan-processor`,
-  `financial-loan-underwriter` et les écrans `consumer-*`) :
+     `financial-loan-underwriter`, les écrans `consumer-*` et `manufacturing-*`) :
   leurs SLOTs enveloppent un composant `<lc-*>` + un `<script type="application/json">`. Reprends le bloc
   d'exemple et **n'ajuste que le JSON** (valeurs), jamais la balise ni les clés attendues. Le marqueur SLOT
   est **autour** du `<script>` (un commentaire dedans casserait `JSON.parse`) — c'est déjà le cas, n'y touche pas.
@@ -355,6 +373,12 @@ Règles pour le manifest :
   validées. Son absence n'empêche jamais le build.
 - **`chapter`** = facultatif. Quand sa valeur change, le hub insère un séparateur narratif.
   Utilise-le pour les changements de persona, de marché ou de temporalité.
+- **`persona`** = nom exact d'un personnage de `intro.cast[]`, sur un écran Salesforce. Le builder
+  prend son `image` et alimente automatiquement le SLOT `sf-avatar`, afin que l'utilisateur connecté
+  change avec l'acte. Un `sf-avatar` explicite dans `slots` reste prioritaire.
+- **`license_selection`** = choix produit/licence confirmé avec l'utilisateur. `mode` vaut en général
+  `core-clouds` ou `industry-cloud`, `label` décrit la configuration retenue et `confirmed` bloque
+  l'absence silencieuse d'avertissement. Les produits réellement utilisés sont déduits des templates.
 - **`trigger` / `result` / `transition`** = contrat causal de l'acte. Ils alimentent les
   notes présentateur ; `transition` peut aussi apparaître discrètement dans le récit du hub.
 - **`presenter`** = notes facultatives de l'acte : `duration_seconds`, `message`, `show`,

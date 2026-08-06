@@ -67,6 +67,7 @@ export class JsonComponent extends HTMLElement {
 class LcRecordHeader extends JsonComponent {
   render() {
     const data = this.data;
+    const titleId = `${this.id || 'record'}-title`;
     const type = data.type || 'Record';
     const icon = (data.icon || type).toLowerCase();
     const highlights = (data.highlights || []).map(item => `
@@ -76,12 +77,12 @@ class LcRecordHeader extends JsonComponent {
       </div>`).join('');
     const actions = (data.actions || []).map((action, index) => buttonMarkup(action, index === 0 && action.primary ? 'brand' : 'neutral')).join('');
     this.innerHTML = `
-      <section class="lc-record-header" aria-labelledby="${this.id || 'record-title'}">
+      <section class="lc-record-header" aria-labelledby="${titleId}">
         <div class="lc-record-header__identity">
           <span class="lc-object-icon lc-object-icon--${escapeHtml(icon)}">${lcIcon(icon)}</span>
           <div>
             <div class="lc-record-header__eyebrow">${escapeHtml(type)}</div>
-            <h1 class="lc-record-header__title" id="${this.id || 'record-title'}">${escapeHtml(data.title || 'Untitled record')}</h1>
+            <h1 class="lc-record-header__title" id="${titleId}">${escapeHtml(data.title || 'Untitled record')}</h1>
           </div>
         </div>
         <div class="lc-record-header__actions">${actions}</div>
@@ -124,6 +125,7 @@ class LcCustomer360 extends JsonComponent {
 class LcRelatedList extends JsonComponent {
   render() {
     const data = this.data;
+    const titleId = `${this.id || 'related-list'}-title`;
     const columns = data.columns || [];
     const header = columns.map(column => `<th scope="col" style="width:${escapeHtml(column.width || 'auto')}">${escapeHtml(column.label)}</th>`).join('');
     const rows = (data.rows || []).map((row, rowIndex) => {
@@ -136,9 +138,9 @@ class LcRelatedList extends JsonComponent {
     }).join('');
     const actions = (data.actions || []).map(action => buttonMarkup(action, action.primary ? 'brand' : 'neutral')).join('');
     this.innerHTML = `
-      <section class="lc-panel" aria-labelledby="${this.id || 'related-list-title'}">
+      <section class="lc-panel" aria-labelledby="${titleId}">
         <div class="lc-panel__header">
-          <div class="lc-panel__heading"><span class="lc-object-icon lc-object-icon--${escapeHtml(data.icon || 'contact')}">${lcIcon(data.icon || 'contact')}</span><div><h2 class="lc-panel__title" id="${this.id || 'related-list-title'}">${escapeHtml(data.title || 'Related records')} (${(data.rows || []).length})</h2><div class="lc-panel__meta">${escapeHtml(data.meta || `${(data.rows || []).length} items`)}</div></div></div>
+          <div class="lc-panel__heading"><span class="lc-object-icon lc-object-icon--${escapeHtml(data.icon || 'contact')}">${lcIcon(data.icon || 'contact')}</span><div><h2 class="lc-panel__title" id="${titleId}">${escapeHtml(data.title || 'Related records')} (${(data.rows || []).length})</h2><div class="lc-panel__meta">${escapeHtml(data.meta || `${(data.rows || []).length} items`)}</div></div></div>
           <div class="lc-panel__actions">${actions}</div>
         </div>
         <div class="lc-table-wrap"><table class="lc-table"><thead><tr><th scope="col"><input type="checkbox" aria-label="Tout sélectionner"></th>${header}<th scope="col"><span class="lc-sr-only">Actions</span></th></tr></thead><tbody>${rows}</tbody></table></div>

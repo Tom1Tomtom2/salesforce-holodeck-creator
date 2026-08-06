@@ -278,6 +278,29 @@ def inject_slots(markup: str, slots: dict, template_name: str) -> list:
     return warnings, markup
 
 
+def inject_story_avatar(markup: str, screen: dict, intro: dict) -> str:
+    """Injecte dans `sf-avatar` le portrait du personnage connecté pour cet acte."""
+    if 'SLOT: sf-avatar' not in markup:
+        return markup
+    persona = screen.get("persona")
+    if not persona:
+        return markup
+    character = next((p for p in intro.get("cast", []) if p.get("name") == persona), None)
+    if character is None:
+        raise SystemExit(
+            f"ERREUR : persona '{persona}' de l'écran '{screen['file']}' absente de intro.cast."
+        )
+    image = character.get("image")
+    if not image:
+        raise SystemExit(
+            f"ERREUR : le personnage '{persona}' doit avoir une image pour alimenter sf-avatar "
+            f"dans '{screen['file']}'."
+        )
+    avatar = f'<img class="ln-avatar" src="{html.escape(image, quote=True)}" alt="">'
+    _, markup = inject_slots(markup, {"sf-avatar": avatar}, screen["template"])
+    return markup
+
+
 def rewrite_tokens(css: str, tokens: dict, font_import: str | None) -> str:
     """Réécrit les valeurs de tokens dans :root, et la 1ère ligne @import si fournie."""
     for name, value in tokens.items():
@@ -397,8 +420,43 @@ def _act_section(s: dict, index: int) -> str:
     )
 
 
+def _story_products(root: Path, screens: list) -> list:
+    """Produits utilisés par les templates de la story, dans l'ordre du registre."""
+    registry = json.loads((root / "registry" / "products.json").read_text(encoding="utf-8"))
+    screen_registry = json.loads((root / "registry" / "screens.json").read_text(encoding="utf-8"))
+    template_ids = {screen["template"] for screen in screens}
+    product_ids = {
+        product_id
+        for registered_screen in screen_registry.get("screens", [])
+        if registered_screen["id"] in template_ids
+        for product_id in registered_screen.get("products", [])
+    }
+    return [item for item in registry.get("products", []) if item["id"] in product_ids]
+
+
+def _license_block(products: list, selection: dict | None = None) -> str:
+    """Encart transparent sur les produits/licences mobilisés par la story."""
+    selection = selection or {}
+    items = []
+    for product in products:
+        license_info = product.get("license") or {}
+        suffix = f' — {html.escape(license_info["notice"])}' if license_info.get("notice") else ""
+        items.append(f'<li><b>{html.escape(product["label"])}</b>{suffix}</li>')
+    if not items:
+        return ""
+    chosen = html.escape(selection.get("label", "Configuration produit sélectionnée"))
+    confirmation = "Choix confirmé pour cette story." if selection.get("confirmed") else "Choix à confirmer avant génération."
+    return (
+        '<aside class="license-notice" aria-label="Produits et licences Salesforce utilisés">'
+        f'<strong>Produits et licences utilisés · {chosen}</strong>'
+        f'{html.escape(confirmation)} Les produits listés peuvent nécessiter des licences et droits distincts.'
+        '<ul>' + "".join(items) + '</ul></aside>'
+    )
+
+
 def build_hub(template: str, brand: str, story_title: str, screens: list,
-              tagline: str = "", intro: dict | None = None, thesis: str = "") -> str:
+              tagline: str = "", intro: dict | None = None, thesis: str = "",
+              products: list | None = None, license_selection: dict | None = None) -> str:
     """Assemble la page story : hero (placeholders) + intro + une section .act par écran."""
     sections = []
     previous_chapter = None
@@ -414,10 +472,12 @@ def build_hub(template: str, brand: str, story_title: str, screens: list,
     head, _, _ = template.partition("<!-- BUILD:")
     hub = head + body + "\n</body>\n</html>\n"
     thesis_block = f'<p class="thesis">{html.escape(thesis)}</p>' if thesis else ""
+    license_block = _license_block(products or [], license_selection)
     return (hub.replace("{{BRAND}}", html.escape(brand))
                .replace("{{STORY_TITLE}}", html.escape(story_title))
                .replace("{{TAGLINE}}", html.escape(tagline or ""))
-               .replace("{{THESIS_BLOCK}}", thesis_block))
+               .replace("{{THESIS_BLOCK}}", thesis_block)
+               .replace("{{LICENSE_BLOCK}}", license_block))
 
 
 def build_presenter_notes(manifest: dict) -> str:
@@ -430,6 +490,16 @@ def build_presenter_notes(manifest: dict) -> str:
     ]
     if manifest.get("thesis"):
         lines += [f'**Thèse de démo :** {manifest["thesis"]}', ""]
+    products = _story_products(ROOT, manifest.get("screens", []))
+    if products:
+        lines += ["## Produits et licences", ""]
+        selection = manifest.get("license_selection") or {}
+        if selection.get("label"):
+            lines += [f'**Choix de configuration :** {selection["label"]}', ""]
+        for product in products:
+            notice = (product.get("license") or {}).get("notice")
+            lines.append(f'- **{product["label"]}**' + (f' — {notice}' if notice else ''))
+        lines.append("")
     brief = manifest.get("brief") or {}
     if brief:
         labels = {
@@ -523,11 +593,15 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     for s in manifest["screens"]:
         markup = (root / "templates" / f'{s["template"]}.html').read_text(encoding="utf-8")
         warns, markup = inject_slots(markup, s.get("slots", {}), s["template"])
+        if "sf-avatar" not in s.get("slots", {}):
+            markup = inject_story_avatar(markup, s, manifest.get("intro", {}))
         wrap_warn += [f"{s['file']} · {w.split(' · ',1)[1]}" for w in warns]
         # ponytail: garde-fou marque d'exemple. Un wordmark "Nova" restant = un SLOT
         # structuré (nav/pdp/landing/email) omis dans le manifest → marque d'exemple qui fuite.
         if "Nova" in markup:
             leaks.append(s["file"])
+        if 'class="lightning"' in markup and "lightning-header.js" not in markup:
+            markup = markup.replace("</body>", '<script src="lightning-header.js"></script>\n</body>')
         (out / s["file"]).write_text(markup, encoding="utf-8")
         rendered[s["file"]] = markup
         written.append(s["file"])
@@ -538,6 +612,11 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
         (out / "lightning-kit.js").write_text(bundle_kit_js(), encoding="utf-8")
         shutil.copy(KIT / "lightning-components.css", out / "lightning-kit.css")
         written += ["lightning-kit.js", "lightning-kit.css"]
+
+    # 2a bis. Chrome Salesforce commune : ordre et icônes globales identiques sur tout écran Lightning.
+    if any('class="lightning"' in mk for mk in rendered.values()):
+        shutil.copy(root / "assets" / "lightning-header.js", out / "lightning-header.js")
+        written.append("lightning-header.js")
 
     # 2b. portraits fictifs de la banque assets/people/ RÉELLEMENT référencés (src="people/xxx").
     # On ne copie que ceux utilisés → aucun poids mort dans le site généré. Le hub (cast[].image)
@@ -557,7 +636,8 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
     hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""),
                     manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
-                    manifest.get("thesis", ""))
+                    manifest.get("thesis", ""), _story_products(root, manifest["screens"]),
+                    manifest.get("license_selection"))
     (out / "index.html").write_text(hub, encoding="utf-8")
     written.append("index.html")
 
@@ -574,6 +654,13 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     narrative_warnings = []
     if not manifest.get("thesis"):
         narrative_warnings.append("thèse de démo absente")
+    industry_products = [product["label"] for product in _story_products(root, manifest["screens"])
+                         if (product.get("license") or {}).get("category") == "industry-cloud"]
+    selection = manifest.get("license_selection") or {}
+    if industry_products and not selection.get("confirmed"):
+        narrative_warnings.append(
+            "choix de licence sectorielle non confirmé : " + ", ".join(industry_products)
+        )
     for index, screen in enumerate(manifest.get("screens", []), 1):
         missing = [key for key in ("trigger", "result", "transition") if not screen.get(key)]
         if missing:
@@ -608,10 +695,12 @@ def selfcheck():
         "tokens": {"--accent": "#ff0000"},
         "tagline": "TAGLINE_INJECTEE",
         "thesis": "THESE_INJECTEE",
+        "license_selection": {"mode": "industry-cloud", "label": "CONFIGURATION_TEST", "confirmed": True},
         "brief": {"audience": "Direction", "duration_minutes": 5,
                   "salesforce_focus": ["Data Cloud", "Agentforce"]},
         "intro": {"title": "INTRO_TITRE", "lede": "intro lede",
-                  "cast": [{"name": "Camille", "role": "La cliente", "bio": "bio", "image": "people/femme-1.jpg"}]},
+                  "cast": [{"name": "Camille", "role": "La cliente", "bio": "bio", "image": "people/femme-1.jpg"},
+                           {"name": "Alex", "role": "Agent de service", "bio": "bio", "image": "people/homme-1.jpg"}]},
         "screens": [
             {"file": "acte1-instagram.html", "template": "instagram", "channel": "Instagram",
              "chapter": "CHAPITRE_TEST", "act": "Acte 1 · Test", "title": "Pub test", "desc": "desc test",
@@ -622,7 +711,11 @@ def selfcheck():
              "act": "Acte 2 · Test", "title": "Fiche", "desc": "desc2", "url": "test.com/produit",
              "trigger": "trigger2", "result": "result2", "transition": "transition2",
              "display": {"mode": "crop", "scale": 0.6, "x": 100, "y": 50, "height": 600},
-             "slots": {}},
+              "slots": {}},
+            {"file": "acte3-salesforce.html", "template": "consumer-service-account", "channel": "Salesforce",
+             "act": "Acte 3 · Test", "title": "Compte", "desc": "desc3",
+             "trigger": "trigger3", "result": "result3", "transition": "transition3",
+             "persona": "Alex", "slots": {}},
         ],
     }
     prev = Path.cwd()
@@ -635,6 +728,7 @@ def selfcheck():
             out = build(m, root=ROOT)
             assert (out / "logo.png").is_file(), "asset fourni non copié"
             assert (out / "people" / "femme-1.jpg").is_file(), "portrait people/ référencé non copié"
+            assert (out / "people" / "homme-1.jpg").is_file(), "portrait du persona Salesforce non copié"
             css = (out / "shared.css").read_text(encoding="utf-8")
             assert "#ff0000" in css, "token accent non réécrit"
             screen = (out / "acte1-instagram.html").read_text(encoding="utf-8")
@@ -643,6 +737,8 @@ def selfcheck():
             hub = (out / "index.html").read_text(encoding="utf-8")
             assert "TAGLINE_INJECTEE" in hub, "tagline hero non injectée"
             assert "THESE_INJECTEE" in hub, "thèse hero non injectée"
+            assert "CONFIGURATION_TEST" in hub and "Consumer Goods Cloud" in hub, \
+                "produits/licences absents du hub"
             assert "INTRO_TITRE" in hub and 'src="people/femme-1.jpg"' in hub, "section intro/personnage manquante"
             assert "CHAPITRE_TEST" in hub and "Chapitre 01" in hub, "séparateur de chapitre manquant"
             assert "TRANSITION_TEST" in hub, "transition narrative manquante du hub"
@@ -652,9 +748,13 @@ def selfcheck():
             assert 'class="frame desktop"' in hub and 'class="act right"' in hub, "cadre desktop / alternance manquant"
             assert "--screen-scale:0.6" in hub and "--screen-left:-60px" in hub, "cadrage desktop non appliqué"
             assert 'src="acte1-instagram.html"' in hub, "iframe de l'écran manquante dans la story"
+            salesforce = (out / "acte3-salesforce.html").read_text(encoding="utf-8")
+            assert '<img class="ln-avatar" src="people/homme-1.jpg" alt="">' in salesforce, \
+                "avatar du persona Salesforce non injecté"
+            assert 'src="lightning-header.js"' in salesforce, "header Lightning non injecté"
             notes = (out / "presenter-notes.md").read_text(encoding="utf-8")
             assert "THESE_INJECTEE" in notes and "MONTRER_TEST" in notes, "notes présentateur incomplètes"
-            assert "0 min 75 s" not in notes and "1 min 15 s" in notes, "durée présentateur mal calculée"
+            assert "0 min 120 s" not in notes and "2 min 00 s" in notes, "durée présentateur mal calculée"
             saved_manifest = json.loads((out / "build-manifest.json").read_text(encoding="utf-8"))
             assert saved_manifest["thesis"] == "THESE_INJECTEE", "manifest de build absent ou altéré"
             # SLOT inconnu → doit lever
@@ -679,7 +779,8 @@ def selfcheck():
             js = bundle_kit_js()
             assert "export " not in js and not re.search(r"^\s*import\s", js, re.M), "import/export non retiré du bundle"
             assert "customElements.define" in js, "définitions de composants absentes du bundle"
-            assert not (out / "lightning-kit.js").exists(), "kit copié alors qu'aucun écran n'utilise <lc-*>"
+            assert (out / "lightning-kit.js").exists(), "kit absent avec un écran qui utilise <lc-*>"
+            assert (out / "lightning-header.js").exists(), "header Lightning absent avec un écran Salesforce"
             # franc­isation : le FR est là, l'EN codé en dur a disparu, ET le filtre carte reste cohérent
             assert ">Optimiser la tournée<" in js and ">Voir le détail<" in js, "libellés FS non traduits"
             assert ">Optimize Schedule<" not in js and ">View Details<" not in js, "libellé EN encore présent"

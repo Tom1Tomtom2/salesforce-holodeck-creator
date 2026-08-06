@@ -4,6 +4,7 @@
   "story_title": "De la demande de prêt à la décision",
   "tagline": "Trois espaces, trois rôles, un même dossier de financement.",
   "thesis": "Parce que le dossier est structuré dès le portail, le loan processor peut le compléter avec Agentforce et le loan underwriter prend une décision argumentée sans ressaisie.",
+  "license_selection": {"mode":"industry-cloud","label":"Expérience Financial Services Cloud","confirmed":true},
   "tokens": {
     "--accent": "#4b3fd5",
     "--accent-dark": "#17145d",
@@ -14,9 +15,9 @@
     "title": "Un dossier partagé entre le client, le processor et l'underwriter",
     "lede": "Laura dépose sa demande ; Sofia instruit le dossier ; Marc analyse le risque et prépare la décision.",
     "cast": [
-      {"name": "Laura", "role": "Cliente", "bio": "Dépose une demande de prêt immobilier."},
-      {"name": "Sofia", "role": "Loan processor", "bio": "Vérifie la complétude et les pièces."},
-      {"name": "Marc", "role": "Loan underwriter", "bio": "Évalue les ratios et les conditions."}
+      {"name": "Laura", "role": "Cliente", "bio": "Dépose une demande de prêt immobilier.", "image": "people/femme-1.jpg"},
+      {"name": "Sofia", "role": "Loan processor", "bio": "Vérifie la complétude et les pièces.", "image": "people/femme-2.jpg"},
+      {"name": "Marc", "role": "Loan underwriter", "bio": "Évalue les ratios et les conditions.", "image": "people/homme-1.jpg"}
     ]
   },
   "screens": [
@@ -45,6 +46,7 @@
       "trigger": "La demande de Laura est soumise.",
       "result": "Les anomalies et pièces manquantes sont identifiées.",
       "transition": "Le dossier fiabilisé est transmis à l'underwriter.",
+      "persona": "Sofia",
       "display": {"mode": "full", "scale": 0.47, "height": 1020},
       "slots": {}
     },
@@ -59,6 +61,7 @@
       "trigger": "Le dossier passe en underwriting.",
       "result": "Une approbation conditionnelle argumentée est prête.",
       "transition": "La décision peut être communiquée au client avec ses conditions.",
+      "persona": "Marc",
       "display": {"mode": "full", "scale": 0.47, "height": 1020},
       "slots": {}
     }

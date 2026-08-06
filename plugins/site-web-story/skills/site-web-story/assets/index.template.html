@@ -24,6 +24,11 @@
     .hero .thesis { margin-top: 18px; max-width: 58ch; color: var(--black); font-size: 1.02rem;
         line-height: 1.55; padding: 14px 20px; border-left: 3px solid var(--accent); text-align: left;
         background: rgba(255,255,255,0.7); }
+    .license-notice { margin-top: 18px; width: min(680px, 92vw); padding: 14px 18px; border: 1px solid var(--border);
+        border-radius: var(--radius); background: #fff; color: var(--grey); font-size: 0.82rem; line-height: 1.5; text-align: left; }
+    .license-notice strong { display: block; margin-bottom: 5px; color: var(--black); font-size: 0.88rem; }
+    .license-notice ul { margin: 8px 0 0; padding-left: 20px; }
+    .license-notice b { color: var(--accent); }
     .cue { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
         color: var(--grey-light); font-family: var(--sans); font-size: 0.72rem; letter-spacing: 2px;
         text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -145,6 +150,7 @@
     <h1>{{STORY_TITLE}}</h1>
     <p>{{TAGLINE}}</p>
     {{THESIS_BLOCK}}
+    {{LICENSE_BLOCK}}
     <div class="cue">Défiler
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>

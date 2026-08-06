@@ -45,6 +45,10 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Plan promotionnel Consumer Goods | `consumer-sales-trade-plan.html` | desktop | Consumer Goods Cloud + Agentforce | calendrier TPM et scénarios |
 | Sales Agreement Consumer Goods | `consumer-sales-agreement.html` | desktop | Consumer Goods Cloud + Agentforce | engagement, réalisé et forecast |
 | Advanced Forecast Consumer Goods | `consumer-sales-forecast.html` | desktop | Consumer Goods Cloud + Agentforce | business planning et forecast ajustable |
+| Accord commercial Manufacturing | `manufacturing-sales-agreement.html` | desktop | Manufacturing Cloud + Agentforce | engagements par produit et période, calculs |
+| Objectif de compte Manufacturing | `manufacturing-account-target.html` | desktop | Manufacturing Cloud | synthèse, affectations et distribution |
+| Service actif et garanties Manufacturing | `manufacturing-asset-service.html` | desktop | Manufacturing Cloud + Service Cloud + Agentforce | identité, couvertures, dossiers, interventions et jalons |
+| Hiérarchie des actifs Manufacturing | `manufacturing-asset-hierarchy.html` | desktop | Manufacturing Cloud | arbre accessible, recherche et navigation clavier |
 
 `datacloud-pipeline.html` couvre 3 scènes du même gabarit (acquisition « lookalike »,
 activation d'audience vers Meta, re-segmentation post-événement) : n'adapte que les SLOTs
@@ -107,6 +111,31 @@ La recherche, le bouton « Ask » et le cluster d'icônes (droite) sont **verrou
   (`lc-sales-agreement-forecast`), `agent` (`lc-agent-overlay`)
 - **consumer-sales-forecast.html** — `title`, `act-tag`, `sf-*`, `heading`, `planner`
   (`lc-trade-business-planner`), `agent` (`lc-agent-overlay`)
+- **manufacturing-sales-agreement.html** — `title`, `act-tag`, `sf-*`, `header`, `agreement`
+  (`lc-manufacturing-agreement-terms`), `agent` (`lc-agent-overlay`)
+- **manufacturing-account-target.html** — `title`, `act-tag`, `sf-*`, `header`, `target`
+  (`lc-account-manager-target`)
+- **manufacturing-asset-service.html** — `title`, `act-tag`, `sf-*`, `header`, `overview`
+  (`lc-manufacturing-asset-overview`), `warranties`, `cases`, `workorders` (trois `lc-related-list`
+  avec des IDs hôtes uniques), `milestones` (`lc-asset-milestones`), `agent` (`lc-agent-overlay`).
+  Le job d’écran reste `asset-service`; la garantie est exposée par le composant au job `warranty-management`.
+- **manufacturing-asset-hierarchy.html** — `title`, `act-tag`, `sf-*`, `header`, `hierarchy`
+  (`lc-asset-hierarchy`). L’arbre suit le modèle ARIA tree/treeitem/group et prend en charge les flèches,
+  Origine/Fin, Entrée et Espace.
+
+`lc-agent-overlay` a deux modes de déclenchement : la valeur par défaut affiche une capsule
+flottante sur les sites externes ; `data-mode="lightning"` remplace le bouton Ask du shell
+Salesforce par une icône Agentforce et ouvre une barre latérale sous l'en-tête global.
+
+Tout écran qui contient `.lightning` reçoit automatiquement la barre d'actions globale commune :
+Agentforce, favoris, création, Trailhead, aide, configuration, notifications, puis l'avatar issu du
+SLOT `sf-avatar`. `build_site.py` injecte `lightning-header.js` ; ne redessine pas cette barre dans un
+nouveau template.
+
+Pour que l'avatar suive le personnage connecté dans chaque acte, donne une `image` à chaque personnage
+de `intro.cast[]`, puis ajoute `"persona": "Nom exact du personnage"` à l'écran Salesforce. Le builder
+injecte alors automatiquement cette image dans `sf-avatar`. Un contenu explicite dans le SLOT
+`sf-avatar` reste prioritaire ; sans `persona` ni SLOT explicite, le template conserve son avatar neutre.
 
 ### Écrans Lightning composables (kit `<lc-*>`)
 Ces 3 templates sont **composés de web components** `<lc-*>` (voir la section « Kit de composants » plus bas).

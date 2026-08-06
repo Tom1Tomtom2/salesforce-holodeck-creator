@@ -7,6 +7,8 @@ sans déplacer les fichiers sources : le bundler continue de lire `templates/` e
 ## Les quatre registres
 
 - `products.json` décrit les produits Salesforce et les jobs qu'ils couvrent.
+  Les produits sectoriels portent aussi un bloc `license` avec la catégorie et l'avertissement à
+  afficher dans les stories.
 - `industries.json` décrit les secteurs autorisés. Le caractère transverse est porté uniquement par
   `cross_industry`, jamais par une fausse industrie `cross-industry`.
 - `components.json` inventorie chaque `<lc-*>`, sa source, son job, ses produits et sa disponibilité.
@@ -21,6 +23,9 @@ Les valeurs de `components[].status` signifient :
 
 1. Pars du job métier et du rôle de l'écran dans l'histoire.
 2. Filtre ensuite sur les produits Salesforce attendus dans le brief.
+   Avant de choisir un produit sectoriel, fais confirmer à l'utilisateur qu'il souhaite une expérience
+   Financial Services Cloud, Consumer Goods Cloud ou Manufacturing Cloud plutôt qu'une expérience
+   limitée aux Clouds déjà licenciés. Ces licences sont distinctes de Sales Cloud.
 3. Préfère un asset `cross_industry: true` et adapte uniquement ses données.
 4. Applique un filtre industrie seulement si le parcours exige une structure ou une interaction
    réellement sectorielle.
@@ -29,6 +34,16 @@ Un changement de marque, de vocabulaire, de persona ou de données ne justifie p
 Il doit vivre dans le manifest ou dans un futur fixture/pack sectoriel. Crée un asset sectoriel
 uniquement lorsque le workflow, les objets visibles ou l'interaction ne peuvent pas être représentés
 crédiblement par un asset cross-industry.
+
+## Transparence licences
+
+- Les produits utilisés sont déduits de `screens[].template` puis de `registry/screens.json.products`.
+- Le manifest garde la décision utilisateur dans `license_selection` (`mode`, `label`, `confirmed`).
+- Le hub et les notes présentateur listent automatiquement les produits utilisés.
+- Si une story utilise un produit `industry-cloud` sans choix confirmé, le build reste possible mais
+  affiche un avertissement explicite.
+- Cet encart est informatif : il ne remplace pas la vérification contractuelle de l'édition, des
+  add-ons et des permission sets disponibles dans l'org cible.
 
 ## Ajouter un asset industrie
 

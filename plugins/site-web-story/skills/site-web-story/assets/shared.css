@@ -104,12 +104,30 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
     border-radius: 18px; padding: 7px 15px; color: #0176d3; font-weight: 600; font-size: 0.82rem; flex-shrink: 0; }
 .ln-icons { display: flex; align-items: center; gap: 17px; flex-shrink: 0; color: #5c5c5c; }
 .ln-icons svg { width: 19px; height: 19px; }
+.ln-utilities { display: flex; align-items: center; gap: 8px; flex-shrink: 0; color: #5c5c5c; }
+.ln-utility { width: 30px; height: 30px; padding: 0; display: inline-grid; place-items: center;
+    border: 0; border-radius: 50%; color: #5c5c5c; background: transparent; }
+.ln-utility:hover { color: #014486; background: #f3f3f3; }
+.ln-utility svg { width: 20px; height: 20px; fill: currentColor; }
+.ln-utilities > .ln-ask { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; }
+.ln-favorites { display: inline-flex; overflow: hidden; border: 1px solid #c9c9c9; border-radius: 16px; }
+.ln-favorites .ln-utility { border-radius: 0; }
+.ln-favorites .ln-utility + .ln-utility { width: 22px; border-left: 1px solid #c9c9c9; }
+.ln-favorites .ln-utility + .ln-utility svg { width: 13px; }
+.ln-profile { display: inline-flex; align-items: center; }
+.ln-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ln-bell { position: relative; display: inline-flex; }
 .ln-bell .badge { position: absolute; top: -7px; right: -7px; background: #ea001e; color: #fff;
     font-size: 0.58rem; font-weight: 700; border-radius: 999px; min-width: 15px; height: 15px;
     display: flex; align-items: center; justify-content: center; padding: 0 3px; }
 /* Avatar : <span> vide = dégradé de repli, ou <img class="ln-avatar" src="people/…"> = vrai portrait. */
 .ln-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#8a8a8a,#3a3a3a); flex-shrink: 0; object-fit: cover; }
+@media (max-width: 860px) {
+    .ln-utilities { gap: 3px; }
+    .ln-utility { width: 28px; height: 28px; }
+    .ln-utilities > :nth-child(4), .ln-utilities > :nth-child(6) { display: none; }
+}
 
 /* Portrait fictif dans un avatar rond (identité client, hero, contact 360…) :
    glisse une <img src="people/…"> dans le conteneur, elle remplit et recadre en rond.

@@ -71,7 +71,11 @@
       "id": "financial-services-cloud",
       "label": "Financial Services Cloud",
       "aliases": ["FSC", "Digital Lending"],
-      "jobs": ["loan-origination", "loan-processing", "loan-underwriting", "credit-decisioning"]
+      "jobs": ["loan-origination", "loan-processing", "loan-underwriting", "credit-decisioning"],
+      "license": {
+        "category": "industry-cloud",
+        "notice": "Licence sectorielle distincte de Sales Cloud. Vérifier l’édition et les droits activés dans l’org."
+      }
     },
     {
       "id": "experience-cloud",
@@ -89,7 +93,21 @@
       "id": "consumer-goods-cloud",
       "label": "Consumer Goods Cloud",
       "aliases": ["Consumer Goods", "CG Cloud"],
-      "jobs": ["retail-execution", "account-planning", "store-performance", "asset-service", "trade-promotion-management", "sales-agreement-management", "account-forecasting"]
+      "jobs": ["retail-execution", "account-planning", "store-performance", "asset-service", "trade-promotion-management", "sales-agreement-management", "account-forecasting"],
+      "license": {
+        "category": "industry-cloud",
+        "notice": "Licence sectorielle distincte de Sales Cloud. Vérifier l’édition et les droits activés dans l’org."
+      }
+    },
+    {
+      "id": "manufacturing-cloud",
+      "label": "Manufacturing Cloud",
+      "aliases": ["Manufacturing", "Salesforce Manufacturing"],
+      "jobs": ["sales-agreement-management", "account-target-management", "asset-service", "warranty-management", "asset-hierarchy"],
+      "license": {
+        "category": "industry-cloud",
+        "notice": "Licence sectorielle distincte de Sales Cloud. Vérifier l’édition et les droits activés dans l’org."
+      }
     }
   ]
 }
