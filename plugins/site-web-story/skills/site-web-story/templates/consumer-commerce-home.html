@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods : accueil B2B Commerce (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Northern Trail Supply - Commerce B2B<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { min-height: 100vh; background: #f5f7f6; --sf-w: 1480px; }
+    .cch-shell { width: min(var(--sf-w), 100%); margin: 0 auto; }
+    .cch-nav { min-height: 68px; padding: 0 28px; display: flex; align-items: center; gap: 42px; border-bottom: 1px solid #dce3e0; background: #fff; }
+    .cch-brand { display: flex; align-items: center; gap: 9px; color: #063d54; font-size: 20px; font-weight: 800; }
+    .cch-brand i { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #087c69; font-style: normal; }
+    .cch-links { display: flex; gap: 30px; }
+    .cch-links a { padding: 24px 0 20px; color: #29465b; font-weight: 700; border-bottom: 3px solid transparent; }
+    .cch-links a.on { color: #087c69; border-color: #087c69; }
+    .cch-tools { margin-left: auto; display: flex; align-items: center; gap: 18px; color: #29465b; }
+    .cch-main { padding: 26px 28px 70px; }
+    @media (max-width: 720px) { .cch-nav { padding-inline: 16px; gap: 18px; } .cch-links { display: none; } .cch-main { padding-inline: 14px; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 1 - Responsable de point de vente - découvrir l'offre<!-- /SLOT --></div>
+<div class="cch-shell">
+    <header class="cch-nav">
+        <!-- SLOT: brand --><span class="cch-brand"><i>N</i>Northern Trail Supply</span><!-- /SLOT: brand -->
+        <!-- SLOT: nav --><nav class="cch-links" aria-label="Navigation principale"><a class="on" href="#">Accueil</a><a href="#">Produits</a><a href="#">Commandes</a><a href="#">Mon compte</a></nav><!-- /SLOT: nav -->
+        <div class="cch-tools" aria-label="Outils du compte"><span aria-hidden="true">⌕</span><span aria-hidden="true">▣</span><span aria-hidden="true">●</span></div>
+    </header>
+    <main class="cch-main">
+        <!-- SLOT: commerce -->
+        <lc-b2b-commerce-home>
+            <script type="application/json">
+            {"eyebrow":"Équipement professionnel","title":"Tout pour servir vos clients, chaque jour","subtitle":"Commandez vos boissons, consommables et équipements avec les tarifs négociés de votre enseigne.","actions":[{"label":"Parcourir le catalogue","action":"browse-catalog"},{"label":"Recommander à l'identique","action":"reorder"}],"benefits":[{"title":"Tarifs contractuels","description":"Prix et remises de votre enseigne"},{"title":"Stock en temps réel","description":"Disponibilité par centre logistique"},{"title":"Livraison planifiée","description":"Créneaux adaptés au point de vente"},{"title":"Historique partagé","description":"Commandes et factures centralisées"}],"categories":[{"name":"Boissons chaudes","description":"Cafés, thés et chocolats","symbol":"☕","color":"#9a5c38"},{"name":"Boissons fraîches","description":"Eaux, jus et sodas","symbol":"◉","color":"#15836f"},{"name":"Équipements","description":"Machines et accessoires","symbol":"✦","color":"#315b85"}]}
+            </script>
+        </lc-b2b-commerce-home>
+        <!-- /SLOT: commerce -->
+    </main>
+</div>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- TEMPLATE — Financial Services : poste loan underwriter (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Digital Lending — Loan Underwriter<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1540px; }
+    .flu-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
+    .flu-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 370px); gap: 16px; align-items: start; }
+    .flu-main, .flu-rail { display: grid; gap: 16px; }
+    .flu-tabs { padding: 0 16px; display: flex; gap: 28px; border-bottom: 1px solid var(--lc-border-subtle); background: #fff; border-radius: 8px 8px 0 0; }
+    .flu-tabs span { padding: 15px 3px 12px; color: var(--lc-text-secondary); font-weight: 600; }
+    .flu-tabs .on { color: var(--lc-brand); border-bottom: 3px solid var(--lc-brand); }
+    @media (max-width: 1000px) { .flu-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 3 · Loan Underwriter — analyse et décision<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">C</span> Cumulus</span></span><!-- /SLOT: sf-logo -->
+        <div class="ln-search"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>Search…</div>
+        <span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">★</span><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div>
+    </div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Digital Lending</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab on">Demandes à analyser</span><span class="ln-tab">Décisions</span><span class="ln-tab">Politiques de crédit</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="flu-page">
+    <!-- SLOT: header -->
+    <lc-record-header>
+        <script type="application/json">
+        {"type":"Produit de prêt","icon":"case","title":"AFP-00000051","actions":[{"label":"Mettre en attente","action":"hold"},{"label":"Préparer la décision","action":"decision","primary":true}],"highlights":[{"label":"Demandeur","value":"Laura Silva"},{"label":"Montant","value":"297 000 €"},{"label":"Type","value":"Prêt immobilier"},{"label":"Risque","value":"Faible"},{"label":"Score crédit","value":"800"}]}
+        </script>
+    </lc-record-header>
+    <!-- /SLOT: header -->
+
+    <section class="flu-grid">
+        <div class="flu-main">
+            <div class="flu-tabs" aria-label="Sections underwriting"><span>Résumé demandeur</span><span>Dossier</span><span class="on">Ratios clés</span><span>Étapes</span><span>Conditions</span><span>Documents</span></div>
+            <!-- SLOT: ratios ─ ratios d'underwriting. -->
+            <lc-loan-key-ratios>
+                <script type="application/json">
+                {"title":"Ratios clés","meta":"Calculés à partir du dossier consolidé","facts":[{"label":"Montant du prêt","value":"297 000 €"},{"label":"Taux","value":"6,0 %"},{"label":"Durée","value":"144 mois"},{"label":"Mensualité","value":"2 898 €"},{"label":"Revenu mensuel","value":"17 000 €"},{"label":"Valeur du bien","value":"330 000 €"}],"ratios":[{"label":"Loan to Value","value":90,"display":"90,09 %","context":"Cible ≤ 90 %","color":"#38bdf8"},{"label":"DTI avant prêt","value":40,"display":"40 %","context":"Endettement actuel","color":"#8b5cf6"},{"label":"DTI après prêt","value":49,"display":"49,01 %","context":"À examiner","color":"#36c7b3"}]}
+                </script>
+            </lc-loan-key-ratios>
+            <!-- /SLOT: ratios -->
+
+            <!-- SLOT: stages ─ étapes et contrôles de décision. -->
+            <lc-loan-stage-board>
+                <script type="application/json">
+                {"title":"Vue des étapes de décision","meta":"11 contrôles · 7 terminés","filters":["Toutes","Terminées","En cours"],"stages":[{"label":"Analyser les ratios clés","state":"Terminé","completed":"19 juil. 2026"},{"label":"Examiner l'offre","state":"En cours","owner":"Marc Leroy"},{"label":"Évaluer la garantie","state":"En cours","owner":"Marc Leroy"},{"label":"Ajouter les covenants","state":"En attente","owner":"Équipe risque"},{"label":"Vérification fraude","state":"Terminé","completed":"19 juil. 2026"},{"label":"Récupérer les données financières","state":"Terminé","completed":"19 juil. 2026"}]}
+                </script>
+            </lc-loan-stage-board>
+            <!-- /SLOT: stages -->
+
+            <!-- SLOT: conditions ─ conditions et pièces. -->
+            <lc-related-list>
+                <script type="application/json">
+                {"title":"Conditions de décision","icon":"task","meta":"4 conditions ouvertes","columns":[{"key":"condition","label":"Condition","link":true,"width":"48%"},{"key":"status","label":"Statut","width":"20%"},{"key":"owner","label":"Responsable","width":"32%"}],"rows":[{"condition":"Justifier les dépôts exceptionnels","status":"Demandé","owner":"Laura Silva","href":"#"},{"condition":"Valider l'estimation du bien","status":"En cours","owner":"Équipe évaluation","href":"#"},{"condition":"Confirmer l'emploi","status":"Reçu","owner":"Sofia Lopez","href":"#"}],"footer":"Voir toutes les conditions"}
+                </script>
+            </lc-related-list>
+            <!-- /SLOT: conditions -->
+        </div>
+
+        <aside class="flu-rail">
+            <!-- SLOT: recommendation ─ recommandation de décision. -->
+            <lc-ai-recommendation>
+                <script type="application/json">
+                {"title":"Underwriting Agent","label":"Recommandation","suggestion":"Le profil crédit est solide et le revenu couvre la mensualité. Le LTV est à la limite de la politique et le DTI après prêt nécessite une justification.","acceptLabel":"Préparer l'approbation conditionnelle","editLabel":"Voir la politique","draft":"Conditions suggérées : justifier deux dépôts exceptionnels et confirmer l'évaluation du bien avant approbation finale."}
+                </script>
+            </lc-ai-recommendation>
+            <!-- /SLOT: recommendation -->
+
+            <!-- SLOT: agent ─ assistant de l'underwriter. -->
+            <lc-agent-conversation>
+                <script type="application/json">
+                {"title":"Underwriting Agent","status":"Disponible","messages":[{"role":"user","author":"Marc Leroy","text":"Quels sont les principaux risques du dossier ?"},{"role":"assistant","author":"Underwriting Agent","text":"Trois points demandent une revue avant décision :","bullets":["LTV à 90,09 %, au seuil de la politique","DTI après prêt à 49,01 %","Deux dépôts bancaires exceptionnels à documenter"]},{"role":"assistant","author":"Underwriting Agent","text":"Aucun signal de fraude n'a été détecté. Le score crédit est de 800 et les revenus déclarés sont cohérents avec les pièces reçues."}],"placeholder":"Interroger le dossier ou la politique de crédit…"}
+                </script>
+            </lc-agent-conversation>
+            <!-- /SLOT: agent -->
+        </aside>
+    </section>
+</main>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

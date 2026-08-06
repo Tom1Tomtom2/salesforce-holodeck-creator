@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods Sales : sales agreement et prévision (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Consumer Goods Sales - Sales Agreement<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .csa2-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 14px; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 6 - Key Account Manager - aligner l'accord et la demande<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top"><!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Northern Trail</span></span><!-- /SLOT: sf-logo --><div class="ln-search">⌕ Rechercher dans Salesforce…</div><span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div></div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Consumer Goods Sales</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Comptes</span><span class="ln-tab on">Sales Agreements</span><span class="ln-tab">Account Forecast</span><span class="ln-tab">Rebate Programs</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="csa2-page">
+    <!-- SLOT: header -->
+    <lc-record-header><script type="application/json">{"type":"Sales Agreement","icon":"account","title":"Urban Coffee - Assortiment & équipements 2027","actions":[{"label":"Envoyer un message","action":"message"},{"label":"Soumettre pour approbation","action":"submit","primary":true}],"highlights":[{"label":"Compte","value":"Urban Coffee France"},{"label":"Statut","value":"Négociation"},{"label":"Début","value":"1 janv. 2027"},{"label":"Fin","value":"31 déc. 2027"},{"label":"Fréquence","value":"Mensuelle"},{"label":"Montant planifié","value":"3,42 M€"}]}</script></lc-record-header>
+    <!-- /SLOT: header -->
+    <!-- SLOT: agreement -->
+    <lc-sales-agreement-forecast>
+        <script type="application/json">
+        {"title":"Produits, engagement et prévision","meta":"Écart recalculé à partir des commandes et promotions","status":"En revue","saveLabel":"Enregistrer les ajustements","metrics":[{"label":"Volume planifié","value":"1,82 M unités","context":"+6,8 % vs N-1"},{"label":"Prévision actuelle","value":"1,76 M unités","context":"96,7 % de couverture"},{"label":"Revenu planifié","value":"3,42 M€","context":"+184 k€ vs N-1"},{"label":"Écart à traiter","value":"-61 k unités","context":"Espresso et Cold Brew","direction":"down"}],"periods":["T1 2027","T2 2027","T3 2027","T4 2027"],"products":[{"name":"Alpine Roast Espresso","code":"AR-ESP-1KG","price":"18,40 €","total":"842 k","values":[{"planned":"210 k","actual":"204 k","forecast":"208 k"},{"planned":"228 k","actual":"219 k","forecast":"222 k"},{"planned":"196 k","actual":"188 k","forecast":"191 k"},{"planned":"208 k","actual":"-","forecast":"201 k"}]},{"name":"Alpine Cold Brew","code":"AR-CB-250","price":"2,90 €","total":"516 k","values":[{"planned":"88 k","actual":"91 k","forecast":"94 k"},{"planned":"146 k","actual":"132 k","forecast":"139 k"},{"planned":"182 k","actual":"169 k","forecast":"174 k"},{"planned":"100 k","actual":"-","forecast":"96 k"}]},{"name":"Barista Pro X2","code":"BPX2-EU","price":"1 490 €","total":"79","values":[{"planned":"18","actual":"18","forecast":"18"},{"planned":"22","actual":"21","forecast":"22"},{"planned":"20","actual":"19","forecast":"20"},{"planned":"19","actual":"-","forecast":"19"}]}]}
+        </script>
+    </lc-sales-agreement-forecast>
+    <!-- /SLOT: agreement -->
+</main>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Agreement Agent","launchLabel":"Analyser l'accord","open":true,"messages":[{"role":"assistant","text":"Le forecast est inférieur à l'engagement sur deux produits, mais le plan promotionnel peut réduire l'écart.","bullets":["Espresso : manque prévisionnel de 34 k unités","Cold Brew : manque prévisionnel de 27 k unités","Le scénario trade optimisé récupère environ 46 k unités","Risque résiduel principalement au T4"]}],"actionsTitle":"Aligner l'accord","actions":[{"label":"Appliquer le scénario promotionnel"},{"label":"Préparer les ajustements par trimestre"}],"placeholder":"Demandez une analyse de l'accord…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

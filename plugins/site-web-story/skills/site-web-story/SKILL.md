@@ -18,7 +18,7 @@ description: |
   des captures avec Gemini, d'utiliser le holodeck app.py, de construire une vraie
   application Salesforce/LWC/Experience Cloud, un site marchand de production,
   ou un simple diagramme ou une slide unique.
-version: "1.10.0"
+version: "1.11.0"
 ---
 
 # Site Web Story
@@ -48,6 +48,11 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `references/story-recipes.md` — recettes narratives prêtes à adapter (acquisition,
   service, vente B2B, Field Service, marketing, pilotage). Utilise-les comme accélérateur,
   jamais comme catalogue automatique.
+- `registry/*.json` — catalogue machine-readable des composants, écrans, produits et
+  industries. Lis `registry/screens.json` pour choisir un écran et `registry/components.json`
+  pour vérifier sa couverture ; règles d'extension dans `references/registry.md`.
+- `scripts/validate_registry.py` — vérifie que le catalogue reste aligné sur les templates,
+  les SLOTs et les définitions `<lc-*>`. Le builder l'exécute automatiquement.
 - `scripts/build_site.py` — assemble le site depuis un manifest JSON (copie les
   templates, injecte les SLOTs, réécrit les tokens, génère le hub). **C'est lui qui
   écrit le HTML, pas toi.**
@@ -189,13 +194,19 @@ fidélité plutôt que promo ; expansion internationale → activation multi-mar
 - **N actes** (vise 5–7, ou 3–4 pour une démo express), chacun :
   - `acte` (libellé, ex. « Acte 1 · Réengagement »),
   - `titre` court de l'écran,
-  - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard · **lightning-sales / lightning-record / lightning-dashboard / lightning-fieldservice / lightning-marketing** (écrans Salesforce riches),
+  - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard · **lightning-sales / lightning-record / lightning-dashboard / lightning-fieldservice / lightning-marketing** (écrans Salesforce riches) · **financial-loan-portal / financial-loan-processor / financial-loan-underwriter** (Digital Lending) · **consumer-commerce-home / consumer-commerce-order / consumer-service-performance / consumer-service-account / consumer-service-case / consumer-service-asset / consumer-sales-trade-plan / consumer-sales-agreement / consumer-sales-forecast** (Consumer Goods),
   - `moment` (1 phrase : ce qui se passe),
   - `trigger` (ce qui déclenche l'acte),
   - `valeur` Salesforce (le produit mis en avant : Data Cloud, Marketing Cloud,
     Agentforce, Service Cloud, MuleSoft, Commerce…),
   - `result` (le résultat visible pour le client ou l'employé),
   - `transition` (la phrase qui rend l'acte suivant inévitable).
+
+**Sélection des assets — deux axes indépendants.** Consulte `registry/screens.json` : choisis
+d'abord le `job` qui sert l'acte, puis vérifie `products`. Utilise par défaut les écrans
+`cross_industry: true`. Ne filtre sur `industries` que si le workflow ou l'interaction est
+réellement sectoriel. Un simple changement de données ou de vocabulaire reste dans le manifest ;
+il ne justifie ni un nouveau composant ni un nouvel écran. Voir `references/registry.md`.
 
 Si l'histoire change de persona, de marché (B2C → B2B) ou de temporalité, crée des
 **chapitres nommés**. Ne masque jamais une seconde histoire derrière un simple « bascule
@@ -313,6 +324,7 @@ Structure :
 
 Règles pour le manifest :
 - **`template`** = le nom du canal (table canal → template dans `references/screens.md`).
+  `registry/screens.json` est la source machine-readable pour la disponibilité et le classement.
   Si aucun ne colle, prends le plus proche et signale-le — n'invente pas d'écran.
 - **`slots`** = un nom de SLOT valide → son contenu HTML. Les noms valides de chaque
   template sont listés dans `references/screens.md`. Un SLOT que tu omets garde le
@@ -322,7 +334,9 @@ Règles pour le manifest :
   **bloc d'exemple du template** (lis-le dans `templates/<canal>.html`) et n'ajuste que
   le texte / le nombre de sous-blocs. Ne fabrique pas de nouvelle structure ni de
   nouvelles classes — la chrome est verrouillée.
-- **Écrans Lightning composables** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`, `lightning-marketing`) :
+- **Écrans composables `<lc-*>`** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`,
+  `lightning-marketing`, `financial-loan-portal`, `financial-loan-processor`,
+  `financial-loan-underwriter` et les écrans `consumer-*`) :
   leurs SLOTs enveloppent un composant `<lc-*>` + un `<script type="application/json">`. Reprends le bloc
   d'exemple et **n'ajuste que le JSON** (valeurs), jamais la balise ni les clés attendues. Le marqueur SLOT
   est **autour** du `<script>` (un commentaire dedans casserait `JSON.parse`) — c'est déjà le cas, n'y touche pas.

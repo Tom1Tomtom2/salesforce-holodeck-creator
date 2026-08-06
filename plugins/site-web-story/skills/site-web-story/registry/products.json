@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "products": [
+    {
+      "id": "salesforce-platform",
+      "label": "Salesforce Platform",
+      "aliases": ["CRM", "Lightning", "Salesforce"],
+      "jobs": ["record-management", "customer-360", "workflow", "reporting"]
+    },
+    {
+      "id": "sales-cloud",
+      "label": "Sales Cloud",
+      "aliases": ["Sales", "CRM Analytics for Sales"],
+      "jobs": ["pipeline", "forecasting", "deal-inspection", "sales-activity", "sales-analytics"]
+    },
+    {
+      "id": "service-cloud",
+      "label": "Service Cloud",
+      "aliases": ["Service", "Service Console"],
+      "jobs": ["case-management", "contact-center", "customer-service"]
+    },
+    {
+      "id": "data-cloud",
+      "label": "Data Cloud",
+      "aliases": ["Data 360"],
+      "jobs": ["identity-resolution", "unified-profile", "segmentation", "activation"]
+    },
+    {
+      "id": "agentforce",
+      "label": "Agentforce",
+      "aliases": ["Einstein", "Service Assistant"],
+      "jobs": ["recommendation", "assistance", "content-generation", "automation"]
+    },
+    {
+      "id": "marketing-cloud",
+      "label": "Marketing Cloud",
+      "aliases": ["Marketing", "Journey Builder", "Email Studio"],
+      "jobs": ["campaign-management", "journey-orchestration", "email-authoring", "marketing-performance"]
+    },
+    {
+      "id": "field-service",
+      "label": "Field Service",
+      "aliases": ["Salesforce Field Service"],
+      "jobs": ["dispatch", "route-optimization", "appointment-management", "work-order-management", "inventory"]
+    },
+    {
+      "id": "commerce-cloud",
+      "label": "Commerce Cloud",
+      "aliases": ["Commerce"],
+      "jobs": ["product-discovery", "checkout", "order-management"]
+    },
+    {
+      "id": "revenue-cloud",
+      "label": "Revenue Cloud",
+      "aliases": ["CPQ", "Revenue Lifecycle Management"],
+      "jobs": ["quote-configuration", "pricing", "approval"]
+    },
+    {
+      "id": "mulesoft",
+      "label": "MuleSoft",
+      "aliases": ["MuleSoft Anypoint Platform"],
+      "jobs": ["integration", "system-synchronization"]
+    },
+    {
+      "id": "digital-engagement",
+      "label": "Digital Engagement",
+      "aliases": ["WhatsApp for Service", "Messaging"],
+      "jobs": ["messaging", "appointment-booking", "service-escalation"]
+    },
+    {
+      "id": "financial-services-cloud",
+      "label": "Financial Services Cloud",
+      "aliases": ["FSC", "Digital Lending"],
+      "jobs": ["loan-origination", "loan-processing", "loan-underwriting", "credit-decisioning"]
+    },
+    {
+      "id": "experience-cloud",
+      "label": "Experience Cloud",
+      "aliases": ["Customer Portal", "Digital Experience"],
+      "jobs": ["customer-portal", "self-service", "application-intake"]
+    },
+    {
+      "id": "slack",
+      "label": "Slack",
+      "aliases": ["Slack for Salesforce"],
+      "jobs": ["collaboration", "case-collaboration", "agent-collaboration"]
+    },
+    {
+      "id": "consumer-goods-cloud",
+      "label": "Consumer Goods Cloud",
+      "aliases": ["Consumer Goods", "CG Cloud"],
+      "jobs": ["retail-execution", "account-planning", "store-performance", "asset-service", "trade-promotion-management", "sales-agreement-management", "account-forecasting"]
+    }
+  ]
+}

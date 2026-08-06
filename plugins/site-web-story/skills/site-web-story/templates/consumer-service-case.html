@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods : traitement d'un dossier de service (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Consumer Goods Service - Dossier 0001842<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1500px; }
+    .csc-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 14px; }
+    .csc-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(340px, .75fr); gap: 14px; align-items: start; }
+    .csc-column { display: grid; gap: 14px; }
+    .csc-summary { padding: 16px; }
+    .csc-summary h2 { margin: 0 0 10px; color: var(--lc-heading); font-size: 18px; font-weight: 400; }
+    .csc-summary p { color: var(--lc-text-secondary); line-height: 1.55; }
+    .csc-summary dl { margin: 14px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .csc-summary dt { color: var(--lc-text-weak); font-size: 11px; }
+    .csc-summary dd { margin: 3px 0 0; color: var(--lc-heading); font-weight: 600; }
+    @media (max-width: 900px) { .csc-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 8 - Agent de service - résoudre le dossier<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top"><!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Northern Trail</span></span><!-- /SLOT: sf-logo --><div class="ln-search">⌕ Rechercher dans Salesforce…</div><span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div></div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Service</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Accueil</span><span class="ln-tab on">Dossiers</span><span class="ln-tab">Actifs</span><span class="ln-tab">Interventions</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="csc-page">
+    <!-- SLOT: header -->
+    <lc-record-header><script type="application/json">{"type":"Dossier","icon":"case","title":"Pression instable - Machine CR-014","actions":[{"label":"Contacter le client","action":"contact"},{"label":"Créer une intervention","action":"new-work-order","primary":true}],"highlights":[{"label":"Dossier","value":"0001842"},{"label":"Compte","value":"Café République"},{"label":"Priorité","value":"Élevée"},{"label":"Canal","value":"Télémétrie IoT"},{"label":"Propriétaire","value":"Alex Martin"}]}</script></lc-record-header>
+    <!-- /SLOT: header -->
+    <!-- SLOT: path -->
+    <lc-status-path><script type="application/json">{"title":"Cycle de résolution","meta":"Étape actuelle : diagnostic","current":1,"steps":["Nouveau","Diagnostic","Intervention","Validation","Clôturé"]}</script></lc-status-path>
+    <!-- /SLOT: path -->
+    <section class="csc-grid">
+        <div class="csc-column">
+            <!-- SLOT: summary -->
+            <section class="lc-panel csc-summary"><h2>Résumé du dossier</h2><p>La plateforme a détecté une dérive continue de la pression de pompe. Le point de vente confirme un bruit inhabituel et une extraction plus lente depuis ce matin.</p><dl><div><dt>Impact</dt><dd>Service dégradé, machine opérationnelle</dd></div><div><dt>SLA restant</dt><dd>5 h 24 min</dd></div><div><dt>Actif</dt><dd>Barista Pro X2 - CR-014</dd></div><div><dt>Dernière maintenance</dt><dd>18 juin 2026</dd></div></dl></section>
+            <!-- /SLOT: summary -->
+            <!-- SLOT: timeline -->
+            <lc-related-list><script type="application/json">{"title":"Chronologie","icon":"activity","meta":"4 événements","columns":[{"key":"type","label":"Type","width":"22%"},{"key":"subject","label":"Événement","link":true,"width":"53%"},{"key":"time","label":"Heure","width":"25%"}],"rows":[{"type":"Télémétrie","subject":"Seuil de pression dépassé","time":"08:42","href":"#"},{"type":"Email","subject":"Confirmation du responsable","time":"09:04","href":"#"},{"type":"Agentforce","subject":"Diagnostic initial généré","time":"09:06","href":"#"},{"type":"Interne","subject":"Pièce FE-220 disponible","time":"09:11","href":"#"}],"footer":"Tout afficher"}</script></lc-related-list>
+            <!-- /SLOT: timeline -->
+        </div>
+        <!-- SLOT: workorders -->
+        <lc-related-list><script type="application/json">{"title":"Interventions associées","icon":"work-order","meta":"1 élément","columns":[{"key":"subject","label":"Intervention","link":true,"width":"58%"},{"key":"status","label":"Statut","width":"42%"}],"rows":[{"subject":"WO-009281 - Remplacer le filtre","status":"Brouillon","href":"#"}],"footer":"Ouvrir l'intervention"}</script></lc-related-list>
+        <!-- /SLOT: workorders -->
+    </section>
+</main>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Service Resolution Agent","launchLabel":"Résoudre avec Agentforce","open":true,"messages":[{"role":"assistant","text":"J'ai rapproché le signal IoT, l'historique de maintenance et le message du client.","bullets":["Cause probable : filtre d'entrée obstrué","Pièce FE-220 disponible au dépôt Paris Est","Technicien recommandé : Léa Durand, créneau 14 h 30","Réponse client prête à être envoyée"]}],"actionsTitle":"Prochaines étapes","actions":[{"label":"Planifier Léa à 14 h 30"},{"label":"Envoyer la confirmation au client"},{"label":"Finaliser l'intervention WO-009281"}],"placeholder":"Demandez une action sur ce dossier…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

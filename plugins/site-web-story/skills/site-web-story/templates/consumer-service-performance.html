@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods : performance du réseau de service (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Consumer Goods Service - Performance réseau<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .csp-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 14px; }
+    .csp-page h1 { margin: 0; color: var(--lc-heading); font-size: 25px; font-weight: 400; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 3 - Responsable service - piloter le réseau<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top"><!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Northern Trail</span></span><!-- /SLOT: sf-logo --><div class="ln-search">⌕ Rechercher dans Salesforce…</div><span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div></div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Consumer Goods Service</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab on">Performance réseau</span><span class="ln-tab">Comptes</span><span class="ln-tab">Actifs</span><span class="ln-tab">Interventions</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="csp-page">
+    <h1><!-- SLOT: heading -->Performance du réseau de points de vente<!-- /SLOT --></h1>
+    <!-- SLOT: performance -->
+    <lc-retail-store-performance>
+        <script type="application/json">
+        {"title":"Suivi des magasins","updated":"Actualisé aujourd'hui à 08:45","filters":[{"label":"Période","options":["Ce trimestre","Ce mois-ci","Cette année"]},{"label":"Région","options":["Île-de-France","Toutes les régions"]}],"metrics":[{"label":"Points de vente actifs","value":"148","context":"+6 ce trimestre"},{"label":"Volume servi","value":"2,84 M","context":"+9,2 % vs N-1"},{"label":"Taux de disponibilité","value":"97,4 %","context":"Objectif 96 %"}],"chartTitle":"Top magasins par volume","stores":[{"name":"République","value":128,"display":"128 k"},{"name":"Opéra","value":112,"display":"112 k"},{"name":"Bastille","value":86,"display":"86 k"},{"name":"Montparnasse","value":72,"display":"72 k"}],"locations":[{"store":"Café République","location":"Paris 11e","account":"Urban Coffee","value":"128 k"},{"store":"Kiosque Opéra","location":"Paris 9e","account":"City Kiosk","value":"112 k"},{"store":"Bastille Central","location":"Paris 12e","account":"Urban Coffee","value":"86 k"}],"scorecardTitle":"Activité service","scorecardMeta":"Ce mois-ci","scorecard":[{"label":"Dossiers résolus","value":"184","progress":86,"icon":"✓","color":"#2e844a"},{"label":"Interventions terrain","value":"42","progress":64,"icon":"▣","color":"#1b78d0"},{"label":"Alertes critiques","value":"3","progress":18,"icon":"!","color":"#ba0517"},{"label":"Satisfaction","value":"4,7 / 5","progress":94,"icon":"★","color":"#8854d0"}]}
+        </script>
+    </lc-retail-store-performance>
+    <!-- /SLOT: performance -->
+</main>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Agentforce Service","launchLabel":"Analyser le réseau","open":true,"messages":[{"role":"assistant","text":"Trois magasins concentrent 61 % des indisponibilités de machines cette semaine.","bullets":["Café République : pression pompe instable","Kiosque Opéra : maintenance préventive en retard","Bastille Central : consommable filtre sous le seuil"]}],"actionsTitle":"Actions recommandées","actions":[{"label":"Créer les interventions prioritaires"},{"label":"Prévenir les responsables de magasin"}],"placeholder":"Posez une question sur la performance…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

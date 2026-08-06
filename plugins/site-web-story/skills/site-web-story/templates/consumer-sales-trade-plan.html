@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods Sales : trade promotion management (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Consumer Goods Sales - Trade Plan 2027<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .ctp-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 14px; }
+    .ctp-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+    .ctp-heading h1 { margin: 0; color: var(--lc-heading); font-size: 26px; font-weight: 400; }
+    .ctp-heading p { margin: 4px 0 0; color: var(--lc-text-weak); }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 5 - Trade Promotion Manager - construire le plan<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top"><!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Northern Trail</span></span><!-- /SLOT: sf-logo --><div class="ln-search">⌕ Rechercher dans Salesforce…</div><span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div></div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Key Account Management</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Accueil</span><span class="ln-tab">Comptes</span><span class="ln-tab on">Trade Planning</span><span class="ln-tab">Promotions</span><span class="ln-tab">Funds</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="ctp-page">
+    <div class="ctp-heading"><div><h1><!-- SLOT: heading -->Plan commercial Urban Coffee 2027<!-- /SLOT --></h1><p>Visualiser les temps forts, promotions et investissements par période.</p></div><span class="lc-badge lc-badge--warning">Brouillon</span></div>
+    <!-- SLOT: calendar -->
+    <lc-trade-promotion-calendar>
+        <script type="application/json">
+        {"title":"Calendrier promotionnel","meta":"Urban Coffee France - Draft Plan 2027","scenarioLabel":"P&L du plan","newLabel":"Nouvelle promotion","periods":["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sept","Oct","Nov","Déc"],"rows":[{"label":"Temps forts enseigne","description":"Périodes merchandising","color":"#67b987","items":[{"label":"Rentrée","start":2,"span":2},{"label":"Terrasses","start":5,"span":3},{"label":"Fêtes","start":11,"span":2}]},{"label":"Media","description":"Activations nationales","color":"#9bcfb1","items":[{"label":"Brand awareness","start":1,"span":2},{"label":"Summer coffee","start":6,"span":2},{"label":"Holiday","start":10,"span":2}]},{"label":"Promotion nationale","description":"Prise en charge marque","color":"#88506b","items":[{"label":"Espresso Week","start":3,"span":2},{"label":"Cold Brew","start":7,"span":2},{"label":"Black Friday","start":11,"span":1}]},{"label":"Réduction temporaire","description":"TPR enseigne","color":"#e07962","items":[{"label":"-10 %","start":1,"span":2},{"label":"-15 %","start":5,"span":2},{"label":"-10 %","start":9,"span":2}]},{"label":"Mise en avant","description":"Displays et visibilité","color":"#4e9ba6","items":[{"label":"Comptoir","start":4,"span":2},{"label":"Vitrine","start":8,"span":2},{"label":"Corner","start":12,"span":1}]},{"label":"Sous-comptes","description":"Actions locales","color":"#55a8dd","items":[{"label":"Paris","start":2,"span":1},{"label":"Lyon","start":6,"span":1},{"label":"Lille","start":9,"span":1}]}],"legend":[{"label":"Promotion marque","color":"#88506b"},{"label":"Promotion enseigne","color":"#67b987"},{"label":"Trade terms","color":"#e07962"},{"label":"Media","color":"#9bcfb1"},{"label":"Activation locale","color":"#55a8dd"}]}
+        </script>
+    </lc-trade-promotion-calendar>
+    <!-- /SLOT: calendar -->
+</main>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Trade Planning Agent","launchLabel":"Optimiser le plan","open":true,"messages":[{"role":"assistant","text":"Le plan concentre trop d'investissement sur mai et juin alors que la couverture forecast est déjà élevée.","bullets":["Décaler Cold Brew de juillet à août","Réduire la remise Espresso Week de 15 % à 10 %","Économie estimée : 42 k€","Volume annuel maintenu à +6,8 %"]}],"actionsTitle":"Optimiser le mix","actions":[{"label":"Créer un scénario optimisé"},{"label":"Comparer le P&L des deux plans"}],"placeholder":"Posez une question sur le plan promotionnel…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

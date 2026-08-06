@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- TEMPLATE — Financial Services : portail emprunteur (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Portail client — Demande de prêt<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { min-height: 100vh; background: #fff; --sf-w: 1480px; }
+    .flp-shell { width: min(var(--sf-w), 100%); margin: 0 auto; }
+    .flp-nav { min-height: 66px; padding: 0 28px; display: flex; align-items: center; gap: 50px; border-bottom: 1px solid #e8e8e8; }
+    .flp-logo { color: #4b5ee8; font-size: 30px; font-weight: 800; letter-spacing: -.05em; }
+    .flp-logo .brand-mark { width: 38px; height: 24px; margin-right: 3px; border-radius: 50% 45% 45% 50%; }
+    .flp-links { display: flex; align-items: center; gap: 34px; }
+    .flp-links a { padding: 21px 0 18px; color: #0b4a8b; font-weight: 700; border-bottom: 3px solid transparent; }
+    .flp-links a.on { color: #171717; border-bottom-color: #4b3fd5; }
+    .flp-user { margin-left: auto; display: flex; gap: 18px; color: #7a7a86; font-size: 20px; }
+    .flp-page { padding: 16px 28px 70px; }
+    .flp-heading { margin: 4px 0 16px; color: var(--lc-heading); font-size: 20px; font-weight: 500; }
+    .flp-footer { min-height: 128px; margin-top: 44px; padding: 28px; color: #fff; background: #302d7f; }
+    @media (max-width: 700px) { .flp-nav { gap: 18px; padding-inline: 16px; } .flp-links { gap: 14px; } .flp-links a { font-size: 12px; } .flp-page { padding-inline: 14px; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 1 · Portail client — demande de prêt<!-- /SLOT --></div>
+<div class="flp-shell">
+    <header class="flp-nav">
+        <!-- SLOT: brand -->
+        <span class="flp-logo"><span class="brand-mark">C</span>Cumulus</span>
+        <!-- /SLOT: brand -->
+        <!-- SLOT: nav -->
+        <nav class="flp-links" aria-label="Navigation principale">
+            <a href="#">Accueil</a><a class="on" href="#">Prêts</a><a href="#">Demandes</a>
+        </nav>
+        <!-- /SLOT: nav -->
+        <div class="flp-user" aria-label="Compte et notifications"><span aria-hidden="true">●</span><span aria-hidden="true">◉</span></div>
+    </header>
+    <main class="flp-page">
+        <h1 class="flp-heading"><!-- SLOT: heading -->Votre projet de financement<!-- /SLOT --></h1>
+
+        <!-- SLOT: catalog ─ catalogue des produits de prêt. Garde le composant et ajuste uniquement le JSON. -->
+        <lc-loan-product-catalog>
+            <script type="application/json">
+            {
+              "eyebrow": "Cumulus Finance", "title": "Une banque simple, pour vos projets importants",
+              "subtitle": "Découvrez les solutions adaptées à votre situation et démarrez une demande en quelques minutes.",
+              "products": [
+                { "name": "Prêt automobile", "description": "Financez votre prochain véhicule avec un taux et une durée adaptés à votre budget.", "action": "Découvrir" },
+                { "name": "Prêt immobilier", "description": "Préparez votre achat immobilier avec un accompagnement personnalisé à chaque étape.", "action": "Découvrir" },
+                { "name": "Prêt personnel", "description": "Donnez vie à vos projets grâce à une solution souple et rapide.", "action": "Découvrir" }
+              ]
+            }
+            </script>
+        </lc-loan-product-catalog>
+        <!-- /SLOT: catalog -->
+
+        <!-- SLOT: application ─ formulaire de demande multi-étapes. Garde le composant et ajuste uniquement le JSON. -->
+        <lc-loan-application-form>
+            <script type="application/json">
+            {
+              "eyebrow": "Demande AF-00000033", "title": "Informations personnelles", "description": "Les champs marqués d'un astérisque sont obligatoires.",
+              "stepsTitle": "Étapes", "currentStep": 0, "nextLabel": "Enregistrer et continuer", "backLabel": "Retour",
+              "steps": ["Informations personnelles", "Détails du prêt", "Adresse", "Emploi et revenus", "Charges", "Co-demandeurs", "Patrimoine", "Vérification de crédit", "Configuration de l'offre", "Documents", "Consentements", "Récapitulatif"],
+              "fields": [
+                { "label": "Prénom", "name": "given-name", "value": "Laura", "required": true, "autocomplete": "given-name" },
+                { "label": "Nom", "name": "family-name", "value": "Silva", "required": true, "autocomplete": "family-name" },
+                { "label": "Date de naissance", "name": "bday", "type": "date", "value": "1986-03-14", "required": true, "autocomplete": "bday" },
+                { "label": "Téléphone", "name": "tel", "type": "tel", "autocomplete": "tel" },
+                { "label": "Email", "name": "email", "type": "email", "value": "laura.silva@example.com", "required": true, "autocomplete": "email", "wide": true },
+                { "label": "Type de justificatif fiscal", "name": "tax-type", "type": "select", "value": "Numéro fiscal", "options": ["Numéro fiscal", "Identifiant étranger"] },
+                { "label": "Identifiant fiscal", "name": "tax-id", "value": "800", "required": true }
+              ]
+            }
+            </script>
+        </lc-loan-application-form>
+        <!-- /SLOT: application -->
+    </main>
+    <footer class="flp-footer"><strong>Cumulus</strong><p>Votre demande est protégée et enregistrée à chaque étape.</p></footer>
+</div>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

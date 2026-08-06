@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods Sales : business planning et forecast (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Consumer Goods Sales - Advanced Forecast<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .csf-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 14px; }
+    .csf-page h1 { margin: 0; color: var(--lc-heading); font-size: 26px; font-weight: 400; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 7 - Sales Planner - réconcilier le forecast<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top"><!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Northern Trail</span></span><!-- /SLOT: sf-logo --><div class="ln-search">⌕ Rechercher dans Salesforce…</div><span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div></div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Consumer Goods Sales</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Sales Agreements</span><span class="ln-tab on">Advanced Forecast</span><span class="ln-tab">Targets</span><span class="ln-tab">Rebate Programs</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="csf-page">
+    <h1><!-- SLOT: heading -->Customer Business Plan - Urban Coffee 2027<!-- /SLOT --></h1>
+    <!-- SLOT: planner -->
+    <lc-trade-business-planner>
+        <script type="application/json">
+        {"title":"Prévision avancée par catégorie","meta":"Version 4 - scénario accord + promotions","calculated":"il y a 12 minutes","filters":[{"label":"Catégorie","options":["Boissons","Toutes les catégories"]},{"label":"Niveau produit","options":["Catégorie + SKU","Catégorie"]},{"label":"KPI Set","options":["Baseline Management","Commercial Plan"]},{"label":"Disposition","options":["KPI / Produit x Temps"]},{"label":"Période","options":["Mois","Trimestre"]}],"periods":["Jan 27","Fév 27","Mar 27","Avr 27","Mai 27","Juin 27"],"rows":[{"label":"Volume N-1","total":"1 704 820","values":["268 400","242 100","284 320","291 000","309 000","310 000"]},{"label":"Volume de base prédit","total":"1 736 410","values":["274 500","249 600","288 810","295 500","313 000","315 000"]},{"label":"Croissance enseigne %","total":"4,27 %","values":["4,27 %","4,27 %","4,27 %","4,27 %","4,27 %","4,27 %"],"editable":true,"group":true},{"label":"Espresso","level":1,"total":"5,00 %","values":["5,00 %","5,00 %","5,00 %","5,00 %","5,00 %","5,00 %"],"editable":true},{"label":"Cold Brew","level":1,"total":"3,00 %","values":["3,00 %","3,00 %","4,50 %","4,50 %","3,00 %","3,00 %"],"editable":true},{"label":"Impact promotions","total":"+74 200","values":["8 400","9 800","17 200","15 100","12 700","11 000"]},{"label":"Prévision finale","total":"1 810 610","values":["282 900","259 400","306 010","310 600","325 700","326 000"],"group":true}]}
+        </script>
+    </lc-trade-business-planner>
+    <!-- /SLOT: planner -->
+</main>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Forecast Agent","launchLabel":"Réconcilier le forecast","open":true,"messages":[{"role":"assistant","text":"La prévision combine désormais baseline, accord commercial et impact promotionnel.","bullets":["Prévision finale : 1,81 M unités","Couverture de l'accord : 99,5 %","Cold Brew en tension sur février","Espresso au-dessus de la capacité cible en juin"]}],"actionsTitle":"Finaliser la prévision","actions":[{"label":"Lisser 12 k unités de juin vers mai"},{"label":"Soumettre le forecast consolidé"}],"placeholder":"Posez une question sur la prévision…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

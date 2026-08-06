@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "industries": [
+    {
+      "id": "retail-consumer-goods",
+      "label": "Retail & Consumer Goods",
+      "aliases": ["retail", "consumer goods"],
+      "description": "Parcours boutique, e-commerce, clienteling, fidélité et point de vente."
+    },
+    {
+      "id": "financial-services",
+      "label": "Financial Services",
+      "aliases": ["banking", "insurance", "wealth"],
+      "description": "Banque, assurance et gestion de patrimoine."
+    },
+    {
+      "id": "communications-media",
+      "label": "Communications & Media",
+      "aliases": ["telecommunications", "media"],
+      "description": "Télécommunications, médias et abonnements."
+    },
+    {
+      "id": "automotive",
+      "label": "Automotive",
+      "aliases": ["mobility"],
+      "description": "Constructeurs, mobilité, vente et après-vente automobile."
+    },
+    {
+      "id": "manufacturing",
+      "label": "Manufacturing",
+      "aliases": ["industrial"],
+      "description": "Fabrication, distribution industrielle et service après-vente."
+    },
+    {
+      "id": "healthcare-life-sciences",
+      "label": "Healthcare & Life Sciences",
+      "aliases": ["healthcare", "life sciences"],
+      "description": "Santé, pharma et dispositifs médicaux."
+    },
+    {
+      "id": "public-sector",
+      "label": "Public Sector",
+      "aliases": ["government"],
+      "description": "Services publics et administrations."
+    },
+    {
+      "id": "travel-transportation-hospitality",
+      "label": "Travel, Transportation & Hospitality",
+      "aliases": ["travel", "transportation", "hospitality"],
+      "description": "Voyage, transport, hôtellerie et loisirs."
+    },
+    {
+      "id": "energy-utilities",
+      "label": "Energy & Utilities",
+      "aliases": ["energy", "utilities"],
+      "description": "Énergie, eau et services aux réseaux."
+    },
+    {
+      "id": "professional-services",
+      "label": "Professional Services",
+      "aliases": ["business services"],
+      "description": "Conseil et services B2B."
+    },
+    {
+      "id": "education",
+      "label": "Education",
+      "aliases": ["higher education"],
+      "description": "Éducation, formation et enseignement supérieur."
+    },
+    {
+      "id": "nonprofit",
+      "label": "Nonprofit",
+      "aliases": ["ngo"],
+      "description": "Associations, fondations et organisations non gouvernementales."
+    }
+  ]
+}

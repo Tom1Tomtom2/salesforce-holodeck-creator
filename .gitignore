@@ -6,3 +6,5 @@ __pycache__/
 # Chemins ancrés à la racine pour ne PAS matcher le dossier skill « site-web-story/ ».
 /*-story/
 /*-brand/
+/plugins/site-web-story/skills/site-web-story/*-story/
+/plugins/site-web-story/skills/site-web-story/*-brand/

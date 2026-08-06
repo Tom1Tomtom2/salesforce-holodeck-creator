@@ -1,0 +1,66 @@
+{
+  "brand": "Cumulus",
+  "slug": "financial-services-lending",
+  "story_title": "De la demande de prêt à la décision",
+  "tagline": "Trois espaces, trois rôles, un même dossier de financement.",
+  "thesis": "Parce que le dossier est structuré dès le portail, le loan processor peut le compléter avec Agentforce et le loan underwriter prend une décision argumentée sans ressaisie.",
+  "tokens": {
+    "--accent": "#4b3fd5",
+    "--accent-dark": "#17145d",
+    "--accent-soft": "#f0efff"
+  },
+  "intro": {
+    "kicker": "Digital Lending",
+    "title": "Un dossier partagé entre le client, le processor et l'underwriter",
+    "lede": "Laura dépose sa demande ; Sofia instruit le dossier ; Marc analyse le risque et prépare la décision.",
+    "cast": [
+      {"name": "Laura", "role": "Cliente", "bio": "Dépose une demande de prêt immobilier."},
+      {"name": "Sofia", "role": "Loan processor", "bio": "Vérifie la complétude et les pièces."},
+      {"name": "Marc", "role": "Loan underwriter", "bio": "Évalue les ratios et les conditions."}
+    ]
+  },
+  "screens": [
+    {
+      "file": "acte1-portail-client.html",
+      "template": "financial-loan-portal",
+      "channel": "Portail client",
+      "chapter": "Demander",
+      "act": "Acte 1 · Laura",
+      "title": "Choisir puis déposer une demande",
+      "desc": "Laura compare les offres et saisit ses informations dans un parcours guidé. Le dossier est structuré avant son arrivée chez les équipes internes.",
+      "trigger": "Laura sélectionne un prêt immobilier.",
+      "result": "Une demande complète et traçable est créée.",
+      "transition": "Le dossier peut maintenant être instruit sans ressaisie.",
+      "display": {"mode": "full", "scale": 0.48, "height": 980},
+      "slots": {}
+    },
+    {
+      "file": "acte2-loan-processor.html",
+      "template": "financial-loan-processor",
+      "channel": "Digital Lending",
+      "chapter": "Instruire",
+      "act": "Acte 2 · Sofia",
+      "title": "Compléter et fiabiliser le dossier",
+      "desc": "Sofia voit la structure du dossier, les pièces et le résumé généré. Processor Agent attire son attention sur les informations encore à confirmer.",
+      "trigger": "La demande de Laura est soumise.",
+      "result": "Les anomalies et pièces manquantes sont identifiées.",
+      "transition": "Le dossier fiabilisé est transmis à l'underwriter.",
+      "display": {"mode": "full", "scale": 0.47, "height": 1020},
+      "slots": {}
+    },
+    {
+      "file": "acte3-underwriter.html",
+      "template": "financial-loan-underwriter",
+      "channel": "Digital Lending",
+      "chapter": "Décider",
+      "act": "Acte 3 · Marc",
+      "title": "Analyser le risque et préparer la décision",
+      "desc": "Marc compare LTV, DTI, conditions et contrôles. Underwriting Agent formule une recommandation explicable avec les réserves à lever.",
+      "trigger": "Le dossier passe en underwriting.",
+      "result": "Une approbation conditionnelle argumentée est prête.",
+      "transition": "La décision peut être communiquée au client avec ses conditions.",
+      "display": {"mode": "full", "scale": 0.47, "height": 1020},
+      "slots": {}
+    }
+  ]
+}

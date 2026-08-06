@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- TEMPLATE — Financial Services : espace loan processor (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Digital Lending — Loan Processor<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .fls-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
+    .fls-grid { display: grid; grid-template-columns: minmax(270px, 320px) minmax(0, 1fr) minmax(320px, 390px); gap: 16px; align-items: start; }
+    .fls-main, .fls-rail { display: grid; gap: 16px; }
+    .fls-record-tabs { display: flex; gap: 24px; padding: 0 16px; border-bottom: 1px solid var(--lc-border-subtle); background: #fff; border-radius: 8px 8px 0 0; }
+    .fls-record-tabs span { padding: 15px 3px 12px; color: var(--lc-text-secondary); font-weight: 600; }
+    .fls-record-tabs .on { color: var(--lc-brand); border-bottom: 3px solid var(--lc-brand); }
+    @media (max-width: 1150px) { .fls-grid { grid-template-columns: minmax(250px, 300px) minmax(0, 1fr); } .fls-agent { grid-column: 1 / -1; } }
+    @media (max-width: 760px) { .fls-grid { grid-template-columns: 1fr; } .fls-agent { grid-column: auto; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 2 · Loan Processor — instruction du dossier<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">C</span> Cumulus</span></span><!-- /SLOT: sf-logo -->
+        <div class="ln-search"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>Search…</div>
+        <span class="ln-ask">✦ Ask</span>
+        <div class="ln-icons"><span aria-hidden="true">★</span><span aria-hidden="true">＋</span><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div>
+    </div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Digital Lending</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab on">Demandes de prêt</span><span class="ln-tab">File de travail</span><span class="ln-tab">Rapports</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="fls-page">
+    <!-- SLOT: header ─ en-tête du dossier. -->
+    <lc-record-header>
+        <script type="application/json">
+        {"type":"Demande de prêt","icon":"case","title":"AF-00000033","actions":[{"label":"Nouvelle tâche","action":"new-task"},{"label":"Contacter Laura","action":"contact","primary":true}],"highlights":[{"label":"Demandeur","value":"Laura Silva"},{"label":"Type","value":"Prêt immobilier"},{"label":"LTV","value":"78 %"},{"label":"DTI","value":"32 %"},{"label":"Étape","value":"Instruction"},{"label":"Soumis le","value":"15 juil. 2026"}]}
+        </script>
+    </lc-record-header>
+    <!-- /SLOT: header -->
+
+    <!-- SLOT: path ─ progression du dossier. -->
+    <lc-status-path>
+        <script type="application/json">
+        {"title":"Cycle d'instruction","meta":"Étape actuelle : instruction","current":3,"steps":["Démarré","En cours","Soumis","Instruction","Décision","Clôture"]}
+        </script>
+    </lc-status-path>
+    <!-- /SLOT: path -->
+
+    <section class="fls-grid">
+        <!-- SLOT: tree ─ arborescence des objets du dossier. -->
+        <lc-loan-record-tree>
+            <script type="application/json">
+            {"title":"Structure du dossier","meta":"Vue consolidée","root":"AF-00000033","groups":[{"label":"Demandeurs","items":[{"label":"AP-00000028","icon":"contact"}]},{"label":"Actions","items":[{"label":"Vérifier les revenus","icon":"task"},{"label":"Contrôler le crédit","icon":"task"},{"label":"Préparer la proposition","icon":"task"}]},{"label":"Produits","items":[{"label":"AFP-00000051","icon":"case","active":true}]},{"label":"Profils de crédit","items":[{"label":"00000018","icon":"trend"}]},{"label":"Notes de prêt","items":[]}]}
+            </script>
+        </lc-loan-record-tree>
+        <!-- /SLOT: tree -->
+
+        <div class="fls-main">
+            <div class="fls-record-tabs" aria-label="Sections du dossier"><span>Résumé</span><span class="on">Conditions</span><span>Documents</span><span>Termes et frais</span></div>
+            <!-- SLOT: summary ─ résumé Agentforce structuré. -->
+            <lc-structured-summary>
+                <script type="application/json">
+                {"title":"Résumé Agentforce","meta":"Généré à 08:28 · sources du dossier","badge":"À vérifier","alert":"Informations de passif manquantes : recueillir les engagements financiers en cours avant la décision.","sections":[{"title":"Vue d'ensemble","items":[{"label":"Soumis le","value":"15 juillet 2026"},{"label":"Étape","value":"Instruction"},{"label":"Montant demandé","value":"550 000 €"}]},{"title":"Checklist documentaire","bullets":["Lettre d'explication : demandée","Deux derniers bulletins de salaire : reçus","Avis fiscal : reçu","Rapport de crédit : reçu"]},{"title":"Scoring crédit","items":[{"label":"Bureau","value":"Equifax"},{"label":"Score","value":"800"},{"label":"Vérification","value":"À confirmer"}]},{"title":"Bien financé","items":[{"label":"Type","value":"Maison"},{"label":"Valeur estimée","value":"600 000 €"},{"label":"Apport","value":"100 000 €"}]}]}
+                </script>
+            </lc-structured-summary>
+            <!-- /SLOT: summary -->
+
+            <!-- SLOT: actions ─ actions et documents. -->
+            <lc-related-list>
+                <script type="application/json">
+                {"title":"Actions du dossier","icon":"task","meta":"6 éléments · mis à jour à l'instant","columns":[{"key":"type","label":"Type","width":"20%"},{"key":"subject","label":"Objet","link":true,"width":"40%"},{"key":"status","label":"Statut","width":"18%"},{"key":"owner","label":"Responsable","width":"22%"}],"rows":[{"type":"Interne","subject":"Vérification initiale du crédit","status":"En cours","owner":"J. Brau","href":"#"},{"type":"Interne","subject":"Générer la proposition","status":"Nouveau","owner":"J. Brau","href":"#"},{"type":"Client","subject":"Signer les documents de clôture","status":"Nouveau","owner":"Laura Silva","href":"#"}],"footer":"Tout afficher"}
+                </script>
+            </lc-related-list>
+            <!-- /SLOT: actions -->
+        </div>
+
+        <!-- SLOT: agent ─ assistant du loan processor. -->
+        <lc-agent-conversation class="fls-agent">
+            <script type="application/json">
+            {"title":"Processor Agent","status":"Disponible","messages":[{"role":"assistant","author":"Processor Agent","text":"Le dossier est complet à 82 %. Les revenus sont cohérents, mais deux engagements financiers nécessitent une confirmation."},{"role":"user","author":"Sofia Lopez","text":"Peux-tu analyser le relevé bancaire ?"},{"role":"assistant","author":"Processor Agent","text":"Analyse terminée. Le solde moyen est stable et aucun découvert n'est observé.","bullets":["Solde moyen : 7 500 €","Deux dépôts importants à justifier","Paiements récurrents cohérents avec les charges déclarées"]}],"placeholder":"Décrivez votre tâche ou posez une question…"}
+            </script>
+        </lc-agent-conversation>
+        <!-- /SLOT: agent -->
+    </section>
+</main>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

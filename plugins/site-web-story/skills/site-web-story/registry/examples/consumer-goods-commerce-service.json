@@ -1,0 +1,150 @@
+{
+  "brand": "Northern Trail Supply",
+  "slug": "consumer-goods-commerce-service",
+  "story_title": "Du réassort du magasin au service proactif",
+  "tagline": "Commerce B2B, connaissance du compte et actifs connectés dans un même parcours.",
+  "thesis": "Parce que les commandes, la performance commerciale et la télémétrie des équipements partagent le même contexte, Agentforce peut prévenir les ruptures, préparer les revues de compte et accélérer la résolution de service.",
+  "tokens": {
+    "--accent": "#087c69",
+    "--accent-dark": "#063d54",
+    "--accent-soft": "#e7f6f2"
+  },
+  "intro": {
+    "kicker": "Consumer Goods",
+    "title": "Une relation continue entre la marque, le point de vente et le service",
+    "lede": "Nadia commande pour son café ; Camille pilote le compte et le réseau ; Alex intervient avant que la machine ne tombe en panne.",
+    "cast": [
+      {"name": "Nadia", "role": "Responsable de point de vente", "bio": "Réapprovisionne Café République."},
+      {"name": "Camille", "role": "Responsable de compte", "bio": "Développe Urban Coffee et son réseau."},
+      {"name": "Alex", "role": "Agent de service", "bio": "Diagnostique les incidents et coordonne les interventions."}
+    ]
+  },
+  "screens": [
+    {
+      "file": "acte1-commerce-b2b.html",
+      "template": "consumer-commerce-home",
+      "channel": "Commerce B2B",
+      "chapter": "Découvrir",
+      "act": "Acte 1 - Nadia",
+      "title": "Retrouver l'offre négociée de son enseigne",
+      "desc": "Nadia accède à un catalogue B2B qui combine assortiment, tarifs contractuels, disponibilité et habitudes de livraison.",
+      "trigger": "Le stock du café doit être reconstitué.",
+      "result": "Les catégories et conditions pertinentes sont immédiatement visibles.",
+      "transition": "Nadia peut préparer une commande sans rechercher les références habituelles.",
+      "display": {"mode": "full", "scale": 0.48, "height": 900},
+      "slots": {}
+    },
+    {
+      "file": "acte2-commande-assistee.html",
+      "template": "consumer-commerce-order",
+      "channel": "Commerce B2B + Agentforce",
+      "chapter": "Commander",
+      "act": "Acte 2 - Nadia",
+      "title": "Compléter la commande avec le contexte du magasin",
+      "desc": "Agentforce compare le panier aux commandes précédentes et signale les consommables ou références habituelles qui manquent.",
+      "trigger": "Nadia saisit les quantités du réassort.",
+      "result": "Le panier couvre la demande probable jusqu'à la prochaine livraison.",
+      "transition": "Les achats alimentent la vision commerciale et service du compte.",
+      "display": {"mode": "full", "scale": 0.48, "height": 920},
+      "slots": {}
+    },
+    {
+      "file": "acte3-performance-reseau.html",
+      "template": "consumer-service-performance",
+      "channel": "Consumer Goods Service",
+      "chapter": "Piloter",
+      "act": "Acte 3 - Camille",
+      "title": "Repérer les magasins qui nécessitent une action",
+      "desc": "Camille suit volume, disponibilité et activité service. Agentforce relie les écarts de performance aux incidents opérationnels.",
+      "trigger": "La revue hebdomadaire du réseau commence.",
+      "result": "Trois magasins prioritaires sont identifiés avec une cause exploitable.",
+      "transition": "Camille ouvre le compte Urban Coffee pour préparer la prochaine revue.",
+      "display": {"mode": "full", "scale": 0.47, "height": 950},
+      "slots": {}
+    },
+    {
+      "file": "acte4-cockpit-compte.html",
+      "template": "consumer-service-account",
+      "channel": "Consumer Goods Cloud",
+      "chapter": "Développer",
+      "act": "Acte 4 - Camille",
+      "title": "Préparer une revue de compte fondée sur les signaux réels",
+      "desc": "Le cockpit rassemble ventes, adoption des programmes, actifs et échéances. Agentforce formule un brief et les opportunités de croissance.",
+      "trigger": "La revue trimestrielle Urban Coffee approche.",
+      "result": "Les risques et le potentiel commercial sont synthétisés.",
+      "transition": "Une anomalie de machine devient simultanément un sujet de service prioritaire.",
+      "display": {"mode": "full", "scale": 0.47, "height": 950},
+      "slots": {}
+    },
+    {
+      "file": "acte5-plan-promotionnel.html",
+      "template": "consumer-sales-trade-plan",
+      "channel": "Trade Promotion Management",
+      "chapter": "Planifier",
+      "act": "Acte 5 - Camille",
+      "title": "Construire un plan promotionnel rentable",
+      "desc": "Camille visualise les temps forts, médias, remises et activations locales. Agentforce propose un scénario qui préserve le volume tout en réduisant l'investissement.",
+      "trigger": "Le plan commercial 2027 doit être préparé avec Urban Coffee.",
+      "result": "Les promotions sont séquencées et leur mix optimisé.",
+      "transition": "Le plan promotionnel peut maintenant être rapproché des engagements négociés.",
+      "display": {"mode": "full", "scale": 0.47, "height": 950},
+      "slots": {}
+    },
+    {
+      "file": "acte6-sales-agreement.html",
+      "template": "consumer-sales-agreement",
+      "channel": "Sales Agreement",
+      "chapter": "Engager",
+      "act": "Acte 6 - Camille",
+      "title": "Aligner l'accord commercial et la demande attendue",
+      "desc": "L'accord confronte le planifié, le réalisé et la prévision révisée par produit et trimestre. Agentforce quantifie l'écart que le plan trade peut récupérer.",
+      "trigger": "Urban Coffee et Northern Trail finalisent leurs engagements 2027.",
+      "result": "Les ajustements nécessaires sont identifiés avant approbation.",
+      "transition": "Le forecast consolidé doit réconcilier baseline, promotions et accord.",
+      "display": {"mode": "full", "scale": 0.47, "height": 960},
+      "slots": {}
+    },
+    {
+      "file": "acte7-forecast.html",
+      "template": "consumer-sales-forecast",
+      "channel": "Advanced Account Forecast",
+      "chapter": "Prévoir",
+      "act": "Acte 7 - Camille",
+      "title": "Réconcilier la prévision par catégorie et par mois",
+      "desc": "Camille ajuste les hypothèses de croissance et observe immédiatement l'effet de la baseline et des promotions sur la prévision finale.",
+      "trigger": "Le scénario négocié doit être soumis au Sales Planner.",
+      "result": "Le forecast couvre 99,5 % de l'accord avec deux arbitrages explicites.",
+      "transition": "La croissance prévue augmente l'importance d'un service proactif sur les équipements.",
+      "display": {"mode": "full", "scale": 0.47, "height": 960},
+      "slots": {}
+    },
+    {
+      "file": "acte8-dossier-service.html",
+      "template": "consumer-service-case",
+      "channel": "Service Cloud + Agentforce",
+      "chapter": "Résoudre",
+      "act": "Acte 8 - Alex",
+      "title": "Orchestrer la résolution avant l'arrêt de la machine",
+      "desc": "Le dossier réunit signal IoT, confirmation client, pièce disponible et intervention. Agentforce propose le technicien et la réponse au client.",
+      "trigger": "La pression dépasse le seuil sain.",
+      "result": "Une intervention prioritaire est prête à être planifiée.",
+      "transition": "Alex consulte la courbe de l'actif pour confirmer le diagnostic.",
+      "display": {"mode": "full", "scale": 0.47, "height": 960},
+      "slots": {}
+    },
+    {
+      "file": "acte9-actif-connecte.html",
+      "template": "consumer-service-asset",
+      "channel": "Connected Asset Service",
+      "chapter": "Prévenir",
+      "act": "Acte 9 - Alex",
+      "title": "Transformer la télémétrie en action de service",
+      "desc": "La dérive de pression est visible dans son contexte de maintenance. Agentforce identifie la pièce probable et prépare l'intervention.",
+      "trigger": "Alex vérifie la cause probable de l'incident.",
+      "result": "Le diagnostic, la pièce et le délai d'intervention sont alignés.",
+      "transition": "Le magasin est pris en charge avant une interruption complète du service.",
+      "display": {"mode": "full", "scale": 0.47, "height": 950},
+      "slots": {}
+    }
+  ]
+}

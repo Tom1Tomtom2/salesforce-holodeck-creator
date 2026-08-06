@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods : supervision d'un actif connecté (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Consumer Goods Service - Machine CR-014<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1500px; }
+    .cst-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 14px; }
+    .cst-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(340px, .6fr); gap: 14px; align-items: start; }
+    @media (max-width: 950px) { .cst-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 9 - Agent de service - diagnostiquer l'actif<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top"><!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Northern Trail</span></span><!-- /SLOT: sf-logo --><div class="ln-search">⌕ Rechercher dans Salesforce…</div><span class="ln-ask">✦ Ask</span><div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div></div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Service</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Accueil</span><span class="ln-tab">Dossiers</span><span class="ln-tab on">Actifs</span><span class="ln-tab">Interventions</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="cst-page">
+    <!-- SLOT: header -->
+    <lc-record-header><script type="application/json">{"type":"Actif connecté","icon":"work-order","title":"Machine espresso CR-014","actions":[{"label":"Ouvrir le compte","action":"open-account"},{"label":"Créer une intervention","action":"new-work-order","primary":true}],"highlights":[{"label":"Compte","value":"Café République"},{"label":"Modèle","value":"Barista Pro X2"},{"label":"Numéro de série","value":"BPX2-2024-0148"},{"label":"Installée le","value":"18 mars 2024"},{"label":"État","value":"Attention requise"}]}</script></lc-record-header>
+    <!-- /SLOT: header -->
+    <section class="cst-grid">
+        <!-- SLOT: telemetry -->
+        <lc-asset-telemetry>
+            <script type="application/json">
+            {"title":"Pression de la pompe","meta":"Télémétrie des dernières 24 heures","status":"Attention","accessibleLabel":"Pression de pompe en hausse, avec dépassement du seuil sain en fin de période","min":0,"max":16,"healthyMin":8,"healthyMax":12,"labels":["00 h","04 h","08 h","12 h","16 h","20 h","Maintenant"],"values":[9.2,9.4,9.8,10.1,11.4,12.8,14.2],"alerts":[{"status":"Critique","title":"Seuil de pression dépassé","description":"14,2 bars mesurés, au-dessus du seuil sain de 12 bars."},{"status":"Alerte","title":"Dérive détectée","description":"Hausse continue depuis 14 heures malgré un volume d'utilisation stable."}]}
+            </script>
+        </lc-asset-telemetry>
+        <!-- /SLOT: telemetry -->
+        <!-- SLOT: history -->
+        <lc-related-list>
+            <script type="application/json">
+            {"title":"Historique de service","icon":"work-order","meta":"3 interventions","columns":[{"key":"subject","label":"Intervention","link":true,"width":"60%"},{"key":"date","label":"Date","width":"40%"}],"rows":[{"subject":"Remplacement du filtre","date":"18 juin","href":"#"},{"subject":"Réglage du groupe 2","date":"4 avr.","href":"#"},{"subject":"Maintenance annuelle","date":"20 mars","href":"#"}],"footer":"Tout afficher"}
+            </script>
+        </lc-related-list>
+        <!-- /SLOT: history -->
+    </section>
+</main>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Asset Service Agent","launchLabel":"Diagnostiquer l'actif","open":true,"messages":[{"role":"assistant","text":"La hausse de pression correspond probablement à une obstruction progressive du circuit.","bullets":["Confiance du diagnostic : 87 %","Pièce probable : filtre d'entrée FE-220","Intervention recommandée sous 24 heures","Durée estimée : 35 minutes"]}],"actionsTitle":"Résoudre l'incident","actions":[{"label":"Créer l'intervention prioritaire"},{"label":"Réserver le filtre FE-220"},{"label":"Informer le responsable du café"}],"placeholder":"Posez une question sur cet actif…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

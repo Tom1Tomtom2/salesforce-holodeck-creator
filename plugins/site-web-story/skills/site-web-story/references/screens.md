@@ -33,6 +33,18 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Tableau de bord CRM Analytics | `lightning-dashboard.html` | desktop | Einstein — insight sur les indicateurs | graphiques SVG (donut/jauge/courbe) |
 | Field Service (répartition, interventions) | `lightning-fieldservice.html` | desktop | Einstein — optimisation de tournée / conflit | carte + Gantt de dispatch |
 | Marketing Cloud (campagne, parcours, e-mail, segment) | `lightning-marketing.html` | desktop | Agentforce (email studio) / Einstein (segment) | canvas de parcours + sparklines |
+| Portail client — produits et demande de prêt | `financial-loan-portal.html` | desktop | Experience Cloud + Financial Services Cloud | formulaire multi-étapes |
+| Loan processor — instruction du dossier | `financial-loan-processor.html` | desktop | Financial Services Cloud + Agentforce | résumé, progression, assistant |
+| Loan underwriter — analyse et décision | `financial-loan-underwriter.html` | desktop | Financial Services Cloud + Agentforce | ratios, contrôles, recommandation |
+| Accueil Commerce B2B Consumer Goods | `consumer-commerce-home.html` | desktop | Commerce Cloud | catalogue et bénéfices B2B |
+| Saisie de commande Consumer Goods | `consumer-commerce-order.html` | desktop | Commerce Cloud + Agentforce | sélection produits et assistant contextuel |
+| Performance réseau Consumer Goods | `consumer-service-performance.html` | desktop | Consumer Goods Cloud + Service Cloud + Agentforce | magasins, KPI et activité service |
+| Cockpit compte Consumer Goods | `consumer-service-account.html` | desktop | Consumer Goods Cloud + Agentforce | ventes, programmes et actifs |
+| Dossier de service Consumer Goods | `consumer-service-case.html` | desktop | Service Cloud + Agentforce | dossier, chronologie et résolution |
+| Actif connecté Consumer Goods | `consumer-service-asset.html` | desktop | Service Cloud + Agentforce | télémétrie, diagnostic et intervention |
+| Plan promotionnel Consumer Goods | `consumer-sales-trade-plan.html` | desktop | Consumer Goods Cloud + Agentforce | calendrier TPM et scénarios |
+| Sales Agreement Consumer Goods | `consumer-sales-agreement.html` | desktop | Consumer Goods Cloud + Agentforce | engagement, réalisé et forecast |
+| Advanced Forecast Consumer Goods | `consumer-sales-forecast.html` | desktop | Consumer Goods Cloud + Agentforce | business planning et forecast ajustable |
 
 `datacloud-pipeline.html` couvre 3 scènes du même gabarit (acquisition « lookalike »,
 activation d'audience vers Meta, re-segmentation post-événement) : n'adapte que les SLOTs
@@ -70,6 +82,31 @@ c'est ce qui fait reconnaître Salesforce. Seuls 3 SLOTs se remplissent :
   **Cohérence** : c'est un personnage de l'histoire (souvent la conseillère/l'employé) → réutilise SA photo, pas un visage inédit.
 La recherche, le bouton « Ask » et le cluster d'icônes (droite) sont **verrouillés** — n'y touche pas.
 - **tpv-pos.html** — `title`, `act-tag`, `pos-name`, `store`, `scan`, `refund` (garde `.sync`)
+- **financial-loan-portal.html** — `title`, `act-tag`, `brand`, `nav`, `heading`, `catalog`
+  (`lc-loan-product-catalog`), `application` (`lc-loan-application-form`)
+- **financial-loan-processor.html** — `title`, `act-tag`, `sf-*`, `header`, `path`, `tree`
+  (`lc-loan-record-tree`), `summary` (`lc-structured-summary`), `actions`, `agent`
+  (`lc-agent-conversation`)
+- **financial-loan-underwriter.html** — `title`, `act-tag`, `sf-*`, `header`, `ratios`
+  (`lc-loan-key-ratios`), `stages` (`lc-loan-stage-board`), `conditions`, `recommendation`, `agent`
+- **consumer-commerce-home.html** — `title`, `act-tag`, `brand`, `nav`, `commerce`
+  (`lc-b2b-commerce-home`)
+- **consumer-commerce-order.html** — `title`, `act-tag`, `brand`, `nav`, `heading`, `order`
+  (`lc-consumer-order-capture`), `agent` (`lc-agent-overlay`)
+- **consumer-service-performance.html** — `title`, `act-tag`, `sf-*`, `heading`, `performance`
+  (`lc-retail-store-performance`), `agent` (`lc-agent-overlay`)
+- **consumer-service-account.html** — `title`, `act-tag`, `sf-*`, `header`, `cockpit`
+  (`lc-retail-account-cockpit`), `activities`, `agent` (`lc-agent-overlay`)
+- **consumer-service-case.html** — `title`, `act-tag`, `sf-*`, `header`, `path`, `summary`,
+  `timeline`, `workorders`, `agent` (`lc-agent-overlay`)
+- **consumer-service-asset.html** — `title`, `act-tag`, `sf-*`, `header`, `telemetry`
+  (`lc-asset-telemetry`), `history`, `agent` (`lc-agent-overlay`)
+- **consumer-sales-trade-plan.html** — `title`, `act-tag`, `sf-*`, `heading`, `calendar`
+  (`lc-trade-promotion-calendar`), `agent` (`lc-agent-overlay`)
+- **consumer-sales-agreement.html** — `title`, `act-tag`, `sf-*`, `header`, `agreement`
+  (`lc-sales-agreement-forecast`), `agent` (`lc-agent-overlay`)
+- **consumer-sales-forecast.html** — `title`, `act-tag`, `sf-*`, `heading`, `planner`
+  (`lc-trade-business-planner`), `agent` (`lc-agent-overlay`)
 
 ### Écrans Lightning composables (kit `<lc-*>`)
 Ces 3 templates sont **composés de web components** `<lc-*>` (voir la section « Kit de composants » plus bas).

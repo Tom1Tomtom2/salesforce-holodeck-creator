@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Consumer Goods : saisie de commande B2B (desktop, sectoriel). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Northern Trail Supply - Saisie de commande<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { min-height: 100vh; background: #f5f7f6; --sf-w: 1480px; }
+    .cco-shell { width: min(var(--sf-w), 100%); margin: 0 auto; }
+    .cco-nav { min-height: 64px; padding: 0 28px; display: flex; align-items: center; gap: 38px; border-bottom: 1px solid #dce3e0; background: #fff; }
+    .cco-brand { color: #063d54; font-size: 19px; font-weight: 800; }
+    .cco-links { display: flex; gap: 28px; }
+    .cco-links a { padding: 22px 0 18px; color: #29465b; font-weight: 700; border-bottom: 3px solid transparent; }
+    .cco-links a.on { color: #087c69; border-color: #087c69; }
+    .cco-cart { margin-left: auto; color: #087c69; font-weight: 700; }
+    .cco-page { padding: 22px 28px 80px; display: grid; gap: 14px; }
+    .cco-page h1 { margin: 0; color: #17324d; font-size: 26px; font-weight: 500; }
+    .cco-context { padding: 12px 16px; display: flex; justify-content: space-between; border: 1px solid #d8dde6; border-radius: 8px; background: #fff; }
+    .cco-context span { color: #5f6b7a; }
+    @media (max-width: 720px) { .cco-links { display: none; } .cco-page { padding-inline: 14px; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 2 - Responsable de point de vente - préparer la commande<!-- /SLOT --></div>
+<div class="cco-shell">
+    <header class="cco-nav"><!-- SLOT: brand --><span class="cco-brand">Northern Trail Supply</span><!-- /SLOT: brand --><!-- SLOT: nav --><nav class="cco-links" aria-label="Navigation principale"><a href="#">Accueil</a><a class="on" href="#">Produits</a><a href="#">Commandes</a><a href="#">Mon compte</a></nav><!-- /SLOT: nav --><span class="cco-cart">Panier (4)</span></header>
+    <main class="cco-page">
+        <h1><!-- SLOT: heading -->Créer une commande pour Café République<!-- /SLOT --></h1>
+        <div class="cco-context"><strong>Compte : Café République - Paris 11e</strong><span>Livraison habituelle : jeudi matin</span></div>
+        <!-- SLOT: order -->
+        <lc-consumer-order-capture>
+            <script type="application/json">
+            {"title":"Saisie rapide de commande","meta":"Catalogue et tarifs du compte appliqués","tableTitle":"Produits disponibles","filters":[{"label":"Catégorie","options":["Toutes les catégories","Café","Thé","Consommables"]},{"label":"Marque","options":["Toutes les marques","Alpine Roast","Green Valley","Northern Trail"]},{"label":"Disponibilité","options":["En stock","Tous les produits"]}],"products":[{"name":"Alpine Roast Espresso - 1 kg","code":"AR-ESP-1KG","shortCode":"ESP1","gtin":"0376001200451","quantity":8,"selected":true},{"name":"Alpine Roast Décaféiné - 500 g","code":"AR-DEC-500","shortCode":"DEC5","gtin":"0376001200468","quantity":4,"selected":true},{"name":"Gobelets compostables - 250 ml","code":"NT-CUP-250","shortCode":"CUP25","gtin":"0376002200818","quantity":12,"selected":true},{"name":"Sirop vanille - 1 L","code":"GV-SYR-VAN","shortCode":"VAN1","gtin":"0376003200145","quantity":0,"selected":false}]}
+            </script>
+        </lc-consumer-order-capture>
+        <!-- /SLOT: order -->
+    </main>
+</div>
+<!-- SLOT: agent -->
+<lc-agent-overlay>
+    <script type="application/json">
+    {"title":"Assistant commandes","launchLabel":"Aide à la commande","open":true,"messages":[{"role":"assistant","text":"J'ai comparé cette sélection aux six dernières commandes de Café République.","bullets":["Le café espresso couvre environ 3 semaines","Les gobelets risquent une rupture avant la prochaine livraison","Le sirop caramel habituel n'est pas encore ajouté"]}],"actionsTitle":"Compléter la commande","actions":[{"label":"Ajouter 6 cartons de gobelets"},{"label":"Ajouter le sirop caramel habituel"}],"placeholder":"Demandez une analyse de la commande…"}
+    </script>
+</lc-agent-overlay>
+<!-- /SLOT: agent -->
+<script src="lightning-kit.js"></script>
+</body>
+</html>

@@ -19,6 +19,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from validate_registry import RegistryError, validate_registry
+
 ROOT = Path(__file__).resolve().parent.parent  # dossier de la skill
 TPL = ROOT / "templates"
 ASSETS = ROOT / "assets"
@@ -491,6 +493,10 @@ def build_presenter_notes(manifest: dict) -> str:
 
 
 def build(manifest: dict, root: Path = ROOT) -> Path:
+    try:
+        validate_registry(root)
+    except RegistryError as exc:
+        raise SystemExit(f"ERREUR registre : {exc}") from exc
     slug = manifest["slug"]
     out = Path.cwd() / f"{slug}-story"
     out.mkdir(exist_ok=True)

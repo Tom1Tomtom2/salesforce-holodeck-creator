@@ -48,11 +48,14 @@ le client X » ou « fais-moi une démo client Salesforce pour X ».
 | `scripts/build_site.py` | génère le site depuis un manifest | aucune (stdlib, Python 3.10+) |
 | `scripts/crawl_brand.py` | crawle logo + images + palette | playwright + un navigateur |
 | `scripts/review_site.py` | capture le hub et contrôle le rendu | playwright + un navigateur |
+| `scripts/validate_registry.py` | valide le catalogue composants/écrans/produits/industries | aucune (stdlib) |
 | `templates/*.html` | bibliothèque d'écrans à chrome verrouillée | — |
+| `registry/*.json` | taxonomie machine-readable des assets | — |
 
 Vérification rapide après install :
 ```
 python3 <chemin>/scripts/build_site.py --selfcheck
+python3 <chemin>/scripts/validate_registry.py
 python3 <chemin>/scripts/crawl_brand.py --selfcheck
 python3 <chemin>/scripts/review_site.py --selfcheck
 ```
