@@ -39,6 +39,8 @@ crédiblement par un asset cross-industry.
 
 - Les produits utilisés sont déduits de `screens[].template` puis de `registry/screens.json.products`.
 - Le manifest garde la décision utilisateur dans `license_selection` (`mode`, `label`, `confirmed`).
+- `products.json` peut référencer une icône officielle via `icon`. Le fichier SVG correspondant vit dans
+  `assets/product-icons/` et le builder ne copie dans la story que les icônes réellement utilisées.
 - Le hub et les notes présentateur listent automatiquement les produits utilisés.
 - Si une story utilise un produit `industry-cloud` sans choix confirmé, le build reste possible mais
   affiche un avertissement explicite.

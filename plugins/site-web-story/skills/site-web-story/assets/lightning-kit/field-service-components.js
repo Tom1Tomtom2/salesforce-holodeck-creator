@@ -251,6 +251,132 @@ class LcPartsInventory extends JsonComponent {
   }
 }
 
+function mobileTone(tone = '') {
+  const normalized = tone.toLowerCase().replaceAll(' ', '-');
+  if (['success', 'covered', 'completed', 'eligible'].includes(normalized)) return 'success';
+  if (['warning', 'expiring', 'pending'].includes(normalized)) return 'warning';
+  if (['error', 'expired', 'ineligible'].includes(normalized)) return 'error';
+  return 'brand';
+}
+
+function mobileBadge(item = {}) {
+  return `<span class="lc-fs-mobile-badge lc-fs-mobile-badge--${mobileTone(item.tone || item.label)}">${escapeHtml(item.label || '')}</span>`;
+}
+
+function mobileFacts(items = []) {
+  return items.map(item => `<div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.value)}</dd></div>`).join('');
+}
+
+class LcFsMobileShell extends JsonComponent {
+  render() {
+    const data = this.data;
+    const content = [...this.children].filter(child => child.localName !== 'script');
+    content.forEach(child => child.remove());
+    const navItems = data.navItems || [];
+    const actions = (data.actions || []).map((action, index) => `<button class="lc-fs-mobile-icon" type="button" data-shell-action="${index}" aria-label="${escapeHtml(action.label)}">${lcIcon(action.icon || 'activity')}<span>${escapeHtml(action.label)}</span></button>`).join('');
+    const navigation = navItems.map((item, index) => `<button class="${item.active ? 'is-active' : ''}" type="button" data-shell-nav="${index}" ${item.active ? 'aria-current="page"' : ''}>${lcIcon(item.icon || 'activity')}<span>${escapeHtml(item.label)}</span></button>`).join('');
+    this.innerHTML = `<section class="lc-fs-mobile-shell" aria-label="${escapeHtml(data.accessibleLabel || 'Application mobile Field Service')}"><header class="lc-fs-mobile-topbar"><button class="lc-fs-mobile-profile" type="button" data-shell-profile aria-label="${escapeHtml(data.profileLabel || 'Ouvrir le profil')}"><span>${escapeHtml(data.initials || 'FS')}</span></button><div><strong>${escapeHtml(data.appName || 'Field Service')}</strong><small>${escapeHtml(data.context || '')}</small></div><div class="lc-fs-mobile-topbar__actions">${actions}</div></header><div class="lc-fs-mobile-content" data-shell-content></div>${navigation ? `<nav class="lc-fs-mobile-nav" aria-label="Navigation principale">${navigation}</nav>` : ''}</section>`;
+    this.querySelector('[data-shell-content]').append(...content);
+    this.querySelector('[data-shell-profile]')?.addEventListener('click', () => this.emitAction('mobile-profile'));
+    this.querySelectorAll('[data-shell-action]').forEach(button => button.addEventListener('click', () => {
+      const index = Number(button.dataset.shellAction);
+      this.emitAction(data.actions[index].action || 'mobile-action', { index, item: data.actions[index] });
+    }));
+    this.querySelectorAll('[data-shell-nav]').forEach(button => button.addEventListener('click', () => {
+      const index = Number(button.dataset.shellNav);
+      this.querySelectorAll('[data-shell-nav]').forEach(item => {
+        const active = item === button;
+        item.classList.toggle('is-active', active);
+        if (active) item.setAttribute('aria-current', 'page');
+        else item.removeAttribute('aria-current');
+      });
+      this.emitAction(data.navItems[index].action || 'mobile-navigate', { index, item: data.navItems[index] });
+    }));
+  }
+}
+
+class LcFsMobileWorkOrder extends JsonComponent {
+  render() {
+    const data = this.data;
+    const facts = mobileFacts(data.facts || []);
+    const sections = (data.sections || []).map((section, index) => `<button class="lc-fs-mobile-row" type="button" data-work-section="${index}"><span class="lc-fs-mobile-row__icon">${lcIcon(section.icon || 'task')}</span><span><strong>${escapeHtml(section.label)}</strong><small>${escapeHtml(section.meta || '')}</small></span>${section.badge ? mobileBadge(section.badge) : ''}${lcIcon('chevron')}</button>`).join('');
+    this.innerHTML = `<article class="lc-fs-mobile-page" aria-labelledby="${this.id || 'fs-work-order'}-title"><header class="lc-fs-mobile-hero"><div class="lc-fs-mobile-eyebrow">${escapeHtml(data.eyebrow || 'Ordre de travail')}</div><div class="lc-fs-mobile-title-row"><h1 id="${this.id || 'fs-work-order'}-title">${escapeHtml(data.title || '')}</h1>${data.status ? mobileBadge(data.status) : ''}</div><p>${escapeHtml(data.summary || '')}</p></header><dl class="lc-fs-mobile-facts">${facts}</dl><div class="lc-fs-mobile-rows">${sections}</div>${data.primaryAction ? `<div class="lc-fs-mobile-sticky"><button class="lc-button lc-button--brand" type="button" data-work-action>${escapeHtml(data.primaryAction)}</button></div>` : ''}</article>`;
+    this.querySelectorAll('[data-work-section]').forEach(button => button.addEventListener('click', () => {
+      const index = Number(button.dataset.workSection);
+      this.emitAction('mobile-work-section', { index, section: data.sections[index] });
+    }));
+    this.querySelector('[data-work-action]')?.addEventListener('click', () => this.emitAction('mobile-work-action', { workOrder: data }));
+  }
+}
+
+class LcFsMobileWorkPlan extends JsonComponent {
+  render() {
+    const data = this.data;
+    const steps = data.steps || [];
+    const completed = steps.filter(step => step.done).length;
+    const progress = steps.length ? Math.round(completed / steps.length * 100) : 0;
+    const stepMarkup = steps.map((step, index) => `<li><label class="lc-fs-mobile-step"><input type="checkbox" data-plan-step="${index}" ${step.done ? 'checked' : ''}><span class="lc-fs-mobile-step__check" aria-hidden="true">${lcIcon('check')}</span><span><strong>${escapeHtml(step.label)}</strong><small>${escapeHtml(step.detail || '')}</small></span>${step.duration ? `<em>${escapeHtml(step.duration)}</em>` : ''}</label></li>`).join('');
+    this.innerHTML = `<section class="lc-fs-mobile-page" aria-labelledby="${this.id || 'fs-plan'}-title"><header class="lc-fs-mobile-section-head"><span>${escapeHtml(data.eyebrow || 'Plan de travail')}</span><h1 id="${this.id || 'fs-plan'}-title">${escapeHtml(data.title || '')}</h1><p>${escapeHtml(data.summary || '')}</p></header><div class="lc-fs-mobile-progress"><div><strong data-plan-count>${completed} sur ${steps.length}</strong><span>étapes terminées</span></div><span>${progress}%</span><div role="progressbar" aria-label="Progression du plan de travail" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}" data-plan-progress><i style="width:${progress}%"></i></div></div><ol class="lc-fs-mobile-steps">${stepMarkup}</ol>${data.primaryAction ? `<div class="lc-fs-mobile-sticky"><button class="lc-button lc-button--brand" type="button" data-plan-action>${escapeHtml(data.primaryAction)}</button></div>` : ''}</section>`;
+    const update = () => {
+      const done = [...this.querySelectorAll('[data-plan-step]')].filter(input => input.checked).length;
+      const percent = steps.length ? Math.round(done / steps.length * 100) : 0;
+      this.querySelector('[data-plan-count]').textContent = `${done} sur ${steps.length}`;
+      const bar = this.querySelector('[data-plan-progress]');
+      bar.setAttribute('aria-valuenow', String(percent));
+      bar.querySelector('i').style.width = `${percent}%`;
+    };
+    this.querySelectorAll('[data-plan-step]').forEach(input => input.addEventListener('change', () => {
+      update();
+      this.emitAction('mobile-plan-step', { index: Number(input.dataset.planStep), checked: input.checked });
+    }));
+    this.querySelector('[data-plan-action]')?.addEventListener('click', () => this.emitAction('mobile-plan-action'));
+  }
+}
+
+class LcFsMobileCoverage extends JsonComponent {
+  render() {
+    const data = this.data;
+    const coverage = data.coverage || {};
+    const requirements = (data.requirements || []).map(item => `<li class="${item.met ? 'is-met' : 'is-missing'}"><span>${lcIcon(item.met ? 'check' : 'close')}</span><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.detail || '')}</small></span></li>`).join('');
+    this.innerHTML = `<section class="lc-fs-mobile-page" aria-labelledby="${this.id || 'fs-coverage'}-title"><header class="lc-fs-mobile-section-head"><span>${escapeHtml(data.eyebrow || 'Couverture')}</span><h1 id="${this.id || 'fs-coverage'}-title">${escapeHtml(data.title || '')}</h1><p>${escapeHtml(data.summary || '')}</p></header><article class="lc-fs-mobile-coverage-card lc-fs-mobile-coverage-card--${mobileTone(coverage.tone)}"><div><span class="lc-fs-mobile-row__icon">${lcIcon('case')}</span><div><strong>${escapeHtml(coverage.label || '')}</strong><small>${escapeHtml(coverage.detail || '')}</small></div></div>${mobileBadge({ label: coverage.status || '', tone: coverage.tone })}<dl>${mobileFacts(coverage.facts || [])}</dl></article><section class="lc-fs-mobile-subsection"><h2>${escapeHtml(data.requirementsTitle || 'Conditions de prise en charge')}</h2><ul class="lc-fs-mobile-requirements">${requirements}</ul></section>${data.primaryAction ? `<div class="lc-fs-mobile-sticky"><button class="lc-button lc-button--brand" type="button" data-coverage-action>${escapeHtml(data.primaryAction)}</button></div>` : ''}</section>`;
+    this.querySelector('[data-coverage-action]')?.addEventListener('click', () => this.emitAction('mobile-coverage-action', { coverage }));
+  }
+}
+
+class LcFsMobilePartReturn extends JsonComponent {
+  render() {
+    const data = this.data;
+    const reasons = data.reasons || [];
+    const reasonOptions = reasons.map(reason => `<option value="${escapeHtml(reason)}">${escapeHtml(reason)}</option>`).join('');
+    const checklist = (data.checklist || []).map((item, index) => `<label class="lc-fs-mobile-return-check"><input type="checkbox" data-return-check="${index}" ${item.done ? 'checked' : ''}><span>${escapeHtml(item.label)}</span></label>`).join('');
+    this.innerHTML = `<section class="lc-fs-mobile-page" aria-labelledby="${this.id || 'fs-return'}-title"><header class="lc-fs-mobile-section-head"><span>${escapeHtml(data.eyebrow || 'Retour de pièce')}</span><h1 id="${this.id || 'fs-return'}-title">${escapeHtml(data.title || '')}</h1><p>${escapeHtml(data.summary || '')}</p></header><article class="lc-fs-mobile-part"><span class="lc-fs-mobile-part__visual" aria-hidden="true">${lcIcon('case')}</span><div><strong>${escapeHtml(data.part?.name || '')}</strong><small>${escapeHtml(data.part?.sku || '')}</small><span>${escapeHtml(data.part?.serial || '')}</span></div>${data.part?.status ? mobileBadge(data.part.status) : ''}</article><form class="lc-fs-mobile-return-form"><label for="${this.id || 'fs-return'}-reason">${escapeHtml(data.reasonLabel || 'Motif du retour')}</label><select class="lc-select" id="${this.id || 'fs-return'}-reason" name="reason">${reasonOptions}</select><fieldset><legend>${escapeHtml(data.checklistTitle || 'Avant de continuer')}</legend>${checklist}</fieldset><button class="lc-button lc-button--brand" type="submit">${escapeHtml(data.primaryAction || 'Créer le retour')}</button></form></section>`;
+    this.querySelector('form').addEventListener('submit', event => {
+      event.preventDefault();
+      const checked = [...this.querySelectorAll('[data-return-check]')];
+      const missing = checked.filter(input => !input.checked);
+      if (missing.length) {
+        missing[0].focus();
+        this.emitAction('mobile-return-error', { message: data.errorMessage || 'Terminez la liste de contrôle avant de créer le retour.' });
+        return;
+      }
+      this.emitAction('mobile-return-submit', { reason: new FormData(event.currentTarget).get('reason'), part: data.part });
+    });
+  }
+}
+
+class LcFsMobileAgentSummary extends JsonComponent {
+  render() {
+    const data = this.data;
+    const highlights = (data.highlights || []).map(item => `<li><span>${lcIcon(item.icon || 'spark')}</span><div><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.detail || '')}</small></div></li>`).join('');
+    const actions = (data.actions || []).map((action, index) => `<button class="lc-button ${index === 0 ? 'lc-button--brand' : ''}" type="button" data-agent-action="${index}">${escapeHtml(action.label)}</button>`).join('');
+    this.innerHTML = `<section class="lc-fs-mobile-page lc-fs-mobile-agent" aria-labelledby="${this.id || 'fs-agent'}-title"><div class="lc-fs-mobile-agent__mark" aria-hidden="true">${lcIcon('spark')}</div><header><span>${escapeHtml(data.eyebrow || 'Agentforce')}</span><h1 id="${this.id || 'fs-agent'}-title">${escapeHtml(data.title || '')}</h1><p>${escapeHtml(data.summary || '')}</p></header><ul>${highlights}</ul>${data.note ? `<aside><strong>${escapeHtml(data.noteLabel || 'À vérifier')}</strong><p>${escapeHtml(data.note)}</p></aside>` : ''}<div class="lc-fs-mobile-agent__actions">${actions}</div></section>`;
+    this.querySelectorAll('[data-agent-action]').forEach(button => button.addEventListener('click', () => {
+      const index = Number(button.dataset.agentAction);
+      this.emitAction(data.actions[index].action || 'mobile-agent-action', { index, item: data.actions[index] });
+    }));
+  }
+}
+
 class LcDashboardFilters extends JsonComponent {
   render() {
     const data = this.data;
@@ -331,6 +457,12 @@ const newDefinitions = {
   'lc-service-appointment': LcServiceAppointment,
   'lc-work-order': LcWorkOrder,
   'lc-parts-inventory': LcPartsInventory,
+  'lc-fs-mobile-shell': LcFsMobileShell,
+  'lc-fs-mobile-work-order': LcFsMobileWorkOrder,
+  'lc-fs-mobile-work-plan': LcFsMobileWorkPlan,
+  'lc-fs-mobile-coverage': LcFsMobileCoverage,
+  'lc-fs-mobile-part-return': LcFsMobilePartReturn,
+  'lc-fs-mobile-agent-summary': LcFsMobileAgentSummary,
   'lc-dashboard-filters': LcDashboardFilters,
   'lc-chart-bar': LcChartBar,
   'lc-chart-donut': LcChartDonut,

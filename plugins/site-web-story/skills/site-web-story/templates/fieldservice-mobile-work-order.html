@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Field Service mobile — ordre de travail<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+body { min-height: 100vh; padding: 20px 0; background: #d7dbe3; }
+.phone { width: 390px; }
+.screen { height: 780px; overflow: hidden; background: #f5f7fb; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Technicien — ordre de travail<!-- /SLOT --></div>
+<div class="phone"><div class="phone-notch"></div><div class="screen">
+<!-- SLOT: app ─ coque mobile Field Service et ordre de travail. Ajuste uniquement les deux objets JSON. -->
+<lc-fs-mobile-shell>
+<script type="application/json">{"appName":"Field Service","context":"Lyon · tournée du matin","initials":"TB","profileLabel":"Ouvrir le profil de Thomas Bernard","actions":[{"label":"Synchroniser","icon":"activity","action":"sync"},{"label":"Aide","icon":"spark","action":"help"}],"navItems":[{"label":"Aujourd’hui","icon":"event"},{"label":"Travaux","icon":"case","active":true},{"label":"Stock","icon":"task"},{"label":"Plus","icon":"activity"}]}</script>
+<lc-fs-mobile-work-order>
+<script type="application/json">{"eyebrow":"WO-0004721 · Priorité haute","title":"Maintenance presse Atlas P400","summary":"Vibration anormale sur l’axe principal. Intervention préventive avant la reprise de production.","status":{"label":"Sur site","tone":"success"},"facts":[{"label":"Compte","value":"Durand Équipements"},{"label":"Créneau","value":"09:00–11:00"},{"label":"Actif","value":"P400-FR-00842"},{"label":"Adresse","value":"Site de Lyon · Ligne 3"}],"sections":[{"label":"Plan de travail","meta":"3 étapes sur 5 terminées","icon":"task","badge":{"label":"60 %","tone":"brand"}},{"label":"Couverture et garantie","meta":"Contrat Gold vérifié","icon":"case","badge":{"label":"Couvert","tone":"success"}},{"label":"Pièces et consommables","meta":"Kit roulement AX-400 réservé","icon":"activity"},{"label":"Compte rendu","meta":"Photos et signature à ajouter","icon":"email"}],"primaryAction":"Poursuivre l’intervention"}</script>
+</lc-fs-mobile-work-order>
+</lc-fs-mobile-shell>
+<!-- /SLOT: app -->
+</div></div>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

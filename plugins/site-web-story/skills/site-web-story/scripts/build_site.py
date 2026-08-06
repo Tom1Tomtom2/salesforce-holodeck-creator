@@ -315,7 +315,12 @@ def rewrite_tokens(css: str, tokens: dict, font_import: str | None) -> str:
 
 # Templates qui dessinent DÉJÀ leur propre coque de téléphone (.phone) → cadre .frame.phone,
 # sinon cadre navigateur .frame.desktop. (cf. references/screens.md)
-PHONE_TEMPLATES = {"instagram", "whatsapp", "landing-capture", "client-app"}
+PHONE_TEMPLATES = {
+    "instagram", "whatsapp", "landing-capture", "client-app",
+    "fieldservice-mobile-work-order", "fieldservice-mobile-work-plan",
+    "fieldservice-mobile-coverage", "fieldservice-mobile-part-return",
+    "fieldservice-mobile-agent-summary",
+}
 
 
 def _intro_block(intro: dict, screens: list) -> str:
@@ -435,22 +440,25 @@ def _story_products(root: Path, screens: list) -> list:
 
 
 def _license_block(products: list, selection: dict | None = None) -> str:
-    """Encart transparent sur les produits/licences mobilisés par la story."""
+    """Mention discrète des produits et licences mobilisés par la story."""
     selection = selection or {}
     items = []
     for product in products:
         license_info = product.get("license") or {}
-        suffix = f' — {html.escape(license_info["notice"])}' if license_info.get("notice") else ""
-        items.append(f'<li><b>{html.escape(product["label"])}</b>{suffix}</li>')
+        notice = html.escape(license_info.get("notice", "Produit mobilisé dans cette story."))
+        icon = product.get("icon")
+        visual = (
+            f'<img src="product-icons/{html.escape(icon)}" alt="">'
+            if icon else
+            f'<span class="license-monogram" aria-hidden="true">{html.escape(product["label"][:2].upper())}</span>'
+        )
+        items.append('<li class="license-product">' + visual
+                     + f'<b>{html.escape(product["label"])}</b><small>{notice}</small></li>')
     if not items:
         return ""
-    chosen = html.escape(selection.get("label", "Configuration produit sélectionnée"))
-    confirmation = "Choix confirmé pour cette story." if selection.get("confirmed") else "Choix à confirmer avant génération."
     return (
         '<aside class="license-notice" aria-label="Produits et licences Salesforce utilisés">'
-        f'<strong>Produits et licences utilisés · {chosen}</strong>'
-        f'{html.escape(confirmation)} Les produits listés peuvent nécessiter des licences et droits distincts.'
-        '<ul>' + "".join(items) + '</ul></aside>'
+        '<span>Produits Salesforce :</span><ul class="license-products">' + "".join(items) + '</ul></aside>'
     )
 
 
@@ -578,6 +586,19 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     (out / "shared.css").write_text(css, encoding="utf-8")
     written.append("shared.css")
 
+    # Icônes produit officielles utilisées par l'encart licences du hub.
+    story_products = _story_products(root, manifest["screens"])
+    product_icons = sorted({product.get("icon") for product in story_products if product.get("icon")})
+    if product_icons:
+        icon_output = out / "product-icons"
+        icon_output.mkdir(exist_ok=True)
+        for icon in product_icons:
+            source = root / "assets" / "product-icons" / icon
+            if not source.is_file():
+                raise SystemExit(f"ERREUR : icône produit introuvable : assets/product-icons/{icon}")
+            shutil.copy(source, icon_output / icon)
+            written.append(f"product-icons/{icon}")
+
     # 1b. assets fournis (logo + photos produit, quand le crawl échoue) : copiés tels quels.
     # manifest["assets"] = liste de chemins ; les écrans y réfèrent par basename (src="logo.png").
     for src in manifest.get("assets", []):
@@ -636,7 +657,7 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
     hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""),
                     manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
-                    manifest.get("thesis", ""), _story_products(root, manifest["screens"]),
+                    manifest.get("thesis", ""), story_products,
                     manifest.get("license_selection"))
     (out / "index.html").write_text(hub, encoding="utf-8")
     written.append("index.html")
@@ -737,7 +758,7 @@ def selfcheck():
             hub = (out / "index.html").read_text(encoding="utf-8")
             assert "TAGLINE_INJECTEE" in hub, "tagline hero non injectée"
             assert "THESE_INJECTEE" in hub, "thèse hero non injectée"
-            assert "CONFIGURATION_TEST" in hub and "Consumer Goods Cloud" in hub, \
+            assert "Produits Salesforce" in hub and "Consumer Goods Cloud" in hub, \
                 "produits/licences absents du hub"
             assert "INTRO_TITRE" in hub and 'src="people/femme-1.jpg"' in hub, "section intro/personnage manquante"
             assert "CHAPITRE_TEST" in hub and "Chapitre 01" in hub, "séparateur de chapitre manquant"

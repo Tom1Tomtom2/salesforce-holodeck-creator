@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Field Service mobile — couverture<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+body { min-height: 100vh; padding: 20px 0; background: #d7dbe3; }
+.phone { width: 390px; }
+.screen { height: 780px; overflow: hidden; background: #f5f7fb; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Technicien — couverture<!-- /SLOT --></div>
+<div class="phone"><div class="phone-notch"></div><div class="screen">
+<!-- SLOT: app ─ coque mobile Field Service et décision de couverture. Ajuste uniquement les deux objets JSON. -->
+<lc-fs-mobile-shell>
+<script type="application/json">{"appName":"Field Service","context":"P400-FR-00842 · Contrats","initials":"TB","profileLabel":"Ouvrir le profil de Thomas Bernard","actions":[{"label":"Synchroniser","icon":"activity","action":"sync"},{"label":"Aide Agentforce","icon":"spark","action":"agent"}],"navItems":[{"label":"Détails","icon":"case"},{"label":"Plan","icon":"task"},{"label":"Couverture","icon":"check","active":true},{"label":"Résumé","icon":"email"}]}</script>
+<lc-fs-mobile-coverage>
+<script type="application/json">{"eyebrow":"Éligibilité de service","title":"Couverture de l’actif","summary":"La garantie et le contrat de service sont rapprochés de l’ordre de travail en cours.","coverage":{"label":"Contrat de service Gold","detail":"Maintenance préventive et pièces critiques","status":"Intervention couverte","tone":"success","facts":[{"label":"Valide jusqu’au","value":"31 déc. 2027"},{"label":"Délai contractuel","value":"4 heures"},{"label":"Main-d’œuvre","value":"100 %"},{"label":"Pièces","value":"100 %"}]},"requirementsTitle":"Conditions de prise en charge","requirements":[{"label":"Actif identifié","detail":"Numéro de série P400-FR-00842","met":true},{"label":"Maintenance préventive autorisée","detail":"Type de travail inclus au contrat Gold","met":true},{"label":"Pièce AX-400 éligible","detail":"Kit classé pièce critique couverte","met":true},{"label":"Photos avant remplacement","detail":"À joindre au compte rendu","met":false}],"primaryAction":"Confirmer la couverture"}</script>
+</lc-fs-mobile-coverage>
+</lc-fs-mobile-shell>
+<!-- /SLOT: app -->
+</div></div>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

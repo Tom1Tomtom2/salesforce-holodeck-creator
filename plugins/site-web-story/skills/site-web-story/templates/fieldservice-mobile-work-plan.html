@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Field Service mobile — plan de travail<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+body { min-height: 100vh; padding: 20px 0; background: #d7dbe3; }
+.phone { width: 390px; }
+.screen { height: 780px; overflow: hidden; background: #f5f7fb; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Technicien — plan de travail<!-- /SLOT --></div>
+<div class="phone"><div class="phone-notch"></div><div class="screen">
+<!-- SLOT: app ─ coque mobile Field Service et checklist. Ajuste uniquement les deux objets JSON. -->
+<lc-fs-mobile-shell>
+<script type="application/json">{"appName":"Field Service","context":"WO-0004721 · Atlas P400","initials":"TB","profileLabel":"Ouvrir le profil de Thomas Bernard","actions":[{"label":"Synchroniser","icon":"activity","action":"sync"},{"label":"Aide Agentforce","icon":"spark","action":"agent"}],"navItems":[{"label":"Détails","icon":"case"},{"label":"Plan","icon":"task","active":true},{"label":"Pièces","icon":"activity"},{"label":"Résumé","icon":"email"}]}</script>
+<lc-fs-mobile-work-plan>
+<script type="application/json">{"eyebrow":"Plan de travail","title":"Contrôler l’axe principal","summary":"Suivez les étapes dans l’ordre et consignez les mesures avant le redémarrage.","steps":[{"label":"Sécuriser la ligne 3","detail":"Consignation électrique validée avec le responsable de site","duration":"10 min","done":true},{"label":"Relever les vibrations initiales","detail":"Mesure enregistrée : 8,4 mm/s","duration":"15 min","done":true},{"label":"Inspecter les roulements","detail":"Usure confirmée sur le palier droit","duration":"20 min","done":true},{"label":"Remplacer le kit AX-400","detail":"Scanner la pièce avant montage","duration":"35 min","done":false},{"label":"Tester et faire signer","detail":"Mesure finale puis validation client","duration":"20 min","done":false}],"primaryAction":"Enregistrer la progression"}</script>
+</lc-fs-mobile-work-plan>
+</lc-fs-mobile-shell>
+<!-- /SLOT: app -->
+</div></div>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

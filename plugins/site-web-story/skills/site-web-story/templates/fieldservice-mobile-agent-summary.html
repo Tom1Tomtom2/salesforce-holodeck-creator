@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Field Service mobile — résumé Agentforce<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+body { min-height: 100vh; padding: 20px 0; background: #d7dbe3; }
+.phone { width: 390px; }
+.screen { height: 780px; overflow: hidden; background: #f5f7fb; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Technicien — résumé Agentforce<!-- /SLOT --></div>
+<div class="phone"><div class="phone-notch"></div><div class="screen">
+<!-- SLOT: app ─ coque mobile Field Service et résumé Agentforce. Ajuste uniquement les deux objets JSON. -->
+<lc-fs-mobile-shell>
+<script type="application/json">{"appName":"Field Service","context":"WO-0004721 · Clôture","initials":"TB","profileLabel":"Ouvrir le profil de Thomas Bernard","actions":[{"label":"Synchroniser","icon":"activity","action":"sync"}],"navItems":[{"label":"Détails","icon":"case"},{"label":"Plan","icon":"task"},{"label":"Pièces","icon":"activity"},{"label":"Résumé","icon":"spark","active":true}]}</script>
+<lc-fs-mobile-agent-summary>
+<script type="application/json">{"eyebrow":"Agentforce pour Field Service","title":"Compte rendu prêt à être vérifié","summary":"Agentforce synthétise les mesures, les actions réalisées et les pièces utilisées. Thomas garde la validation finale.","highlights":[{"label":"Diagnostic","detail":"Usure du palier droit confirmée par une vibration initiale de 8,4 mm/s.","icon":"search"},{"label":"Intervention","detail":"Kit roulement AX-400 remplacé, serrage et alignement contrôlés.","icon":"task"},{"label":"Résultat","detail":"Vibration finale à 2,1 mm/s ; presse remise en service à 10:42.","icon":"check"},{"label":"Suivi","detail":"Retour atelier AX4-77109 préparé et prochaine visite proposée dans 6 mois.","icon":"event"}],"noteLabel":"À vérifier avant envoi","note":"Ajouter la signature de Mme Petit et confirmer la photo du numéro de série de la pièce déposée.","actions":[{"label":"Relire et compléter","action":"review-summary"},{"label":"Enregistrer comme brouillon","action":"save-draft"}]}</script>
+</lc-fs-mobile-agent-summary>
+</lc-fs-mobile-shell>
+<!-- /SLOT: app -->
+</div></div>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Field Service mobile — retour de pièce<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+body { min-height: 100vh; padding: 20px 0; background: #d7dbe3; }
+.phone { width: 390px; }
+.screen { height: 780px; overflow: hidden; background: #f5f7fb; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Technicien — retour de pièce<!-- /SLOT --></div>
+<div class="phone"><div class="phone-notch"></div><div class="screen">
+<!-- SLOT: app ─ coque mobile Field Service et formulaire de retour. Ajuste uniquement les deux objets JSON. -->
+<lc-fs-mobile-shell>
+<script type="application/json">{"appName":"Field Service","context":"Camion 14 · Stock mobile","initials":"TB","profileLabel":"Ouvrir le profil de Thomas Bernard","actions":[{"label":"Scanner une pièce","icon":"search","action":"scan"},{"label":"Aide Agentforce","icon":"spark","action":"agent"}],"navItems":[{"label":"Travaux","icon":"case"},{"label":"Pièces","icon":"task","active":true},{"label":"Retours","icon":"activity"},{"label":"Plus","icon":"activity"}]}</script>
+<lc-fs-mobile-part-return>
+<script type="application/json">{"eyebrow":"Gestion des pièces","title":"Retourner le roulement remplacé","summary":"Préparez la pièce déposée pour l’analyse atelier et la mise à jour du stock.","part":{"name":"Kit roulement axe principal","sku":"AX-400","serial":"Série déposée · AX4-77109","status":{"label":"À retourner","tone":"warning"}},"reasonLabel":"Motif du retour","reasons":["Pièce usagée après remplacement","Défaut confirmé sur site","Pièce non utilisée"],"checklistTitle":"Avant de continuer","checklist":[{"label":"Numéro de série lisible","done":true},{"label":"Photo de la pièce jointe","done":true},{"label":"Pièce placée dans le bac de retour","done":false}],"primaryAction":"Créer le retour","errorMessage":"Cochez chaque contrôle avant de créer le retour."}</script>
+</lc-fs-mobile-part-return>
+</lc-fs-mobile-shell>
+<!-- /SLOT: app -->
+</div></div>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+<script>document.addEventListener('lc-action',event=>{if(event.detail.action==='mobile-return-error')document.querySelector('lc-toast-region')?.show(event.detail.message,'error',5000);if(event.detail.action==='mobile-return-submit')document.querySelector('lc-toast-region')?.show('Retour créé et synchronisé.');});</script>
+</body>
+</html>

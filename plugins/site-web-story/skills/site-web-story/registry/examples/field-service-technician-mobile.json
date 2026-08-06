@@ -1,0 +1,24 @@
+{
+  "brand": "Acme Industrie",
+  "slug": "field-service-technician-mobile",
+  "story_title": "Une intervention industrielle guidée de bout en bout",
+  "tagline": "Le technicien garde le contexte, la couverture, les pièces et le compte rendu dans une seule expérience mobile.",
+  "thesis": "Parce que Field Service relie l’ordre de travail, le contrat et le stock mobile, Thomas intervient plus vite et Agentforce prépare un compte rendu qu’il contrôle avant envoi.",
+  "license_selection": {"mode":"core-clouds","label":"Field Service + Agentforce","confirmed":true},
+  "tokens": {"--accent":"#174a7e","--accent-dark":"#0b2f52","--accent-soft":"#eaf2f8"},
+  "intro": {
+    "kicker": "Field Service mobile",
+    "title": "Thomas, technicien de maintenance industrielle",
+    "lede": "Une vibration menace la reprise de la ligne 3. Thomas doit diagnostiquer, confirmer la couverture, remplacer la pièce et documenter l’intervention sur site.",
+    "cast": [
+      {"name":"Thomas Bernard","role":"Technicien Field Service","bio":"Intervient sur les équipements de production du secteur lyonnais.","image":"people/homme-2.jpg"}
+    ]
+  },
+  "screens": [
+    {"file":"acte1-ordre-travail.html","template":"fieldservice-mobile-work-order","channel":"Field Service mobile","chapter":"Comprendre","act":"Acte 1 · Thomas","title":"Retrouver tout le contexte de l’intervention","desc":"Thomas ouvre l’ordre de travail de la presse Atlas P400. Le créneau, l’actif, le site et les prochaines actions sont immédiatement visibles.","trigger":"Une vibration anormale est signalée avant la reprise de production.","result":"Thomas confirme le périmètre et démarre sans rechercher l’information dans plusieurs outils.","transition":"Il peut maintenant exécuter le plan de travail dans le bon ordre.","persona":"Thomas Bernard","slots":{}},
+    {"file":"acte2-plan-travail.html","template":"fieldservice-mobile-work-plan","channel":"Field Service mobile","chapter":"Exécuter","act":"Acte 2 · Thomas","title":"Suivre un plan de travail traçable","desc":"Chaque étape porte sa mesure et sa durée. Thomas coche la progression tout en conservant les contrôles de sécurité et de remise en service.","trigger":"Le diagnostic doit être reproductible et auditable.","result":"Trois étapes sur cinq sont consignées avant le remplacement.","transition":"Avant d’utiliser la pièce, Thomas vérifie sa prise en charge.","persona":"Thomas Bernard","slots":{}},
+    {"file":"acte3-couverture.html","template":"fieldservice-mobile-coverage","channel":"Field Service mobile","chapter":"Décider","act":"Acte 3 · Thomas","title":"Confirmer la couverture sur site","desc":"Le contrat Gold, le délai, la main-d’œuvre et la pièce AX-400 sont rapprochés de l’actif. Une condition manquante reste explicite : la photo avant remplacement.","trigger":"La pièce critique ne doit pas être engagée sans confirmation contractuelle.","result":"La prise en charge est claire et la preuve à joindre est identifiée.","transition":"La pièce usagée doit ensuite revenir à l’atelier pour analyse.","persona":"Thomas Bernard","slots":{}},
+    {"file":"acte4-retour-piece.html","template":"fieldservice-mobile-part-return","channel":"Field Service mobile","chapter":"Tracer","act":"Acte 4 · Thomas","title":"Préparer le retour de la pièce déposée","desc":"Thomas sélectionne le motif, vérifie le numéro de série, la photo et le bac de retour. Le formulaire refuse une soumission incomplète et place le focus sur le contrôle manquant.","trigger":"Le roulement usagé doit être analysé et retiré du stock mobile.","result":"Le retour est documenté avant synchronisation avec l’atelier.","transition":"Les faits de l’intervention peuvent maintenant être synthétisés.","persona":"Thomas Bernard","slots":{}},
+    {"file":"acte5-resume-agentforce.html","template":"fieldservice-mobile-agent-summary","channel":"Agentforce + Field Service","chapter":"Conclure","act":"Acte 5 · Thomas","title":"Valider le compte rendu préparé par Agentforce","desc":"Agentforce rassemble le diagnostic, le remplacement, le résultat et le suivi. Il signale aussi les preuves qui manquent, sans envoyer le résumé à la place du technicien.","trigger":"La clôture exige un compte rendu précis sans ressaisie complète.","result":"Thomas relit un brouillon structuré et garde la décision finale.","transition":"L’intervention peut être clôturée avec un historique exploitable par le service.","persona":"Thomas Bernard","slots":{}}
+  ]
+}

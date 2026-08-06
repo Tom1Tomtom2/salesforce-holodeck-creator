@@ -22,14 +22,21 @@
         margin: 22px 0 10px; line-height: 1.15; max-width: 14ch; }
     .hero p { color: var(--grey); font-size: 0.95rem; max-width: 40ch; }
     .hero .thesis { margin-top: 18px; max-width: 58ch; color: var(--black); font-size: 1.02rem;
-        line-height: 1.55; padding: 14px 20px; border-left: 3px solid var(--accent); text-align: left;
-        background: rgba(255,255,255,0.7); }
-    .license-notice { margin-top: 18px; width: min(680px, 92vw); padding: 14px 18px; border: 1px solid var(--border);
-        border-radius: var(--radius); background: #fff; color: var(--grey); font-size: 0.82rem; line-height: 1.5; text-align: left; }
-    .license-notice strong { display: block; margin-bottom: 5px; color: var(--black); font-size: 0.88rem; }
-    .license-notice ul { margin: 8px 0 0; padding-left: 20px; }
-    .license-notice b { color: var(--accent); }
-    .cue { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+        line-height: 1.55; padding: 16px 20px; border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+        border-radius: 16px; text-align: left; background: rgba(255,255,255,0.82); box-shadow: 0 10px 34px rgba(28,32,40,0.06); }
+    .license-notice { margin-top: 16px; width: min(720px, 92vw); display: flex; align-items: center;
+        justify-content: center; flex-wrap: wrap; gap: 6px 10px; color: var(--grey-light); font-family: var(--sans);
+        font-size: 0.66rem; line-height: 1.35; }
+    .license-notice > span:first-child { font-weight: 600; }
+    .license-products { margin: 0; padding: 0; display: flex; align-items: center; flex-wrap: wrap;
+        justify-content: center; gap: 5px 10px; list-style: none; }
+    .license-product { display: inline-flex; align-items: center; gap: 4px; color: var(--grey); }
+    .license-product img, .license-product .license-monogram { width: 18px; height: 18px; display: grid;
+        place-items: center; object-fit: contain; border-radius: 5px; }
+    .license-product .license-monogram { color: #fff; background: var(--accent); font-size: 0.55rem; font-weight: 700; }
+    .license-product b { color: inherit; font-size: inherit; }
+    .license-product small { display: none; }
+    .cue { margin-top: 24px;
         color: var(--grey-light); font-family: var(--sans); font-size: 0.72rem; letter-spacing: 2px;
         text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .cue svg { width: 22px; height: 22px; animation: bob 1.8s ease-in-out infinite; }
@@ -85,10 +92,12 @@
         font-weight: 600; font-size: 0.85rem; color: var(--accent); text-decoration: none;
         border-bottom: 1px solid currentColor; padding-bottom: 3px; transition: gap 0.2s; }
     .act .go:hover { gap: 14px; }
-    .act .transition { margin: 22px 0 24px; padding: 12px 14px; border-left: 3px solid var(--accent);
-        color: var(--grey); background: #fff; font-size: 0.86rem; line-height: 1.5; text-align: left; }
-    .act .transition b { display: block; margin-bottom: 3px; color: var(--accent); font-family: var(--sans);
-        font-size: 0.66rem; letter-spacing: 1.4px; text-transform: uppercase; }
+    .act .transition { margin: 22px 0 24px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--border));
+        border-radius: 14px; color: var(--grey); background: color-mix(in srgb, var(--accent) 4%, #fff);
+        font-size: 0.86rem; line-height: 1.5; text-align: left; }
+    .act .transition b { width: fit-content; display: block; margin-bottom: 7px; padding: 4px 8px; border-radius: 999px;
+        color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, #fff); font-family: var(--sans);
+        font-size: 0.62rem; letter-spacing: 1.2px; text-transform: uppercase; }
 
     /* ---------- CADRE + iframe live ---------- */
     .stage { flex: 1; display: flex; justify-content: center; }
@@ -101,8 +110,8 @@
     /* Téléphone : le template DESSINE DÉJÀ sa coque (.phone + notch + biseau 12px via box-shadow).
        On ne dessine donc PAS de cadre : on recadre l'iframe sur cette coque.
        Coque = 390 + 2×12 biseau = 414 large. Échelle 300/414 = 0.7246 ; shift 35px amène le biseau en haut. */
-    .frame.phone { width: 300px; box-shadow: none; background: transparent; }
-    .frame.phone .vp { width: 300px; height: 597px; border-radius: 40px; }
+    .frame.phone { width: 300px; border-radius: 40px; box-shadow: none; background: transparent; }
+    .frame.phone .vp { width: 300px; height: 568px; border-radius: 40px; clip-path: inset(0 0 0 0 round 40px); }
     .frame.phone iframe { top: -35px; width: 414px; height: 880px; transform: scale(0.7246); }
 
     /* Desktop : chrome navigateur ; écran rendu à 1440 de large. Échelle 660/1440 = 0.4583 ; shift 12px clippe l'act-tag (~26px). */
@@ -135,6 +144,7 @@
         .journey .step:first-child::before { top: 8px; left: 6px; }
         .journey .step:last-child::before { bottom: 50%; left: 6px; }
         .journey .dot { top: 4px; left: 6px; transform: none; }
+        .license-notice { max-width: 38ch; }
     }
     @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }

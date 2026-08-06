@@ -10,38 +10,48 @@
     {
       "id": "sales-cloud",
       "label": "Sales Cloud",
+      "icon": "sales-cloud.svg",
       "aliases": ["Sales", "CRM Analytics for Sales"],
       "jobs": ["pipeline", "forecasting", "deal-inspection", "sales-activity", "sales-analytics"]
     },
     {
       "id": "service-cloud",
       "label": "Service Cloud",
+      "icon": "service-cloud.svg",
       "aliases": ["Service", "Service Console"],
       "jobs": ["case-management", "contact-center", "customer-service"]
     },
     {
       "id": "data-cloud",
       "label": "Data Cloud",
+      "icon": "data-cloud.svg",
       "aliases": ["Data 360"],
       "jobs": ["identity-resolution", "unified-profile", "segmentation", "activation"]
     },
     {
       "id": "agentforce",
       "label": "Agentforce",
+      "icon": "agentforce.svg",
       "aliases": ["Einstein", "Service Assistant"],
       "jobs": ["recommendation", "assistance", "content-generation", "automation"]
     },
     {
       "id": "marketing-cloud",
       "label": "Marketing Cloud",
+      "icon": "marketing-cloud.svg",
       "aliases": ["Marketing", "Journey Builder", "Email Studio"],
       "jobs": ["campaign-management", "journey-orchestration", "email-authoring", "marketing-performance"]
     },
     {
       "id": "field-service",
       "label": "Field Service",
+      "icon": "field-service.svg",
       "aliases": ["Salesforce Field Service"],
-      "jobs": ["dispatch", "route-optimization", "appointment-management", "work-order-management", "inventory"]
+      "jobs": ["dispatch", "route-optimization", "appointment-management", "work-order-management", "inventory"],
+      "license": {
+        "category": "add-on",
+        "notice": "Licence Field Service distincte de Service Cloud. Vérifier l’édition, les droits mobiles et les fonctionnalités activées dans l’org."
+      }
     },
     {
       "id": "commerce-cloud",
@@ -52,12 +62,14 @@
     {
       "id": "revenue-cloud",
       "label": "Revenue Cloud",
+      "icon": "revenue-cloud.svg",
       "aliases": ["CPQ", "Revenue Lifecycle Management"],
       "jobs": ["quote-configuration", "pricing", "approval"]
     },
     {
       "id": "mulesoft",
       "label": "MuleSoft",
+      "icon": "mulesoft.svg",
       "aliases": ["MuleSoft Anypoint Platform"],
       "jobs": ["integration", "system-synchronization"]
     },
@@ -70,6 +82,7 @@
     {
       "id": "financial-services-cloud",
       "label": "Financial Services Cloud",
+      "icon": "financial-services-cloud.svg",
       "aliases": ["FSC", "Digital Lending"],
       "jobs": ["loan-origination", "loan-processing", "loan-underwriting", "credit-decisioning"],
       "license": {
@@ -80,18 +93,21 @@
     {
       "id": "experience-cloud",
       "label": "Experience Cloud",
+      "icon": "experience-cloud.svg",
       "aliases": ["Customer Portal", "Digital Experience"],
       "jobs": ["customer-portal", "self-service", "application-intake"]
     },
     {
       "id": "slack",
       "label": "Slack",
+      "icon": "slack.svg",
       "aliases": ["Slack for Salesforce"],
       "jobs": ["collaboration", "case-collaboration", "agent-collaboration"]
     },
     {
       "id": "consumer-goods-cloud",
       "label": "Consumer Goods Cloud",
+      "icon": "consumer-goods-cloud.svg",
       "aliases": ["Consumer Goods", "CG Cloud"],
       "jobs": ["retail-execution", "account-planning", "store-performance", "asset-service", "trade-promotion-management", "sales-agreement-management", "account-forecasting"],
       "license": {

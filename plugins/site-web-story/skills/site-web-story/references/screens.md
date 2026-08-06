@@ -11,7 +11,7 @@ déjà son animation CSS et son clin d'œil produit Salesforce (le `.why` de l'�
 **Format & page story.** La colonne *Format* pilote l'affichage de l'écran dans `index.html`
 (scrollytelling) : `mobile` → coque téléphone, `desktop` → cadre navigateur avec barre d'adresse
 (SLOT `url` du manifest). Les templates *mobile* — `instagram`, `whatsapp`, `landing-capture`,
-`client-app` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
+`client-app` et les templates `fieldservice-mobile-*` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
 ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur cette colonne).
 
 ## Table canal → template
@@ -32,6 +32,11 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Fiche client CRM 360 (Lightning composable) | `lightning-record.html` | desktop | Agentforce — meilleure action suivante (`lc-ai-recommendation`) | interactions du kit (toast, checklist) |
 | Tableau de bord CRM Analytics | `lightning-dashboard.html` | desktop | Einstein — insight sur les indicateurs | graphiques SVG (donut/jauge/courbe) |
 | Field Service (répartition, interventions) | `lightning-fieldservice.html` | desktop | Einstein — optimisation de tournée / conflit | carte + Gantt de dispatch |
+| Field Service mobile — ordre de travail | `fieldservice-mobile-work-order.html` | mobile | Field Service — contexte technicien | sections pilotées par JSON |
+| Field Service mobile — plan de travail | `fieldservice-mobile-work-plan.html` | mobile | Field Service — exécution guidée | checklist interactive |
+| Field Service mobile — couverture | `fieldservice-mobile-coverage.html` | mobile | Field Service — éligibilité | couverture et conditions |
+| Field Service mobile — retour de pièce | `fieldservice-mobile-part-return.html` | mobile | Field Service — stock mobile | validation avant retour |
+| Field Service mobile — résumé Agentforce | `fieldservice-mobile-agent-summary.html` | mobile | Agentforce — compte rendu | synthèse à valider |
 | Marketing Cloud (campagne, parcours, e-mail, segment) | `lightning-marketing.html` | desktop | Agentforce (email studio) / Einstein (segment) | canvas de parcours + sparklines |
 | Portail client — produits et demande de prêt | `financial-loan-portal.html` | desktop | Experience Cloud + Financial Services Cloud | formulaire multi-étapes |
 | Loan processor — instruction du dossier | `financial-loan-processor.html` | desktop | Financial Services Cloud + Agentforce | résumé, progression, assistant |
@@ -144,6 +149,10 @@ que le JSON, jamais la structure du composant**. Le header Lightning (`sf-*`) es
 - **lightning-record.html** (fiche client 360) — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `header` (`lc-record-header`), `customer` (`lc-customer-360`), `related` (`lc-related-list`), `feed` (`lc-engagement-feed`), `assistant` (`lc-ai-recommendation` = **Agentforce, clin d'œil produit, garde-le**)
 - **lightning-dashboard.html** (tableau de bord) — `title`, `act-tag`, `sf-*`, `heading`, `filters` (`lc-dashboard-filters`), `kpis` (`lc-kpi-grid`), `donut` (`lc-chart-donut`), `gauge` (`lc-chart-gauge`), `trend` (`lc-chart-line`), `bars` (`lc-chart-bar`), `leaderboard` (`lc-leaderboard`), `insight` (`lc-ai-recommendation` = **Einstein, clin d'œil, garde-le**)
 - **lightning-fieldservice.html** (Field Service) — `title`, `act-tag`, `sf-*`, `heading`, `roster` (`lc-technician-roster`), `appointment` (`lc-service-appointment`), `dispatch` (`lc-dispatch-console`), `map` (`lc-map`), `workorder` (`lc-work-order`), `parts` (`lc-parts-inventory`), `assistant` (`lc-ai-recommendation` = **Einstein optimisation, clin d'œil, garde-le**)
+- **fieldservice-mobile-*.html** — `title`, `act-tag`, `app`. Le SLOT `app` contient une coque
+  `lc-fs-mobile-shell` et une surface métier (`lc-fs-mobile-work-order`, `lc-fs-mobile-work-plan`,
+  `lc-fs-mobile-coverage`, `lc-fs-mobile-part-return` ou `lc-fs-mobile-agent-summary`). Reprends le bloc
+  complet et n'ajuste que les deux objets JSON. La coque, la barre haute et la navigation basse restent communes.
 - **lightning-marketing.html** (Marketing Cloud) — `title`, `act-tag`, `sf-*`, `header` (`lc-marketing-header`), `campaign` (`lc-campaign-workspace`), `journey` (`lc-journey-builder`), `email` (`lc-email-studio`), `segment` (`lc-segment-builder`), `performance` (`lc-marketing-performance`)
   (**6 surfaces empilées en 1/1, chacune RETIRABLE** : un acte MC montre en général UNE surface — vide les SLOTs des autres pour les masquer. Ex. acte « je construis mon parcours » → garde `header`+`campaign`+`journey`, vide `email`/`segment`/`performance`. Le panneau **Agentforce** de `email` et le panneau **Einstein** de `segment` sont les clins d'œil produit : garde-les quand la surface est affichée. `journey` : les nœuds se placent sur une grille `row`/`column` reliée par un connecteur SVG **fixe** — garde le schéma start→email→wait→decision→3 branches→…→end, n'ajuste que les libellés.)
 

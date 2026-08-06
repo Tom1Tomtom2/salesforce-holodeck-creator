@@ -353,7 +353,7 @@ Règles pour le manifest :
   le texte / le nombre de sous-blocs. Ne fabrique pas de nouvelle structure ni de
   nouvelles classes — la chrome est verrouillée.
 - **Écrans composables `<lc-*>`** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`,
-  `lightning-marketing`, `financial-loan-portal`, `financial-loan-processor`,
+  `lightning-marketing`, les écrans `fieldservice-mobile-*`, `financial-loan-portal`, `financial-loan-processor`,
      `financial-loan-underwriter`, les écrans `consumer-*` et `manufacturing-*`) :
   leurs SLOTs enveloppent un composant `<lc-*>` + un `<script type="application/json">`. Reprends le bloc
   d'exemple et **n'ajuste que le JSON** (valeurs), jamais la balise ni les clés attendues. Le marqueur SLOT
@@ -422,7 +422,7 @@ python3 scripts/build_site.py manifest.json
 Il copie chaque template dans `./<slug>-story/`, injecte les SLOTs entre les marqueurs,
 réécrit les tokens `:root` de `shared.css`, et génère `index.html` : la **page story** en
 scrollytelling (hero → intro personnages/frise → une section par acte avec l'écran en iframe).
-Les écrans « téléphone » (instagram, whatsapp, landing-capture, client-app) sont affichés dans une
+Les écrans « téléphone » (instagram, whatsapp, landing-capture, client-app, fieldservice-mobile-*) sont affichés dans une
 coque mobile ; les autres dans un cadre navigateur. Un clic sur un écran l'ouvre en plein écran.
 Un SLOT mal orthographié → **erreur explicite** : corrige le nom dans le manifest
 (noms valides dans `references/screens.md`) et relance. **Ne recopie jamais un template
