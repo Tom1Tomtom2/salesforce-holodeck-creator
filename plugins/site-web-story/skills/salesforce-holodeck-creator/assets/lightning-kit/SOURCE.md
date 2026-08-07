@@ -32,5 +32,11 @@ le kit et vérifie 3 pièges connus —
    template ne câble ses composants (cf. sales/dashboard/marketing : dispos mais non exposés). Quand
    tu crées le template qui les utilise, ajoute leurs libellés EN à `KIT_I18N` (voir screens.md § B2B).
 
+La copie vendorée peut contenir de petits ajustements d'intégration propres à la skill. Actuellement,
+`sales-components.js` accepte `data.eyebrow` dans `lc-sales-overview` afin qu'un écran pipeline ne soit
+pas étiqueté « Forecast ». Un re-sync brut peut écraser cet ajustement : réapplique-le avant le self-check.
+`pipeline-inspection-components.js` est propre à la skill et ne vient pas du kit amont : ne le supprime pas
+lors d'un re-sync.
+
 On NE vendorise PAS scenario-loader.js (il utilise fetch(), bloqué en file://) :
 la config passe en JSON inline dans un SLOT, pas par un scénario chargé au runtime.

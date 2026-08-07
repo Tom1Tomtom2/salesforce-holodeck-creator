@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Sales Cloud : Pipeline Inspection, mouvements et insights (desktop, transverse). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Sales Cloud - Pipeline Inspection<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1640px; }
+    .pi-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
+    .pi-titlebar { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+    .pi-titlebar span { color: var(--lc-text-weak); font-size: 12px; }
+    .pi-titlebar h1 { margin: 4px 0 0; color: var(--lc-heading); font-size: 28px; font-weight: 400; }
+    .pi-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(350px, 1fr); align-items: start; }
+    .pi-main { min-width: 0; padding-right: 16px; display: grid; gap: 16px; }
+    .pi-chart-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .pi-layout > lc-opportunity-insight-panel { position: sticky; top: 92px; }
+    @media (max-width: 1100px) { .pi-layout { grid-template-columns: 1fr; } .pi-main { padding-right: 0; } .pi-layout > lc-opportunity-insight-panel { position: static; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 4 - Sales Cloud - inspecter les mouvements du pipeline<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Nova</span></span><!-- /SLOT: sf-logo -->
+        <div class="ln-search"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>Rechercher dans Salesforce...</div>
+        <span class="ln-ask">Ask</span>
+        <div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div>
+    </div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Sales</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Accueil</span><span class="ln-tab on">Opportunités</span><span class="ln-tab">Leads</span><span class="ln-tab">Tâches</span><span class="ln-tab">Comptes</span><span class="ln-tab">Contacts</span><span class="ln-tab">Analytics</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="pi-page">
+    <div class="pi-titlebar"><div><span>Opportunités</span><h1><!-- SLOT: heading -->Pipeline Inspection<!-- /SLOT --></h1></div></div>
+
+    <!-- SLOT: summary - vues, filtres et mouvements synthétiques. -->
+    <lc-pipeline-inspection-summary>
+        <script type="application/json">
+        {"title":"Pipeline Inspection","tabs":["Inspection","Flux"],"activeTab":0,"updated":"Actualisé il y a quelques secondes","filters":[{"label":"Clôture","value":"Ce mois-ci"},{"label":"Équipe","value":"France Life Sciences"}],"metrics":[{"label":"Pipeline d'ouverture","value":"4,82 M€"},{"label":"Nouveau","value":"740 k€","direction":"up"},{"label":"Gagné","value":"580 k€"},{"label":"Augmenté","value":"180 k€","direction":"up"},{"label":"Entré dans la période","value":"420 k€","direction":"up"},{"label":"Sorti de la période","value":"-360 k€","direction":"down"},{"label":"Diminué","value":"-120 k€","direction":"down"},{"label":"Perdu","value":"-190 k€","direction":"down"}]}
+        </script>
+    </lc-pipeline-inspection-summary>
+    <!-- /SLOT: summary -->
+
+    <section class="pi-layout">
+        <div class="pi-main">
+            <div class="pi-chart-grid">
+                <!-- SLOT: waterfall - waterfall des mouvements du pipeline. -->
+                <lc-revenue-waterfall>
+                    <script type="application/json">
+                    {"title":"Évolution du pipeline","meta":"Du début de la période à aujourd'hui","currency":" M€","items":[{"label":"Ouverture","value":4.82,"type":"total"},{"label":"Nouveau","value":0.74},{"label":"Augmenté","value":0.18},{"label":"Entré","value":0.42},{"label":"Sorti","value":-0.36},{"label":"Diminué","value":-0.12},{"label":"Gagné","value":-0.58},{"label":"Perdu","value":-0.19},{"label":"Aujourd'hui","value":4.91,"type":"total"}]}
+                    </script>
+                </lc-revenue-waterfall>
+                <!-- /SLOT: waterfall -->
+            </div>
+
+            <!-- SLOT: opportunities - table des opportunités inspectées. -->
+            <lc-risk-deal-table>
+                <script type="application/json">
+                {"title":"Opportunités inspectées","meta":"8 affaires · clôture ce mois-ci","deals":[{"name":"Morosil - lancement gamme 2027","account":"NutriForm Labs","owner":"Camille Berthier","amount":420000,"stage":"Proposition","score":68,"risk":"Contacts acheteurs insuffisants","closeDate":"30 sept."},{"name":"Programme nutraceutique Europe","account":"Laboratoires Aster","owner":"Camille Berthier","amount":780000,"stage":"Proposition","score":72,"risk":"Montant réduit 3 fois","closeDate":"18 sept."},{"name":"Accord cadre ingrédients 2027","account":"BioHealth Group","owner":"Camille Berthier","amount":1200000,"stage":"Négociation","score":91,"risk":"Faible","closeDate":"12 sept."},{"name":"Extension Morosil France","account":"Vitae Italia","owner":"Nora Petit","amount":540000,"stage":"Négociation","score":73,"risk":"Revue juridique requise","closeDate":"25 sept."},{"name":"Contrat excipients premium","account":"Pharma Ouest","owner":"Léo Martin","amount":980000,"stage":"Validation finale","score":88,"risk":"Faible","closeDate":"8 sept."}]}
+                </script>
+            </lc-risk-deal-table>
+            <!-- /SLOT: opportunities -->
+        </div>
+
+        <!-- SLOT: insights - panneau de détail et signaux Einstein de l'opportunité sélectionnée. -->
+        <lc-opportunity-insight-panel>
+            <script type="application/json">
+            {"eyebrow":"Opportunité sélectionnée","title":"Morosil - lancement gamme 2027","stats":[{"label":"Score","value":"68","tone":"warning"},{"label":"Jours dans l'étape","value":"17"},{"label":"Activités","value":"8"},{"label":"Contacts","value":"2"}],"tabs":["Insights","Détails","Activité"],"activeTab":0,"groups":[{"title":"Nécessite votre attention (2)","items":[{"tone":"warning","title":"Seulement 2 contacts acheteurs engagés","detail":"Les affaires comparables gagnées impliquent en moyenne 5 contacts côté client.","action":"Voir les contacts impliqués"},{"tone":"warning","title":"Le montant a récemment diminué 3 fois","detail":"La réduction cumulée atteint 64 k€ depuis le début de la période.","action":"Voir l'historique des changements"}]},{"title":"Tendances et autres insights (2)","items":[{"tone":"info","title":"L'affaire avance rapidement","detail":"Il reste 11 jours avant le passage prévu en négociation.","action":"Voir l'historique d'engagement"},{"tone":"info","title":"Le prospect a consulté le dossier Morosil 3 fois","detail":"Le contenu réglementaire et les preuves cliniques concentrent l'engagement.","action":"Voir l'engagement marketing"}]}],"actions":[{"label":"Envoyer un e-mail","action":"send-email","primary":true}]}
+            </script>
+        </lc-opportunity-insight-panel>
+        <!-- /SLOT: insights -->
+    </section>
+</main>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

@@ -64,7 +64,11 @@
       "label": "Revenue Cloud",
       "icon": "revenue-cloud.svg",
       "aliases": ["CPQ", "Revenue Lifecycle Management"],
-      "jobs": ["quote-configuration", "pricing", "approval"]
+      "jobs": ["quote-configuration", "pricing", "approval"],
+      "license": {
+        "category": "add-on",
+        "notice": "Licence Revenue Cloud distincte de Sales Cloud. Vérifier l’édition, les fonctions de tarification et les droits activés dans l’org."
+      }
     },
     {
       "id": "mulesoft",

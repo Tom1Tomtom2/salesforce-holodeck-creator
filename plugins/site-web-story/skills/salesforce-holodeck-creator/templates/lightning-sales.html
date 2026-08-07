@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Sales Cloud : pipeline, inspection des affaires et activité (desktop, transverse). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Sales Cloud - Pipeline commercial<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .ls-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
+    .ls-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(330px, 1fr); gap: 16px; align-items: start; }
+    .ls-main, .ls-rail { display: grid; gap: 16px; }
+    .ls-rail .lc-deal-card { grid-template-columns: 48px minmax(0, 1fr) auto; }
+    .ls-rail .lc-deal-card__next { grid-column: 2 / -1; }
+    .ls-rail .lc-deal-card > span:last-child { display: none; }
+    @media (max-width: 1050px) { .ls-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 3 - Sales Cloud - piloter le pipeline<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Nova</span></span><!-- /SLOT: sf-logo -->
+        <div class="ln-search"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>Rechercher dans Salesforce...</div>
+        <span class="ln-ask">Ask</span>
+        <div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div>
+    </div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Sales</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Accueil</span><span class="ln-tab">Comptes</span><span class="ln-tab on">Opportunités</span><span class="ln-tab">Prévisions</span><span class="ln-tab">Rapports</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="ls-page">
+    <!-- SLOT: overview - synthèse commerciale et actions. -->
+    <lc-sales-overview>
+        <script type="application/json">
+        {"eyebrow":"Pipeline","title":"Pipeline France - Life Sciences","subtitle":"Opportunités ouvertes · trimestre en cours","status":"En bonne voie","actions":[{"label":"Actualiser","action":"refresh"},{"label":"Nouvelle opportunité","action":"new-opportunity","primary":true}],"metrics":[{"label":"Pipeline ouvert","value":"4,82 M€"},{"label":"Commit","value":"1,74 M€"},{"label":"Couverture","value":"2,8x"},{"label":"Affaires à risque","value":"3"}]}
+        </script>
+    </lc-sales-overview>
+    <!-- /SLOT: overview -->
+
+    <section class="ls-grid">
+        <div class="ls-main">
+            <!-- SLOT: pipeline - Kanban des opportunités. -->
+            <lc-pipeline-board>
+                <script type="application/json">
+                {"title":"Pipeline des opportunités","meta":"18 affaires · triées par date de clôture","currency":"EUR","stages":[{"name":"Qualification","amount":840000,"opportunities":[{"account":"NutriForm Labs","name":"Morosil - lancement gamme 2027","amount":420000,"closeDate":"30 sept.","probability":35,"owner":"Camille Berthier"},{"account":"Dermalys France","name":"Actifs naturels - renouvellement","amount":260000,"closeDate":"15 oct.","probability":30,"owner":"Nora Petit"}]},{"name":"Proposition","amount":1260000,"opportunities":[{"account":"Laboratoires Aster","name":"Programme nutraceutique Europe","amount":780000,"closeDate":"18 sept.","probability":60,"owner":"Camille Berthier","risk":"Marge à valider"},{"account":"Cosméa France","name":"Nouvelle formulation solaire","amount":480000,"closeDate":"4 oct.","probability":55,"owner":"Léo Martin"}]},{"name":"Négociation","amount":1740000,"opportunities":[{"account":"BioHealth Group","name":"Accord cadre ingrédients 2027","amount":1200000,"closeDate":"12 sept.","probability":80,"owner":"Camille Berthier"},{"account":"Vitae Italia","name":"Extension Morosil France","amount":540000,"closeDate":"25 sept.","probability":75,"owner":"Nora Petit","risk":"Décision juridique"}]},{"name":"Validation finale","amount":980000,"opportunities":[{"account":"Pharma Ouest","name":"Contrat excipients premium","amount":980000,"closeDate":"8 sept.","probability":90,"owner":"Léo Martin"}]}]}
+                </script>
+            </lc-pipeline-board>
+            <!-- /SLOT: pipeline -->
+        </div>
+
+        <aside class="ls-rail" aria-label="Inspection du pipeline">
+            <!-- SLOT: inspection - scoring Einstein et meilleure action suivante. -->
+            <lc-deal-inspection>
+                <script type="application/json">
+                {"title":"Inspection des affaires","meta":"Signaux et actions prioritaires","deals":[{"name":"Laboratoires Aster","stage":"Proposition","amount":"780 k€","score":68,"risk":"Élevé","nextStep":"Valider la remise avec le manager"},{"name":"BioHealth Group","stage":"Négociation","amount":"1,2 M€","score":91,"risk":"Faible","nextStep":"Préparer la version finale du devis"},{"name":"Vitae Italia","stage":"Négociation","amount":"540 k€","score":73,"risk":"Moyen","nextStep":"Planifier la revue juridique"}]}
+                </script>
+            </lc-deal-inspection>
+            <!-- /SLOT: inspection -->
+
+            <!-- SLOT: activity - activité récente liée aux affaires. -->
+            <lc-sales-activity>
+                <script type="application/json">
+                {"title":"Activité récente","meta":"Compte et opportunités","items":[{"icon":"@","title":"Réponse de NutriForm Labs","detail":"Demande de prix pour 3 volumes annuels","time":"Il y a 12 min"},{"icon":"EUR","title":"Devis Q-10428 recalculé","detail":"Marge nette : 18,4 %","time":"Il y a 38 min"},{"icon":"OK","title":"Échantillon livré","detail":"Morosil · lot MS-24087","time":"Hier"}]}
+                </script>
+            </lc-sales-activity>
+            <!-- /SLOT: activity -->
+        </aside>
+    </section>
+</main>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

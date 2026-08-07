@@ -1,0 +1,22 @@
+{
+  "brand": "Safic-Alcan",
+  "slug": "core-sales-revenue",
+  "story_title": "Du signal commercial au devis approuvé",
+  "tagline": "Un pipeline priorisé, un devis calculé et une marge protégée sans ressaisie.",
+  "thesis": "Parce que les signaux d'intention, les opportunités et les règles de prix partagent le même contexte, Safic-Alcan transforme une demande d'échantillon en devis approuvé tout en protégeant sa marge.",
+  "tokens": {"--accent":"#0975d3","--accent-dark":"#064f93","--accent-soft":"#e7f3fc"},
+  "intro": {
+    "kicker": "Sales Cloud + Revenue Cloud",
+    "title": "Une ITC, un pipeline priorisé, un devis maîtrisé",
+    "lede": "Camille suit la demande Morosil de NutriForm Labs depuis l'opportunité jusqu'à l'approbation de la marge.",
+    "cast": [
+      {"name":"Camille Berthier","role":"Ingénieure technico-commerciale","bio":"Qualifie l'opportunité et configure la proposition.","image":"people/femme-2.jpg"},
+      {"name":"Marc Vidal","role":"Directeur commercial","bio":"Arbitre les remises exceptionnelles.","image":"people/homme-1.jpg"}
+    ]
+  },
+  "screens": [
+    {"file":"acte1-pipeline.html","template":"lightning-sales","channel":"Sales Cloud","chapter":"Prioriser","act":"Acte 1 · Camille","title":"Concentrer l'équipe sur les bonnes affaires","desc":"Camille retrouve le pipeline partagé Life Sciences sous forme de Kanban. Einstein fait remonter les affaires à risque et recommande la prochaine action sans sortir du contexte commercial.","trigger":"La demande Morosil est qualifiée et devient une opportunité.","result":"L'affaire est positionnée, scorée et affectée à Camille.","transition":"Les changements de montant et d'étape doivent maintenant être expliqués.","persona":"Camille Berthier","display":{"mode":"full","scale":0.45,"height":980},"slots":{"sf-logo":"<span class=\"ln-logo\"><span class=\"brand\"><span class=\"brand-mark\">S</span> Safic-Alcan</span></span>"}},
+    {"file":"acte2-inspection.html","template":"lightning-pipeline-inspection","channel":"Sales Cloud","chapter":"Comprendre","act":"Acte 2 · Camille","title":"Expliquer chaque mouvement du pipeline","desc":"Camille passe du Kanban à Pipeline Inspection. Le waterfall explique les entrées, sorties et réductions de valeur ; le panneau Einstein révèle les contacts manquants et les signaux d'engagement sur l'affaire Morosil.","trigger":"Le montant de l'opportunité NutriForm Labs diminue pour la troisième fois.","result":"Camille identifie la cause, les parties prenantes manquantes et l'action à mener.","transition":"Le besoin stabilisé peut maintenant devenir une proposition chiffrée.","persona":"Camille Berthier","display":{"mode":"full","scale":0.43,"height":1120},"slots":{"sf-logo":"<span class=\"ln-logo\"><span class=\"brand\"><span class=\"brand-mark\">S</span> Safic-Alcan</span></span>"}},
+    {"file":"acte3-devis.html","template":"lightning-revenue","channel":"Revenue Cloud","chapter":"Chiffrer et approuver","act":"Acte 3 · Camille et Marc","title":"Protéger la marge avant la commande","desc":"Camille assemble les produits, services et conditions du devis. Revenue Cloud recalcule les totaux en temps réel, déclenche l'approbation de la remise et Agentforce propose une alternative qui préserve la marge.","trigger":"NutriForm Labs demande trois paliers de volume et une remise de lancement.","result":"Le devis est prêt à être approuvé puis transmis vers la commande JDE.","transition":"Une fois accepté, le devis devient une commande sans ressaisie.","persona":"Camille Berthier","display":{"mode":"full","scale":0.45,"height":1040},"slots":{"sf-logo":"<span class=\"ln-logo\"><span class=\"brand\"><span class=\"brand-mark\">S</span> Safic-Alcan</span></span>"}}
+  ]
+}

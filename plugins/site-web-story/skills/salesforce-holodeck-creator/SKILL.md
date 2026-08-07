@@ -21,7 +21,7 @@ description: |
   des captures avec Gemini, d'utiliser le holodeck app.py, de construire une vraie
   application Salesforce/LWC/Experience Cloud, un site marchand de production,
   ou un simple diagramme ou une slide unique.
-version: "1.12.0"
+version: "1.13.0"
 ---
 
 # Salesforce Holodeck Creator
@@ -43,7 +43,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `templates/*.html` — **bibliothèque d'écrans complets, chrome verrouillée + SLOTs.**
   C'est le cœur : tu pars TOUJOURS d'un template, tu ne redessines jamais un écran.
 - `assets/lightning-kit/` — **kit de composants `<lc-*>`** (record 360, charts, dispatch, carte, parcours marketing…)
-  utilisé par les templates `lightning-record` / `lightning-dashboard` / `lightning-fieldservice` / `lightning-marketing`
+  utilisé par les templates `lightning-record` / `lightning-dashboard` / `lightning-fieldservice` /
+  `lightning-marketing` / `lightning-sales` / `lightning-pipeline-inspection` / `lightning-revenue`
   et les écrans sectoriels Consumer Goods, Financial Services et Manufacturing.
   Écrans Salesforce **composables** : chaque bloc lit sa config d'un `<script JSON>` slotté. Détails dans `references/screens.md`.
 - `references/screens.md` — table canal → template + liste des SLOTs de chaque template.
@@ -211,7 +212,7 @@ fidélité plutôt que promo ; expansion internationale → activation multi-mar
 - **N actes** (vise 5–7, ou 3–4 pour une démo express), chacun :
   - `acte` (libellé, ex. « Acte 1 · Réengagement »),
   - `titre` court de l'écran,
-  - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard · **lightning-sales / lightning-record / lightning-dashboard / lightning-fieldservice / lightning-marketing** (écrans Salesforce riches) · **financial-loan-portal / financial-loan-processor / financial-loan-underwriter** (Digital Lending) · **consumer-commerce-home / consumer-commerce-order / consumer-service-performance / consumer-service-account / consumer-service-case / consumer-service-asset / consumer-sales-trade-plan / consumer-sales-agreement / consumer-sales-forecast** (Consumer Goods),
+  - `canal` ∈ instagram · whatsapp · email · site · console · app · dashboard · **lightning-sales / lightning-pipeline-inspection / lightning-revenue / lightning-record / lightning-dashboard / lightning-fieldservice / lightning-marketing** (écrans Salesforce riches) · **financial-loan-portal / financial-loan-processor / financial-loan-underwriter** (Digital Lending) · **consumer-commerce-home / consumer-commerce-order / consumer-service-performance / consumer-service-account / consumer-service-case / consumer-service-asset / consumer-sales-trade-plan / consumer-sales-agreement / consumer-sales-forecast** (Consumer Goods),
   - `moment` (1 phrase : ce qui se passe),
   - `trigger` (ce qui déclenche l'acte),
   - `valeur` Salesforce (le produit mis en avant : Data Cloud, Marketing Cloud,
@@ -254,7 +255,7 @@ grand public (B2C) ou l'entreprise (B2B). Ce n'est pas qu'un ton, ça change la 
   d'achat** côté client (ex. Directeur Achats + utilisateur métier). Parcours type : **lead/signal →
   qualification → opportunité (pipeline) → prévision → devis (CPQ/Revenue) → signature → onboarding →
   expansion/renouvellement**. Canaux : LinkedIn/email de prospection, **console commerciale**,
-  **pipeline & prévision** (`lightning-dashboard` / `lightning-sales`), **devis**, portail partenaire.
+  **pipeline** (`lightning-sales`), inspection des variations (`lightning-pipeline-inspection`), prévision (`lightning-dashboard`), **devis** (`lightning-revenue`), portail partenaire.
   Produits mis en avant : **Sales Cloud** (pipeline, prévision), **Revenue/CPQ** (devis), Agentforce
   (SDR/assistant vente), Data Cloud (scoring/intent). ⚠ **Vérifie dans `references/screens.md` (§ B2B)
   quels écrans B2B existent réellement.** Si le parcours B2B demande un écran non couvert (prévision,
@@ -360,7 +361,7 @@ Règles pour le manifest :
   le texte / le nombre de sous-blocs. Ne fabrique pas de nouvelle structure ni de
   nouvelles classes — la chrome est verrouillée.
 - **Écrans composables `<lc-*>`** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`,
-  `lightning-marketing`, les écrans `fieldservice-mobile-*`, `financial-loan-portal`, `financial-loan-processor`,
+  `lightning-marketing`, `lightning-sales`, `lightning-pipeline-inspection`, `lightning-revenue`, les écrans `fieldservice-mobile-*`, `financial-loan-portal`, `financial-loan-processor`,
      `financial-loan-underwriter`, les écrans `consumer-*` et `manufacturing-*`) :
   leurs SLOTs enveloppent un composant `<lc-*>` + un `<script type="application/json">`. Reprends le bloc
   d'exemple et **n'ajuste que le JSON** (valeurs), jamais la balise ni les clés attendues. Le marqueur SLOT

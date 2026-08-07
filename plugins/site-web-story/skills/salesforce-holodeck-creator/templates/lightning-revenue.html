@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- TEMPLATE - Revenue Cloud : configuration du devis et approbation (desktop, transverse). -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Revenue Cloud - Configuration du devis<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="lightning-kit.css">
+<style>
+    body { background: var(--lc-page); min-height: 100vh; --sf-w: 1560px; }
+    .rc-page { width: min(var(--sf-w), 100%); margin: 0 auto; padding: 18px 20px 72px; display: grid; gap: 16px; }
+    .rc-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(350px, 1fr); gap: 16px; align-items: start; }
+    .rc-main, .rc-rail { display: grid; gap: 16px; }
+    @media (max-width: 1050px) { .rc-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte 4 - Revenue Cloud - configurer et approuver le devis<!-- /SLOT --></div>
+<div class="lightning">
+    <div class="ln-top">
+        <!-- SLOT: sf-logo --><span class="ln-logo"><span class="brand"><span class="brand-mark">N</span> Nova</span></span><!-- /SLOT: sf-logo -->
+        <div class="ln-search"><svg viewBox="0 0 520 520" fill="currentColor"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22M210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130"/></svg>Rechercher dans Salesforce...</div>
+        <span class="ln-ask">Ask</span>
+        <div class="ln-icons"><span aria-hidden="true">?</span><!-- SLOT: sf-avatar --><span class="ln-avatar"></span><!-- /SLOT: sf-avatar --></div>
+    </div>
+    <div class="ln-nav"><span class="ln-waffle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><!-- SLOT: sf-app --><span class="ln-app">Revenue Cloud</span><!-- /SLOT: sf-app --><!-- SLOT: sf-tabs --><div class="ln-tabs"><span class="ln-tab">Accueil</span><span class="ln-tab">Opportunités</span><span class="ln-tab on">Devis</span><span class="ln-tab">Commandes</span><span class="ln-tab">Contrats</span></div><!-- /SLOT: sf-tabs --></div>
+</div>
+<main class="rc-page">
+    <!-- SLOT: header - contexte du devis et actions principales. -->
+    <lc-record-header>
+        <script type="application/json">
+        {"type":"Devis","icon":"case","title":"Q-10428 - NutriForm Labs","actions":[{"label":"Aperçu PDF","action":"preview"},{"label":"Soumettre pour approbation","action":"submit","primary":true}],"highlights":[{"label":"Opportunité","value":"Morosil - lancement gamme 2027"},{"label":"Compte","value":"NutriForm Labs"},{"label":"Statut","value":"Brouillon"},{"label":"Devise","value":"EUR"},{"label":"Date d'expiration","value":"30 sept. 2026"},{"label":"Total TTC","value":"367 410 €"}]}
+        </script>
+    </lc-record-header>
+    <!-- /SLOT: header -->
+
+    <!-- SLOT: path - progression devis vers commande. -->
+    <lc-status-path>
+        <script type="application/json">
+        {"title":"Cycle devis vers commande","meta":"Étape actuelle : validation de la marge","current":2,"steps":["Configuration","Tarification","Approbation","Acceptation client","Commande JDE"]}
+        </script>
+    </lc-status-path>
+    <!-- /SLOT: path -->
+
+    <section class="rc-grid">
+        <div class="rc-main">
+            <!-- SLOT: quote - lignes, prix, durée, remise et calcul temps réel. -->
+            <lc-quote-builder>
+                <script type="application/json">
+                {"title":"Configuration et tarification","meta":"Q-10428 · Liste de prix France Life Sciences 2026","validUntil":"30 sept. 2026","currency":"EUR","discount":7.5,"taxRate":20,"items":[{"product":"Morosil - lot industriel 25 kg","code":"MORO-25-EU","quantity":12,"unitPrice":24800,"term":12},{"product":"Support formulation nutraceutique","code":"LAB-FORM-40H","quantity":1,"unitPrice":18500,"term":3},{"product":"Dossier réglementaire Europe","code":"REG-EU-PREM","quantity":1,"unitPrice":14900,"term":12}]}
+                </script>
+            </lc-quote-builder>
+            <!-- /SLOT: quote -->
+        </div>
+
+        <aside class="rc-rail" aria-label="Validation et assistance du devis">
+            <!-- SLOT: approval - parcours d'approbation de la remise et de la marge. -->
+            <lc-quote-approval>
+                <script type="application/json">
+                {"title":"Approbation du devis","meta":"Remise 7,5 % · marge nette 18,4 %","current":1,"steps":[{"label":"Contrôle automatique des règles","owner":"Revenue Cloud","status":"Approuvé","time":"Aujourd'hui, 09:14"},{"label":"Validation de la marge","owner":"Marc Vidal · Directeur commercial","status":"En attente","time":"Échéance aujourd'hui"},{"label":"Validation Finance","owner":"Équipe Finance France","status":"À venir","time":"Après validation manager"}]}
+                </script>
+            </lc-quote-approval>
+            <!-- /SLOT: approval -->
+
+            <!-- SLOT: agent - recommandation Agentforce pour préserver la marge. -->
+            <lc-agent-overlay data-mode="lightning">
+                <script type="application/json">
+                {"title":"Revenue Agent","launchLabel":"Analyser le devis","open":false,"messages":[{"role":"assistant","text":"Le devis respecte le plancher de marge, mais la remise de 7,5 % exige l'accord du directeur commercial.","bullets":["Marge nette prévue : 18,4 %","Plancher contractuel : 17 %","Devise du compte : EUR","Économie client : 24 825 €"]},{"role":"assistant","text":"Une remise de 6,5 % préserverait 3 310 € de marge sans changer les volumes."}],"actionsTitle":"Actions recommandées","actions":[{"label":"Appliquer la remise de 6,5 %"},{"label":"Préparer la justification manager"}],"placeholder":"Demandez une analyse de prix ou de marge..."}
+                </script>
+            </lc-agent-overlay>
+            <!-- /SLOT: agent -->
+        </aside>
+    </section>
+</main>
+<lc-toast-region></lc-toast-region>
+<script src="lightning-kit.js"></script>
+</body>
+</html>

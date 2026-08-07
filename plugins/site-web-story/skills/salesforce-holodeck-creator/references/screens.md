@@ -38,6 +38,9 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Field Service mobile — retour de pièce | `fieldservice-mobile-part-return.html` | mobile | Field Service — stock mobile | validation avant retour |
 | Field Service mobile — résumé Agentforce | `fieldservice-mobile-agent-summary.html` | mobile | Agentforce — compte rendu | synthèse à valider |
 | Marketing Cloud (campagne, parcours, e-mail, segment) | `lightning-marketing.html` | desktop | Agentforce (email studio) / Einstein (segment) | canvas de parcours + sparklines |
+| Pipeline commercial Sales Cloud | `lightning-sales.html` | desktop | Einstein — inspection des affaires | Kanban + scoring + activité |
+| Analyse des mouvements Pipeline Inspection | `lightning-pipeline-inspection.html` | desktop | Einstein — signaux et risques de l'affaire | waterfall + table + panneau d'insights |
+| Devis, tarification et approbation Revenue Cloud | `lightning-revenue.html` | desktop | Agentforce — analyse de marge | recalcul des totaux + parcours d'approbation |
 | Portail client — produits et demande de prêt | `financial-loan-portal.html` | desktop | Experience Cloud + Financial Services Cloud | formulaire multi-étapes |
 | Loan processor — instruction du dossier | `financial-loan-processor.html` | desktop | Financial Services Cloud + Agentforce | résumé, progression, assistant |
 | Loan underwriter — analyse et décision | `financial-loan-underwriter.html` | desktop | Financial Services Cloud + Agentforce | ratios, contrôles, recommandation |
@@ -143,7 +146,7 @@ injecte alors automatiquement cette image dans `sf-avatar`. Un contenu explicite
 `sf-avatar` reste prioritaire ; sans `persona` ni SLOT explicite, le template conserve son avatar neutre.
 
 ### Écrans Lightning composables (kit `<lc-*>`)
-Ces 3 templates sont **composés de web components** `<lc-*>` (voir la section « Kit de composants » plus bas).
+Ces templates sont **composés de web components** `<lc-*>` (voir la section « Kit de composants » plus bas).
 Chaque SLOT de contenu enveloppe un composant + son `<script type="application/json">` : **ne modifie
 que le JSON, jamais la structure du composant**. Le header Lightning (`sf-*`) est le même que les autres écrans SF.
 - **lightning-record.html** (fiche client 360) — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `header` (`lc-record-header`), `customer` (`lc-customer-360`), `related` (`lc-related-list`), `feed` (`lc-engagement-feed`), `assistant` (`lc-ai-recommendation` = **Agentforce, clin d'œil produit, garde-le**)
@@ -155,6 +158,24 @@ que le JSON, jamais la structure du composant**. Le header Lightning (`sf-*`) es
   complet et n'ajuste que les deux objets JSON. La coque, la barre haute et la navigation basse restent communes.
 - **lightning-marketing.html** (Marketing Cloud) — `title`, `act-tag`, `sf-*`, `header` (`lc-marketing-header`), `campaign` (`lc-campaign-workspace`), `journey` (`lc-journey-builder`), `email` (`lc-email-studio`), `segment` (`lc-segment-builder`), `performance` (`lc-marketing-performance`)
   (**6 surfaces empilées en 1/1, chacune RETIRABLE** : un acte MC montre en général UNE surface — vide les SLOTs des autres pour les masquer. Ex. acte « je construis mon parcours » → garde `header`+`campaign`+`journey`, vide `email`/`segment`/`performance`. Le panneau **Agentforce** de `email` et le panneau **Einstein** de `segment` sont les clins d'œil produit : garde-les quand la surface est affichée. `journey` : les nœuds se placent sur une grille `row`/`column` reliée par un connecteur SVG **fixe** — garde le schéma start→email→wait→decision→3 branches→…→end, n'ajuste que les libellés.)
+- **lightning-sales.html** (Sales Cloud) — `title`, `act-tag`, `sf-*`, `overview`
+  (`lc-sales-overview`), `pipeline` (`lc-pipeline-board`), `inspection` (`lc-deal-inspection`),
+  `activity` (`lc-sales-activity`). Le pipeline est un **Kanban d'opportunités** en 2/3 ; la colonne 1/3
+  conserve l'inspection Einstein et l'activité. Ajuste les étapes, montants, risques et propriétaires,
+  sans changer la structure. `inspection` est le clin d'œil produit : garde-le.
+- **lightning-pipeline-inspection.html** (Sales Cloud Pipeline Inspection) — `title`, `act-tag`,
+  `sf-*`, `heading`, `summary` (`lc-pipeline-inspection-summary`), `waterfall`
+  (`lc-revenue-waterfall`), `opportunities` (`lc-risk-deal-table`), `insights`
+  (`lc-opportunity-insight-panel`). `summary.metrics` et `waterfall.items` doivent raconter les mêmes
+  mouvements ; le total final du waterfall doit correspondre au pipeline d'ouverture corrigé des entrées
+  et sorties. `insights` décrit l'opportunité mise en avant dans la table. Garde au moins un signal
+  d'attention et un signal positif : c'est la valeur Einstein de l'écran.
+- **lightning-revenue.html** (Revenue Cloud) — `title`, `act-tag`, `sf-*`, `header`
+  (`lc-record-header`), `path` (`lc-status-path`), `quote` (`lc-quote-builder`), `approval`
+  (`lc-quote-approval`), `agent` (`lc-agent-overlay`). Le devis occupe 2/3 ; approbation et Revenue Agent
+  occupent 1/3. Le composant recalcule quantité, prix, remise et taxes en temps réel. Les données sont des
+  nombres bruts (`quantity`, `unitPrice`, `discount`, `taxRate`) ; la devise est définie par `currency`.
+  Garde `approval` et `agent` : ils matérialisent la gouvernance de marge et la valeur Agentforce.
 
 ## B2B vs B2C — quels écrans existent
 
@@ -169,23 +190,22 @@ est **partielle** — voici l'état honnête, à annoncer à l'utilisateur en Ph
 | Prospection / réengagement compte | `email-marketing`, `whatsapp` | ✅ réutilisable (adapter le ton B2B) |
 | Fiche compte / contact 360 | `lightning-record` | ✅ (persona = contact du compte) |
 | Console commerciale / relance | `service-console` | ⚠️ proche (conçue SAV, se détourne en console vente) |
-| Pipeline & prévision des ventes | `lightning-dashboard` | ⚠️ proche (KPI/charts génériques) — **pas** un vrai pipeline board |
-| **Pipeline board / deal inspection** | — | ❌ **à créer** (composants dispo : `lc-pipeline-board`, `lc-deal-inspection`) |
-| **Prévision (forecast) Sales Cloud** | — | ❌ **à créer** (`lc-forecast-summary/-categories/-hierarchy`, `lc-team-attainment`, `lc-pipeline-velocity`, `lc-win-rate-heatmap`) |
-| **Devis (CPQ / Revenue Cloud)** | — | ❌ **à créer** (`lc-quote-builder`, `lc-quote-approval`) |
+| Pipeline & inspection des ventes | `lightning-sales` | ✅ Kanban, risques et meilleure action |
+| Explication des variations du pipeline | `lightning-pipeline-inspection` | ✅ waterfall, opportunités et insights Einstein |
+| Prévision agrégée / forecast hiérarchique | `lightning-dashboard` | ⚠️ proche (KPI/charts génériques) ; composants forecast disponibles mais non câblés |
+| **Devis (CPQ / Revenue Cloud)** | `lightning-revenue` | ✅ configuration, calcul temps réel, approbation et Revenue Agent |
 | Portail partenaire / Experience Cloud | — | ❌ **à créer** (aucun composant dédié — chrome à dessiner) |
 | **Marketing Cloud (campagne, parcours, e-mail studio, segment)** | `lightning-marketing` | ✅ (câblé — 6 surfaces masquables) — utile B2C **et** B2B (nurturing) |
 
 **Règle** : si le brief réclame un écran ❌, ne l'improvise pas — signale-le et prends le ⚠️ le plus
-proche en attendant. Les composants `<lc-*>` cités existent DÉJÀ dans le kit (re-syncés) mais **ne sont
-câblés à aucun template** : créer le template = les envelopper (comme les autres `lightning-*`) +
-ajouter leurs libellés EN à `KIT_I18N` dans `build_site.py` (les fichiers `sales`/`dashboard` ne sont
-PAS encore francisés — on le fait au moment de créer leur template ; `marketing` l'est, cf.
-`lightning-marketing`). On construit **à partir du cahier des charges**, jamais d'écran spéculatif.
+proche en attendant. Les composants de forecast avancé (`lc-forecast-*`, `lc-team-attainment`,
+`lc-pipeline-velocity`, `lc-win-rate-heatmap`) existent dans le kit mais ne sont pas encore câblés.
+Pour un besoin ❌ ou ⚠️, crée le template à partir du cahier des charges puis ajoute ses libellés EN
+à `KIT_I18N`. On ne construit jamais un écran spéculatif.
 
 ## Kit de composants Lightning (`assets/lightning-kit/`)
 
-Les 3 templates `lightning-*` sont **composables** : au lieu d'une chrome figée, leur corps est fait de
+Les templates `lightning-*` sont **composables** : au lieu d'une chrome figée, leur corps est fait de
 web components `<lc-*>` (record header, customer 360, charts, dispatch console, carte…) qui lisent chacun
 leur configuration dans un `<script type="application/json">` enfant. C'est le **niveau 2 composable** de la
 roadmap : la *chrome* (header Lightning) et *chaque composant* restent verrouillés et crédibles ; seule la
