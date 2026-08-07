@@ -21,6 +21,10 @@ jobs:
           python-version: "3.11"
       - name: Validate registry, taxonomy and component charter
         run: python3 scripts/validate_registry.py
+      - name: Run component creator self-check
+        run: python3 scripts/create_component.py --selfcheck
+      - name: Run component catalog self-check
+        run: python3 scripts/build_component_catalog.py --selfcheck
       - name: Run deterministic build self-check
         run: python3 scripts/build_site.py --selfcheck
       - name: Compile Python scripts

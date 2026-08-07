@@ -243,13 +243,13 @@ KIT_I18N = [
 ]
 
 
-def kit_js_files() -> list:
+def kit_js_files(kit: Path = KIT) -> list:
     """Fichiers JS du kit à bundler, base d'abord. Découverte auto → quand l'utilisateur AJOUTE
     un fichier de composants au kit, il est pris sans toucher au code (cf. son workflow « j'en
     ajoute, on récupère petit à petit »). Ordre : lightning-components.js (base JsonComponent dont
     tout hérite → sinon `class X extends JsonComponent` casse à l'évaluation) puis le reste, trié."""
-    others = sorted(f.name for f in KIT.glob("*.js") if f.name not in KIT_SKIP and f.name != KIT_BASE)
-    return ([KIT_BASE] if (KIT / KIT_BASE).is_file() else []) + others
+    others = sorted(f.name for f in kit.glob("*.js") if f.name not in KIT_SKIP and f.name != KIT_BASE)
+    return ([KIT_BASE] if (kit / KIT_BASE).is_file() else []) + others
 
 
 def _top_level_dupes(js: str) -> list:
@@ -263,7 +263,7 @@ def _top_level_dupes(js: str) -> list:
     return sorted(set(dupes))
 
 
-def bundle_kit_js() -> str:
+def bundle_kit_js(kit: Path = KIT) -> str:
     """Concatène les modules du kit <lc-*> en UN script CLASSIQUE (chargeable en file://).
     Les ES modules (import/export) et fetch() sont bloqués en file:// ; le contrat de la skill
     est le double-clic. On retire donc `import`/`export` : une fois concaténés, les fichiers
@@ -273,8 +273,8 @@ def bundle_kit_js() -> str:
     homonymes lèveraient `Identifier 'definitions' has already been declared`. On la renomme donc
     par fichier (elle n'est jamais partagée entre fichiers). Toute AUTRE collision → on lève."""
     parts = []
-    for name in kit_js_files():
-        src = (KIT / name).read_text(encoding="utf-8")
+    for name in kit_js_files(kit):
+        src = (kit / name).read_text(encoding="utf-8")
         src = re.sub(r"^\s*import\s.*?;\s*$", "", src, flags=re.M)  # lignes `import … ;`
         src = re.sub(r"^export\s+", "", src, flags=re.M)            # mot-clé `export`
         slug = re.sub(r"[^A-Za-z0-9]", "_", name)                   # map d'enregistrement → unique/fichier

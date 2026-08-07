@@ -26,6 +26,17 @@ job/produit et plusieurs écarts objectifs à la charte.
 
 ## Ajouter un composant `<lc-*>`
 
+Pour initialiser tous les fichiers et la classification sans recopier ce guide, lance d'abord :
+
+```bash
+python3 scripts/create_component.py
+```
+
+Le mode interactif propose les valeurs contrôlées. Le mode non interactif accepte `--id`, `--label`,
+`--job`, `--products`, `--surface`, `--scope` et `--industries`. `--dry-run` n'écrit rien. Le script
+annule ses écritures si le registre final ne passe pas la validation. Les étapes suivantes restent
+nécessaires pour transformer le squelette en composant métier et l'exposer dans un écran.
+
 ### 1. Choisir sa source
 
 - Ajoute le composant à un fichier métier existant, par exemple
@@ -205,6 +216,8 @@ Depuis le dossier `plugins/salesforce-holodeck-creator/skills/salesforce-holodec
 
 ```bash
 python3 scripts/validate_registry.py
+python3 scripts/create_component.py --selfcheck
+python3 scripts/build_component_catalog.py --selfcheck
 python3 scripts/build_site.py --selfcheck
 python3 scripts/build_site.py registry/examples/<exemple>.json
 python3 scripts/review_site.py ./<slug>-story
@@ -217,6 +230,11 @@ Vérifie ensuite :
 - le composant fonctionne au clavier ;
 - le rendu autonome s'ouvre directement en `file://` ;
 - `git diff --check` ne remonte rien.
+
+Pour inspecter la bibliothèque complète avant une revue, exécute
+`python3 scripts/build_component_catalog.py`, puis ouvre `component-catalog/index.html`. Le catalogue
+est une sortie locale `file://` reconstruite depuis les registres et exemples de templates ; ne
+modifie jamais ses fichiers à la main.
 
 La CI exécute les validations sans navigateur sur chaque PR. Le contributeur reste responsable de
 la revue Chromium et des captures, car une charte visuelle ne peut pas être validée uniquement par
