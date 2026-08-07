@@ -11,7 +11,7 @@ déjà son animation CSS et son clin d'œil produit Salesforce (le `.why` de l'�
 **Format & page story.** La colonne *Format* pilote l'affichage de l'écran dans `index.html`
 (scrollytelling) : `mobile` → coque téléphone, `desktop` → cadre navigateur avec barre d'adresse
 (SLOT `url` du manifest). Les templates *mobile* — `instagram`, `whatsapp`, `landing-capture`,
-`client-app` et les templates `fieldservice-mobile-*` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
+`client-app`, `mobile-card-scan` et les templates `fieldservice-mobile-*` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
 ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur cette colonne).
 
 ## Table canal → template
@@ -23,6 +23,8 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Email (bienvenue, cross-sell, fidélité) | `email-marketing.html` | desktop | Einstein Copy Insights (panneau) | — (statique) |
 | Fiche produit / navigation e-commerce | `site-ecommerce.html` | desktop | Data Cloud beacon temps réel | dot qui pulse |
 | Landing de capture + résolution d'identité | `landing-capture.html` | mobile | Data Cloud identity resolution (overlay) | fusion des fragments (scriptée) |
+| Landing B2B — capture de lead | `landing-b2b-capture.html` | desktop | Data Cloud → lead rattaché au compte, routé vers Sales (overlay) | soumission → résolution des fragments (scriptée) |
+| Scan de carte de visite | `mobile-card-scan.html` | mobile | Agentforce OCR + Data Cloud dédoublonne → contact Sales | scan → extraction champ par champ → dédoublon (scriptée) |
 | Profil client unifié | `datacloud-profil.html` | desktop | Data Cloud — flux + segments | events « live » + segment qui s'allume |
 | Acquisition / activation / re-segmentation | `datacloud-pipeline.html` | desktop | Data Cloud — pipeline vers Meta/Google | status-line qui pulse |
 | Création de segment assistée IA | `datacloud-segment.html` | desktop | Data Cloud — Einstein génère le segment (panneau chat) | — (statique) |
@@ -75,6 +77,8 @@ activation d'audience vers Meta, re-segmentation post-événement) : n'adapte qu
 - **email-marketing.html** — `title`, `act-tag`, `email`, `einstein`
 - **site-ecommerce.html** — `title`, `act-tag`, `order-confirm` (retirable), `nav`, `pdp`, `beacon`
 - **landing-capture.html** — `title`, `act-tag`, `url`, `landing`, `resolve`
+- **landing-b2b-capture.html** — `title`, `act-tag`, `nav`, `hero`, `form`, `resolve` · desktop (pas de coque : le hub dessine la barre navigateur) · garde les id `sub`/`resolve`/`f1`/`f2`/`mrg`/`uni`
+- **mobile-card-scan.html** — `title`, `act-tag`, `rep`, `card`, `extract`, `dedup`, `cta` · mobile (dessine sa coque `.phone`) · garde les id `scan`/`x1`..`x4`/`dedup`/`done`
   (garde les `id` cur/sub/resolve/f1/f2/mrg/uni : le `<script>` en bas les anime)
 - **datacloud-profil.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `identity`, `stream`, `segments`
   (garde `.live-2`/`.live-1` en tête du flux, une seule pastille `.seg.on`)

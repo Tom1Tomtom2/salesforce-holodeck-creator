@@ -1,0 +1,21 @@
+{
+  "brand": "Safic-Alcan",
+  "slug": "lead-capture-b2b",
+  "story_title": "Du premier contact au CRM, sans ressaisie",
+  "tagline": "Chaque lead — capté sur le web ou sur un salon — arrive qualifié et dédoublonné dans Sales Cloud.",
+  "thesis": "Parce que le web, l'IA et le CRM partagent le même profil client, Safic-Alcan transforme un formulaire rempli ou une carte de visite photographiée en contact qualifié, rattaché au bon compte, sans double saisie.",
+  "tokens": {"--accent":"#0975d3","--accent-dark":"#064f93","--accent-soft":"#e7f3fc"},
+  "intro": {
+    "kicker": "Data Cloud + Agentforce + Sales Cloud",
+    "title": "Deux portes d'entrée, un seul profil client",
+    "lede": "Julien capte des leads sur le terrain et sur le web ; Data Cloud les réconcilie et Sales Cloud les active.",
+    "cast": [
+      {"name":"Julien Martin","role":"Commercial terrain","bio":"Rencontre les prospects sur les salons et qualifie les demandes web.","image":"people/homme-1.jpg"},
+      {"name":"Sophie Lefèvre","role":"Responsable R&D — ACME","bio":"Prospecte des additifs pour un nouveau revêtement.","image":"people/femme-2.jpg"}
+    ]
+  },
+  "screens": [
+    {"file":"acte1-landing.html","template":"landing-b2b-capture","channel":"safic-alcan.com/documentation","url":"safic-alcan.com/documentation","chapter":"Capter","act":"Acte 1 · Le web","title":"Transformer une visite en lead qualifié","desc":"Un prospect remplit le formulaire de documentation sur le site. Data Cloud réconcilie sa navigation anonyme et son email professionnel, puis rattache le lead au compte ACME déjà connu et notifie l'expert marché.","trigger":"Julien soumet sa demande de fiche technique depuis la landing.","result":"Le lead est qualifié, rattaché au bon compte et routé vers Sales Cloud.","transition":"Le même prospect, Julien le recroise en personne sur un salon.","persona":"Julien Martin","display":{"mode":"full","scale":0.5,"height":940}},
+    {"file":"acte2-scan.html","template":"mobile-card-scan","channel":"App commerciale Safic-Alcan","chapter":"Numériser","act":"Acte 2 · Le terrain","title":"Une carte de visite devient un contact CRM","desc":"Sur le salon, Julien photographie la carte de Sophie. Agentforce extrait et structure les champs par OCR, Data Cloud vérifie qu'aucun doublon n'existe et propose de rattacher le contact au compte ACME déjà présent.","trigger":"Julien scanne la carte de visite de Sophie Lefèvre.","result":"Un contact dédoublonné est créé dans le CRM, rattaché au compte ACME.","transition":"Web et terrain convergent : un seul profil, prêt pour la relance commerciale.","persona":"Julien Martin","display":null}
+  ]
+}

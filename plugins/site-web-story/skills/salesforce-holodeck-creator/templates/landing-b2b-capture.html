@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Landing B2B capture de lead (desktop) · Data Cloud         │
+     │ Page d'atterrissage marketing B2B : hero + formulaire de capture,     │
+     │ bandeau "propulsé par Salesforce / capté vers le CRM", puis overlay   │
+     │ de résolution d'identité Data Cloud (le "gif" scripté).               │
+     │ CHROME VERROUILLÉE : header nav, colonne hero, carte formulaire,      │
+     │ bandeau CRM, overlay resolve + timeline.                              │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Pas de barre navigateur : le hub en dessine une autour du desktop.    │
+     │ Le <script> en bas orchestre l'animation : garde les id               │
+     │ (sub, resolve, f1, f2, mrg, uni).                                     │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Landing B2B — capture de lead<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #fff; }
+
+    /* Header */
+    .header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.96); border-bottom: 1px solid var(--border); backdrop-filter: blur(8px); }
+    .header-inner { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; }
+    .nav-left, .nav-right { display: flex; gap: 26px; align-items: center; }
+    .nav-link { font-family: var(--sans); font-size: 0.72rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); }
+    .nav-link.active, .nav-link:hover { color: var(--accent); }
+
+    /* Split hero : copie à gauche, formulaire à droite */
+    .split { max-width: 1240px; margin: 0 auto; padding: 56px 40px 90px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: start; position: relative; }
+
+    .copy .eyebrow { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+    .copy h1 { font-family: var(--sans); font-weight: 300; font-size: 2.6rem; line-height: 1.15; margin: 14px 0 18px; }
+    .copy h1 b { font-weight: 600; }
+    .copy .lede { font-size: 1rem; line-height: 1.65; color: #444; max-width: 460px; }
+
+    .points { list-style: none; margin: 28px 0 32px; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+    .points li { display: flex; gap: 12px; align-items: flex-start; font-size: 0.92rem; line-height: 1.4; }
+    .points .ck { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .points .ck svg { width: 13px; height: 13px; }
+
+    /* Bandeau "propulsé par Salesforce / capté vers le CRM" */
+    .powered { display: flex; align-items: center; gap: 12px; background: var(--accent-soft); border: 1px solid rgba(9,117,211,0.18); border-radius: var(--radius); padding: 14px 16px; font-size: 0.82rem; line-height: 1.45; }
+    .powered .spark { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg,var(--accent),var(--accent-dark)); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .powered .spark svg { width: 17px; height: 17px; }
+    .powered b { color: var(--accent); }
+
+    /* Carte formulaire */
+    .form-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-md); padding: 30px 28px; position: relative; overflow: hidden; }
+    .form-card h2 { font-family: var(--sans); font-weight: 600; font-size: 1.15rem; margin-bottom: 4px; }
+    .form-card .fh { font-size: 0.82rem; color: var(--grey); margin-bottom: 20px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .lab { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); margin-bottom: 6px; display: block; }
+    .fld { margin-bottom: 14px; }
+    .fld .box { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 0.9rem; color: var(--black); display: flex; align-items: center; min-height: 20px; }
+    .fld .box.filled { border-color: var(--accent); }
+    .fld .box .ph { color: var(--grey-light); }
+    .btn-sub { width: 100%; margin-top: 8px; background: var(--black); color: #fff; padding: 15px; font-family: var(--sans); font-size: 0.72rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 10px; transition: background 0.3s; }
+    .btn-sub.on { background: var(--accent); }
+    .consent { font-size: 0.68rem; color: var(--grey-light); text-align: center; margin-top: 12px; line-height: 1.5; }
+
+    /* Overlay résolution d'identité Data Cloud (sur la carte formulaire) */
+    .resolve { position: absolute; inset: 0; background: rgba(9,25,51,0.95); color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 32px; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+    .resolve.show { opacity: 1; }
+    .resolve .tag { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 22px; }
+    .resolve .tag svg { width: 15px; height: 15px; }
+    .resolve h2 { font-family: var(--sans); font-weight: 300; font-size: 1.4rem; margin-bottom: 22px; }
+    .frag { display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-radius: 10px; background: rgba(255,255,255,0.08); margin-bottom: 11px; opacity: 0; transform: translateY(8px); }
+    .frag.in { animation: rise 0.5s ease forwards; }
+    .frag .fi { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .frag .fi svg { width: 17px; height: 17px; }
+    .frag .ft { font-size: 0.82rem; line-height: 1.35; }
+    .frag .ft b { font-weight: 600; }
+    .frag .ft .s { color: #a9b6d4; font-size: 0.72rem; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    .merge { text-align: center; color: #a9b6d4; font-size: 1.5rem; opacity: 0; margin: 3px 0; }
+    .merge.in { animation: fade 0.4s ease forwards; }
+    @keyframes fade { to { opacity: 1; } }
+    .unified { display: flex; align-items: center; gap: 13px; padding: 15px; border-radius: 12px; background: #fff; color: var(--accent); opacity: 0; transform: scale(0.94); }
+    .unified.in { animation: pop 0.5s cubic-bezier(.3,1.4,.5,1) forwards; }
+    @keyframes pop { to { opacity: 1; transform: scale(1); } }
+    .unified .av { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),var(--accent-dark)); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 700; }
+    .unified .u b { font-family: var(--sans); font-size: 0.95rem; }
+    .unified .u .r { font-size: 0.74rem; color: var(--grey); margin-top: 2px; }
+    .unified .chk { margin-left: auto; color: var(--green); }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Prologue · Capture de lead B2B (Data Cloud + Sales)<!-- /SLOT --></div>
+<div class="accent-band"></div>
+
+<header class="header">
+    <div class="header-inner">
+        <!-- SLOT: nav ─ logo de marque (.brand) + liens de navigation. -->
+        <span class="brand"><span class="brand-mark" style="width:28px;height:28px;font-size:0.9rem">S</span> Safic-Alcan</span>
+        <nav class="nav-right">
+            <a class="nav-link active">Solutions</a>
+            <a class="nav-link">Marchés</a>
+            <a class="nav-link">Ressources</a>
+            <a class="nav-link">Contact</a>
+        </nav>
+        <!-- /SLOT: nav -->
+    </div>
+</header>
+
+<main class="split">
+    <!-- SLOT: hero ─ colonne gauche : accroche, promesse, preuves, bandeau CRM. -->
+    <div class="copy">
+        <div class="eyebrow">Distribution de spécialités chimiques</div>
+        <h1>Le bon <b>ingrédient</b>,<br>livré au bon moment.</h1>
+        <div class="lede">Recevez la fiche technique et un échantillon de nos solutions de formulation. Un expert marché vous recontacte sous 24 h.</div>
+
+        <ul class="points">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg></span>Documentation technique &amp; réglementaire complète</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg></span>Échantillonnage sur mesure selon votre application</li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg></span>Accompagnement par un expert de votre marché</li>
+        </ul>
+
+        <div class="powered">
+            <div class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg></div>
+            <div>Formulaire <b>propulsé par Salesforce</b> — chaque demande est captée dans Data Cloud puis routée vers le CRM Sales en temps réel.</div>
+        </div>
+    </div>
+    <!-- /SLOT: hero -->
+
+    <!-- SLOT: form ─ carte de capture B2B. Champs : Société, Nom, Email pro, Pays, Besoin.
+         Garde le bouton #sub (déclenche l'animation). -->
+    <div class="form-card">
+        <h2>Demander la documentation</h2>
+        <div class="fh">Réponse d'un expert sous 24 h · sans engagement</div>
+
+        <div class="grid2">
+            <div class="fld"><label class="lab">Société</label><div class="box filled">Industrie ACME</div></div>
+            <div class="fld"><label class="lab">Pays</label><div class="box filled">France</div></div>
+        </div>
+        <div class="fld"><label class="lab">Nom &amp; prénom</label><div class="box filled">Julien Martin</div></div>
+        <div class="fld"><label class="lab">Email professionnel</label><div class="box filled">j.martin@acme-industrie.com</div></div>
+        <div class="fld"><label class="lab">Votre besoin</label><div class="box filled">Additif pour revêtement extérieur</div></div>
+
+        <button class="btn-sub" id="sub">Recevoir la documentation</button>
+        <div class="consent">En soumettant ce formulaire, vous acceptez d'être recontacté par nos équipes · désinscription à tout moment.</div>
+    </div>
+    <!-- /SLOT: form -->
+
+    <!-- SLOT: resolve ─ overlay Data Cloud : le lead entrant est réconcilié avec le compte connu.
+         C'est le clin d'œil produit de cet écran. Garde la structure + les id. -->
+    <div class="resolve" id="resolve">
+        <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>Salesforce Data Cloud · résolution d'identité</span>
+        <h2>Un lead, déjà rattaché à son compte.</h2>
+
+        <div class="frag" id="f1">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20"/></svg></div>
+            <div class="ft"><b>Visiteur web anonyme</b><div class="s">3 pages produit vues · fiche « additifs » téléchargée</div></div>
+        </div>
+
+        <div class="frag" id="f2">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></div>
+            <div class="ft"><b>Email pro capté</b><div class="s">j.martin@acme-industrie.com · domaine = compte ACME</div></div>
+        </div>
+
+        <div class="merge" id="mrg">↕</div>
+
+        <div class="unified" id="uni">
+            <div class="av">JM</div>
+            <div class="u"><b>Lead qualifié · rattaché au compte ACME</b><div class="r">Routé vers Sales Cloud · expert marché notifié</div></div>
+            <span class="chk"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg></span>
+        </div>
+    </div>
+    <!-- /SLOT: resolve -->
+</main>
+
+<script>
+    // ponytail: timeline scriptée pour le GIF — soumission simulée puis résolution du lead
+    var t = 0, step = function (fn, d) { t += d; setTimeout(fn, t); };
+    step(function(){ document.getElementById('sub').classList.add('on'); }, 2500);
+    step(function(){ document.getElementById('resolve').classList.add('show'); }, 1300);
+    step(function(){ document.getElementById('f1').classList.add('in'); }, 500);
+    step(function(){ document.getElementById('f2').classList.add('in'); }, 700);
+    step(function(){ document.getElementById('mrg').classList.add('in'); }, 600);
+    step(function(){ document.getElementById('uni').classList.add('in'); }, 500);
+</script>
+</body>
+</html>
