@@ -1,0 +1,10 @@
+{
+  "title": "Revenu vs objectif",
+  "meta": "T1 · valeurs en milliers",
+  "currency": "k€",
+  "labels": ["Jan", "Fév", "Mar"],
+  "target": [800, 900, 1000],
+  "series": [
+    {"label": "Réalisé", "color": "#0176d3", "values": [740, 880, 1040]}
+  ]
+}

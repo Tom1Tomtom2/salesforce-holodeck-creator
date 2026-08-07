@@ -241,6 +241,14 @@ def validate_registry(root: Path = ROOT) -> dict:
             raise RegistryError(f"écran {screen_id} : template incohérent ou absent")
         if screen.get("format") not in {"mobile", "desktop"}:
             raise RegistryError(f"écran {screen_id} : format invalide")
+        if "surface" in screen:
+            surfaces = {item["id"] for item in taxonomy_data["surfaces"]}
+            if screen["surface"] not in surfaces:
+                raise RegistryError(f"écran {screen_id} : surface inconnue {screen['surface']}")
+            if screen["surface"] == "mobile" and screen["format"] != "mobile":
+                raise RegistryError(f"écran {screen_id} : une surface mobile exige le format mobile")
+            if screen["surface"] == "lightning" and screen["format"] != "desktop":
+                raise RegistryError(f"écran {screen_id} : une surface lightning exige le format desktop")
         if screen.get("status") != "available" or not screen.get("job") or not screen.get("label"):
             raise RegistryError(f"écran {screen_id} : label, job et statut available sont obligatoires")
         if screen.get("job") not in jobs:

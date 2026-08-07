@@ -1,6 +1,6 @@
 {
   "name": "salesforce-holodeck-creator",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "description": "Expose Salesforce Holodeck Creator pour créer automatiquement les holodecks et démonstrations client Salesforce narratives, avec brief facultatif, notes présentateur et revue visuelle.",
   "author": {
     "name": "Thomas Damiens"

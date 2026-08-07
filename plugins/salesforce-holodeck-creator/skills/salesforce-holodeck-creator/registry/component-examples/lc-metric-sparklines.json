@@ -1,0 +1,6 @@
+{
+  "title": "Indicateurs commerciaux",
+  "items": [
+    {"label": "Pipeline", "value": "2,4 M€", "change": "12 %", "context": "vs trimestre précédent", "direction": "up", "values": [1.8, 2.0, 1.9, 2.4]}
+  ]
+}

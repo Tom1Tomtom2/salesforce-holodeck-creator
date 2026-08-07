@@ -1,0 +1,8 @@
+{
+  "title": "Modifier l'opportunité",
+  "previewOpen": true,
+  "fields": [
+    {"label": "Nom de l'opportunité", "name": "name", "value": "Renouvellement Acme"}
+  ],
+  "submitLabel": "Enregistrer"
+}

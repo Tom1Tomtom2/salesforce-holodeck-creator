@@ -1,0 +1,9 @@
+{
+  "eyebrow": "Sales Analytics",
+  "title": "Tableau de bord du revenu",
+  "subtitle": "Performance depuis le début du trimestre",
+  "updated": "Actualisé il y a 5 minutes",
+  "actions": [
+    {"label": "Actualiser", "action": "refresh", "primary": true}
+  ]
+}

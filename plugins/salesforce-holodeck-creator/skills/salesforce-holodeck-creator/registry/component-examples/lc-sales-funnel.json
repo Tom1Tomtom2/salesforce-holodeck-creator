@@ -1,0 +1,9 @@
+{
+  "title": "Entonnoir commercial",
+  "meta": "Pipeline ouvert",
+  "currency": "EUR",
+  "stages": [
+    {"label": "Qualifié", "count": 12, "amount": 1200000, "conversion": 100},
+    {"label": "Proposition", "count": 5, "amount": 640000, "conversion": 42}
+  ]
+}

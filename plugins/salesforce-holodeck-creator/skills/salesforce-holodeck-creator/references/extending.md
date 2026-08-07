@@ -130,6 +130,18 @@ Pour un composant sectoriel, ajoute aussi :
 
 ## Créer un écran à partir de composants existants
 
+Pour initialiser le template, le registre et sa story d'exemple en une seule opération :
+
+```bash
+python3 scripts/create_screen.py
+```
+
+Le mode non interactif accepte `--id`, `--label`, `--format`, `--surface`, `--job`, `--products`,
+`--scope`, `--industries` et `--components`. L'assistant réutilise les exemples des templates ou les
+fixtures `registry/component-examples/`, dérive l'ordre réel des SLOTs et composants, puis valide
+l'ensemble. Les étapes ci-dessous restent nécessaires pour adapter le squelette au besoin métier et
+documenter son contrat.
+
 ### 1. Copier la chrome la plus proche
 
 Pars d'un template existant du même format :
@@ -217,6 +229,7 @@ Depuis le dossier `plugins/salesforce-holodeck-creator/skills/salesforce-holodec
 ```bash
 python3 scripts/validate_registry.py
 python3 scripts/create_component.py --selfcheck
+python3 scripts/create_screen.py --selfcheck
 python3 scripts/build_component_catalog.py --selfcheck
 python3 scripts/build_site.py --selfcheck
 python3 scripts/build_site.py registry/examples/<exemple>.json

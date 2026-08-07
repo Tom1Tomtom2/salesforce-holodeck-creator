@@ -458,11 +458,12 @@ def _desktop_frame_style(screen: dict) -> str:
     return ";".join(f"{name}:{value}" for name, value in values.items())
 
 
-def _act_section(s: dict, index: int) -> str:
+def _act_section(s: dict, index: int, phone_templates: set | None = None) -> str:
     """Une section .act : récit (num/titre/desc/lien) + écran réel en iframe (cadre phone ou desktop)."""
     side = " right" if index % 2 else ""
     f = html.escape(s["file"])
-    phone = s["template"] in PHONE_TEMPLATES
+    active_phone_templates = PHONE_TEMPLATES if phone_templates is None else phone_templates
+    phone = s["template"] in active_phone_templates
     open_link = f'<a class="open" href="{f}" target="_blank" aria-label="Ouvrir en plein écran"></a>'
     iframe = f'<div class="vp"><iframe src="{f}" loading="lazy" scrolling="no" title="{html.escape(s.get("title",""))}"></iframe></div>'
     if phone:
@@ -532,7 +533,8 @@ def _license_block(products: list, selection: dict | None = None) -> str:
 
 def build_hub(template: str, brand: str, story_title: str, screens: list,
               tagline: str = "", intro: dict | None = None, thesis: str = "",
-              products: list | None = None, license_selection: dict | None = None) -> str:
+              products: list | None = None, license_selection: dict | None = None,
+              phone_templates: set | None = None) -> str:
     """Assemble la page story : hero (placeholders) + intro + une section .act par écran."""
     sections = []
     previous_chapter = None
@@ -543,7 +545,7 @@ def build_hub(template: str, brand: str, story_title: str, screens: list,
             chapter_number += 1
             sections.append(_chapter_section(chapter, chapter_number))
             previous_chapter = chapter
-        sections.append(_act_section(screen, index))
+        sections.append(_act_section(screen, index, phone_templates))
     body = _intro_block(intro or {}, screens) + "\n".join(sections)
     head, _, _ = template.partition("<!-- BUILD:")
     hub = head + body + "\n</body>\n</html>\n"
@@ -656,6 +658,10 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
 
     # Icônes produit officielles utilisées par l'encart licences du hub.
     story_products = _story_products(root, manifest["screens"])
+    screen_registry = json.loads((root / "registry" / "screens.json").read_text(encoding="utf-8"))
+    phone_templates = {
+        screen["id"] for screen in screen_registry.get("screens", []) if screen.get("format") == "mobile"
+    }
     product_icons = sorted({product.get("icon") for product in story_products if product.get("icon")})
     if product_icons:
         icon_output = out / "product-icons"
@@ -724,9 +730,9 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     # 3. hub
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
     hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""),
-                    manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
-                    manifest.get("thesis", ""), story_products,
-                    manifest.get("license_selection"))
+                     manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
+                     manifest.get("thesis", ""), story_products,
+                     manifest.get("license_selection"), phone_templates)
     (out / "index.html").write_text(hub, encoding="utf-8")
     written.append("index.html")
 

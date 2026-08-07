@@ -79,6 +79,23 @@ Le résultat est volontairement un squelette : adapte son rendu et sa fixture, p
 un template. Utilise `--dry-run` pour vérifier la classification sans écrire et `--selfcheck` pour
 tester l'assistant lui-même.
 
+### Assistant d'écran
+
+L'assistant d'écran compose un template à partir de composants existants, ajoute son entrée dans
+`screens.json` et génère une story d'exemple buildable :
+
+```bash
+python3 scripts/create_screen.py \
+  --id forecast-summary --label "Synthèse des prévisions" --format desktop \
+  --surface lightning --job forecasting --products sales-cloud \
+  --scope cross-industry --components lc-forecast-summary,lc-forecast-categories
+```
+
+Les composants sans écran disposent d'une fixture dans `registry/component-examples/`, ce qui
+permet de les exposer sans inventer leur contrat JSON. L'assistant promeut automatiquement leur
+statut à `available` et restaure les fichiers qu'il a modifiés si la validation échoue. Évite de
+lancer deux assistants simultanément dans la même copie de travail.
+
 ### Catalogue local
 
 Génère puis ouvre le catalogue autonome pour rechercher les composants et inspecter les exemples
@@ -100,6 +117,7 @@ Depuis `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator` 
 ```bash
 python3 scripts/validate_registry.py
 python3 scripts/create_component.py --selfcheck
+python3 scripts/create_screen.py --selfcheck
 python3 scripts/build_component_catalog.py --selfcheck
 python3 scripts/build_site.py --selfcheck
 python3 scripts/review_site.py --selfcheck

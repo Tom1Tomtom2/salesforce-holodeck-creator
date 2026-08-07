@@ -88,5 +88,9 @@ optionnelle dans `registry/component-examples/<id>.json` fournit uniquement ses 
 Le bundle est produit par le même code que les stories. Cette sortie générée est ignorée par Git et
 ne remplace aucun registre.
 
+`python3 scripts/create_screen.py` compose un nouveau template avec ces exemples, ajoute l'écran au
+registre et crée `registry/examples/<id>.json`. Le format mobile du registre pilote désormais
+directement le cadrage téléphone du hub, sans liste manuelle supplémentaire.
+
 Pour le workflow complet de création d'un composant ou d'un écran, consulte `extending.md`.
 Pour interpréter une erreur de validation ou de rendu, consulte `troubleshooting.md`.

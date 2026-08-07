@@ -127,11 +127,12 @@ Le guide complet est dans
 Pour contribuer via une pull request, commence par [`CONTRIBUTING.md`](CONTRIBUTING.md) : la charte
 visuelle, la classification et les preuves de rendu y sont obligatoires.
 
-Deux outils accélèrent le workflow contributeur :
+Trois outils accélèrent le workflow contributeur :
 
 ```bash
 cd plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator
 python3 scripts/create_component.py          # assistant interactif classifié
+python3 scripts/create_screen.py             # template + registre + story d'exemple
 python3 scripts/build_component_catalog.py   # catalogue filtrable en file://
 ```
 
@@ -144,6 +145,7 @@ Commande de validation obligatoire après une extension :
 cd plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator
 python3 scripts/validate_registry.py
 python3 scripts/create_component.py --selfcheck
+python3 scripts/create_screen.py --selfcheck
 python3 scripts/build_component_catalog.py --selfcheck
 python3 scripts/build_site.py --selfcheck
 python3 scripts/build_site.py registry/examples/<exemple>.json
@@ -181,6 +183,7 @@ couvre notamment :
 | `scripts/review_site.py` | capture le hub et contrôle le rendu | playwright + un navigateur |
 | `scripts/validate_registry.py` | valide catalogue, taxonomie, classification et contrat statique des composants | aucune (stdlib) |
 | `scripts/create_component.py` | génère un squelette de composant classifié et sa fixture | aucune (stdlib) |
+| `scripts/create_screen.py` | compose un écran, le catalogue et une story d'exemple | aucune (stdlib) |
 | `scripts/build_component_catalog.py` | génère le catalogue filtrable depuis les assets réels | aucune (stdlib) |
 | `templates/*.html` | bibliothèque d'écrans à chrome verrouillée | — |
 | `registry/*.json` | taxonomie machine-readable des assets | — |
@@ -193,6 +196,7 @@ Vérification rapide après install :
 python3 <chemin>/scripts/build_site.py --selfcheck
 python3 <chemin>/scripts/validate_registry.py
 python3 <chemin>/scripts/create_component.py --selfcheck
+python3 <chemin>/scripts/create_screen.py --selfcheck
 python3 <chemin>/scripts/build_component_catalog.py --selfcheck
 python3 <chemin>/scripts/crawl_brand.py --selfcheck
 python3 <chemin>/scripts/review_site.py --selfcheck

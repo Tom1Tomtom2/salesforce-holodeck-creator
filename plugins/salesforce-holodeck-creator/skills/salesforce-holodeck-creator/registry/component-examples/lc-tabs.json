@@ -1,0 +1,6 @@
+{
+  "tabs": [
+    {"label": "Vue d'ensemble", "html": "<p>Prévisions du trimestre et activité récente.</p>"},
+    {"label": "Risques", "html": "<p>Deux affaires nécessitent une attention.</p>"}
+  ]
+}

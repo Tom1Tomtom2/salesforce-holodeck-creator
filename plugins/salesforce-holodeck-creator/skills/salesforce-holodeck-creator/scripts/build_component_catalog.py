@@ -67,6 +67,15 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
     industries = _load(root, "industries.json")["industries"]
     taxonomy = _load(root, "taxonomy.json")
     examples = _examples(root)
+    screen_data = _load(root, "screens.json")
+    component_surfaces = {}
+    for screen in screen_data["screens"]:
+        template_text = (root / screen["template"]).read_text(encoding="utf-8")
+        screen_surface = screen.get("surface") or (
+            "mobile" if screen["format"] == "mobile" else "lightning" if 'class="lightning"' in template_text else "external"
+        )
+        for component_id in screen.get("components", []):
+            component_surfaces.setdefault(component_id, set()).add(screen_surface)
     defaults = components_data.get("defaults", {})
     product_labels = {item["id"]: item["label"] for item in products}
     industry_labels = {item["id"]: item["label"] for item in industries}
@@ -81,10 +90,20 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
         cross_industry = component.get("cross_industry", defaults.get("cross_industry", True))
         component_industries = component.get("industries", defaults.get("industries", []))
         scope = "cross-industry" if cross_industry else "industry"
+        inferred_surfaces = component_surfaces.get(component_id, set())
+        if not inferred_surfaces:
+            if component_id.startswith("lc-fs-mobile-"):
+                inferred_surfaces = {"mobile"}
+            elif any(product in {"commerce-cloud", "experience-cloud"} for product in component["products"]):
+                inferred_surfaces = {"external"}
+            else:
+                inferred_surfaces = {component.get("surface", "lightning")}
+        surfaces = sorted(inferred_surfaces)
         search = " ".join([
             component_id,
             component["label"],
             component["job"],
+            *surfaces,
             *component["products"],
             *component_industries,
         ]).casefold()
@@ -117,7 +136,7 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
         <article class="component-card" data-component-card
           data-search="{html.escape(search)}" data-job="{html.escape(component['job'])}"
           data-products="{' '.join(component['products'])}" data-industry="{html.escape(scope + ' ' + ' '.join(component_industries))}"
-          data-status="{html.escape(component['status'])}">
+          data-surface="{' '.join(surfaces)}" data-status="{html.escape(component['status'])}">
           <header class="component-card__header">
             <div><p class="eyebrow">{html.escape(component['job'])}</p><h2>{html.escape(component['label'])}</h2>
             <code>{html.escape(component_id)}</code></div>
@@ -130,6 +149,7 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
     if available_without_example:
         raise ValueError("composants disponibles sans exemple dans un template : " + ", ".join(available_without_example))
     jobs = [{"id": job, "label": job} for job in taxonomy["jobs"]]
+    surface_items = taxonomy["surfaces"]
     catalog_data = {
         **counts,
         "previews": sum(component["id"] in examples for component in components_data["components"]),
@@ -145,7 +165,7 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
 .catalog-header p{{max-width:760px;color:#dbeaff}} .catalog-header h1{{font-size:clamp(30px,5vw,56px);line-height:1;margin:0 0 12px}}
 .catalog-header code{{color:#fff}} .catalog-main{{max-width:1500px;margin:auto;padding:24px}}
 .stats{{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 20px}} .stat{{background:#fff;border:1px solid var(--catalog-line);border-radius:999px;padding:7px 12px}}
-.filters{{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:minmax(220px,2fr) repeat(4,minmax(145px,1fr)) auto;gap:10px;padding:14px;background:#fff;border:1px solid var(--catalog-line);border-radius:12px;box-shadow:0 8px 24px #10213a12}}
+.filters{{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:minmax(220px,2fr) repeat(5,minmax(135px,1fr)) auto;gap:10px;padding:14px;background:#fff;border:1px solid var(--catalog-line);border-radius:12px;box-shadow:0 8px 24px #10213a12}}
 .filters label{{font-size:12px;font-weight:700;color:var(--catalog-muted)}} .filters input,.filters select{{display:block;width:100%;min-height:42px;margin-top:4px;border:1px solid #8c9bad;border-radius:7px;padding:8px;background:#fff;color:var(--catalog-ink)}}
 .filters button{{align-self:end;min-height:42px;border:1px solid var(--catalog-accent);border-radius:7px;padding:8px 14px;background:#fff;color:var(--catalog-accent);font-weight:700;cursor:pointer}}
 .result-count{{margin:20px 2px 12px;color:var(--catalog-muted)}} .grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px;align-items:start}}
@@ -164,6 +184,7 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
 <label>Rechercher<input type="search" name="query" placeholder="Nom, id, job…"></label>
 <label>Job<select name="job">{_options(jobs, 'Tous les jobs')}</select></label>
 <label>Produit<select name="product">{_options(products, 'Tous les produits')}</select></label>
+<label>Surface<select name="surface">{_options(surface_items, 'Toutes les surfaces')}</select></label>
 <label>Industrie<select name="industry"><option value="">Toutes les industries</option><option value="cross-industry">Transverse</option>{''.join(f'<option value="{html.escape(item["id"])}">{html.escape(item["label"])}</option>' for item in industries)}</select></label>
 <label>Statut<select name="status"><option value="">Tous les statuts</option><option value="available">Disponible</option><option value="uncatalogued-screen">Sans écran</option></select></label>
 <button type="reset">Réinitialiser</button></form>
@@ -171,7 +192,7 @@ def _catalog_html(root: Path) -> tuple[str, dict]:
 <section class="grid" aria-label="Composants">{''.join(cards)}</section></main>
 <script src="lightning-kit.js"></script><script>
 const form=document.querySelector('#filters');const cards=[...document.querySelectorAll('[data-component-card]')];const count=document.querySelector('#result-count');
-function applyFilters(){{const data=new FormData(form);const query=String(data.get('query')||'').trim().toLocaleLowerCase('fr');let visible=0;for(const card of cards){{const show=(!query||card.dataset.search.includes(query))&&(!data.get('job')||card.dataset.job===data.get('job'))&&(!data.get('product')||card.dataset.products.split(' ').includes(data.get('product')))&&(!data.get('industry')||card.dataset.industry.split(' ').includes(data.get('industry')))&&(!data.get('status')||card.dataset.status===data.get('status'));card.hidden=!show;if(show)visible++}}count.textContent=`${{visible}} composant${{visible>1?'s':''}}`}}
+function applyFilters(){{const data=new FormData(form);const query=String(data.get('query')||'').trim().toLocaleLowerCase('fr');let visible=0;for(const card of cards){{const show=(!query||card.dataset.search.includes(query))&&(!data.get('job')||card.dataset.job===data.get('job'))&&(!data.get('product')||card.dataset.products.split(' ').includes(data.get('product')))&&(!data.get('surface')||card.dataset.surface.split(' ').includes(data.get('surface')))&&(!data.get('industry')||card.dataset.industry.split(' ').includes(data.get('industry')))&&(!data.get('status')||card.dataset.status===data.get('status'));card.hidden=!show;if(show)visible++}}count.textContent=`${{visible}} composant${{visible>1?'s':''}}`}}
 form.addEventListener('input',applyFilters);form.addEventListener('reset',()=>requestAnimationFrame(applyFilters));
 </script></body></html>"""
     return markup, catalog_data
@@ -228,7 +249,10 @@ def selfcheck() -> None:
         report = build_catalog(ROOT, output)
         markup = (output / "index.html").read_text(encoding="utf-8")
         assert markup.count('<article class="component-card" data-component-card') == report["components"]
-        assert report["previews"] >= report["components_in_screens"]
+        assert report["previews"] == report["components"]
+        assert 'select name="surface"' in markup
+        assert 'data-surface="mobile"' in markup
+        assert 'data-surface="external"' in markup
         assert "fetch(" not in (output / "lightning-kit.js").read_text(encoding="utf-8")
         fixture_root = temporary / "fixture-root"
         (fixture_root / "templates").mkdir(parents=True)

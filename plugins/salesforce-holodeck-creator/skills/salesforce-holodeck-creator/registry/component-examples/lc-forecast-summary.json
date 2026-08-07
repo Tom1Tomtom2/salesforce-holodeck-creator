@@ -1,0 +1,10 @@
+{
+  "title": "Prévisions trimestrielles",
+  "meta": "Prévisions actuelles de l'équipe",
+  "currency": "EUR",
+  "quota": 1000000,
+  "closed": 600000,
+  "commit": 850000,
+  "bestCase": 1000000,
+  "pipeline": 2400000
+}

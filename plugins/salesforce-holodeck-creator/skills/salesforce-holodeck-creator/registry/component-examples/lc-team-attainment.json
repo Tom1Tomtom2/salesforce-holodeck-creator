@@ -1,0 +1,8 @@
+{
+  "title": "Atteinte des objectifs",
+  "meta": "Trimestre en cours",
+  "teams": [
+    {"initials": "NE", "name": "Europe du Nord", "region": "EMEA", "attainment": 96, "commit": 850000},
+    {"initials": "SE", "name": "Europe du Sud", "region": "EMEA", "attainment": 108, "commit": 920000}
+  ]
+}
