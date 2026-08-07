@@ -381,7 +381,7 @@ def rewrite_tokens(css: str, tokens: dict, font_import: str | None) -> str:
 # Templates qui dessinent DÉJÀ leur propre coque de téléphone (.phone) → cadre .frame.phone,
 # sinon cadre navigateur .frame.desktop. (cf. references/screens.md)
 PHONE_TEMPLATES = {
-    "instagram", "whatsapp", "landing-capture", "client-app",
+    "instagram", "whatsapp", "landing-capture", "client-app", "mobile-card-scan",
     "fieldservice-mobile-work-order", "fieldservice-mobile-work-plan",
     "fieldservice-mobile-coverage", "fieldservice-mobile-part-return",
     "fieldservice-mobile-agent-summary",
