@@ -34,12 +34,115 @@ playwright install chromium
 > Sans cette étape, la **génération** du site fonctionne quand même (stdlib pure) ; seul le
 > crawl automatique de la marque est indisponible — on remplit alors le manifest à la main.
 
-## Utilisation
+## Démarrage rapide
 
-Demande à Claude : « fais-moi un site-web-story pour la marque X, url https://… ».
-La skill est conversationnelle en 3 phases (ambiance → story validée en chat → génération).
-Elle s'active aussi automatiquement pour des demandes comme « prépare un holodeck pour
-le client X » ou « fais-moi une démo client Salesforce pour X ».
+La façon normale d'utiliser le plugin est de demander la démo à Claude. Il orchestre le crawl,
+la sélection des écrans, le manifest, le build et la revue visuelle.
+
+Exemple minimal :
+
+```text
+Prépare-moi un holodeck pour Acme, https://www.example.com.
+```
+
+Exemple avec un brief :
+
+```text
+Prépare une démo client Salesforce pour Acme, https://www.example.com.
+Audience : direction service et IT.
+Objectif : montrer le parcours d'un technicien de la réception de l'ordre de travail
+jusqu'au compte rendu Agentforce.
+Durée : 8 minutes.
+Produits : Field Service et Agentforce.
+```
+
+La skill fonctionne en trois validations :
+
+1. **Ambiance** : marque, palette, assets et hypothèses du brief.
+2. **Story** : thèse, personnages, actes, écrans et produits Salesforce.
+3. **Génération** : manifest JSON, site statique, notes présentateur et revue visuelle.
+
+Le brief est facultatif. En son absence, Claude propose des hypothèses et demande leur validation.
+Un cahier des charges PDF, Word ou texte peut aussi servir de point de départ.
+
+### Livrables
+
+Le build écrit un dossier `<slug>-story/` dans le dossier depuis lequel il est lancé :
+
+- `index.html` : page story à présenter ;
+- `acte*.html` : écrans autonomes ouvrables individuellement ;
+- `presenter-notes.md` : fil de présentation, transitions et durée indicative ;
+- `build-manifest.json` : copie du manifest ayant produit le site ;
+- `review/contact-sheet.html` : planche de contrôle visuel ;
+- `review/review-report.json` : erreurs de console, assets cassés et débordements.
+
+Le site est autonome et s'ouvre directement en `file://` : aucun serveur n'est nécessaire.
+
+### Utilisation manuelle
+
+Pour repartir d'un exemple sans passer par le workflow conversationnel :
+
+```bash
+cd plugins/site-web-story/skills/site-web-story
+cp registry/examples/field-service-technician-mobile.json /tmp/ma-story.json
+# Éditer /tmp/ma-story.json, puis :
+python3 scripts/build_site.py /tmp/ma-story.json
+python3 scripts/review_site.py ./field-service-technician-mobile-story
+```
+
+Autres exemples disponibles :
+
+- `registry/examples/financial-services-lending.json`
+- `registry/examples/consumer-goods-commerce-service.json`
+- `registry/examples/manufacturing-sales-service.json`
+- `registry/examples/field-service-technician-mobile.json`
+
+Pour choisir un écran, consulte d'abord `registry/screens.json`, puis `references/screens.md`
+pour son contrat JSON et ses SLOTs. Ne modifie jamais directement un dossier `*-story/` : c'est une
+sortie générée qui sera écrasée au prochain build.
+
+## Étendre la bibliothèque
+
+Les trois niveaux d'extension ne coûtent pas la même chose :
+
+1. **Nouvelles données seulement** : adapte le JSON d'un composant dans le manifest. C'est le choix par défaut.
+2. **Nouvel écran** : compose un nouveau template à partir de composants `<lc-*>` existants.
+3. **Nouveau composant** : ajoute une nouvelle primitive JSON-driven au Lightning kit, puis expose-la dans un écran.
+
+Le guide complet est dans
+[`references/extending.md`](plugins/site-web-story/skills/site-web-story/references/extending.md).
+
+Commande de validation obligatoire après une extension :
+
+```bash
+cd plugins/site-web-story/skills/site-web-story
+python3 scripts/validate_registry.py
+python3 scripts/build_site.py --selfcheck
+python3 scripts/build_site.py registry/examples/<exemple>.json
+python3 scripts/review_site.py ./<slug>-story
+```
+
+## Dépannage
+
+Commence toujours par ces commandes depuis le dossier de la skill :
+
+```bash
+python3 scripts/validate_registry.py
+python3 scripts/build_site.py --selfcheck
+python3 scripts/review_site.py --selfcheck
+```
+
+Le guide [`references/troubleshooting.md`](plugins/site-web-story/skills/site-web-story/references/troubleshooting.md)
+couvre notamment :
+
+- Playwright ou Chromium absent ;
+- crawl de marque bloqué ;
+- SLOT inconnu ou wrapper avalé ;
+- registre désynchronisé ;
+- composant non hydraté ou bundle JavaScript cassé ;
+- écran blanc, asset manquant ou débordement ;
+- problème de cadrage téléphone/desktop ;
+- marque d'exemple `Nova` encore visible.
 
 ## Contenu
 
@@ -53,9 +156,12 @@ le client X » ou « fais-moi une démo client Salesforce pour X ».
 | `registry/*.json` | taxonomie machine-readable des assets | — |
 
 Vérification rapide après install :
-```
+```bash
 python3 <chemin>/scripts/build_site.py --selfcheck
 python3 <chemin>/scripts/validate_registry.py
 python3 <chemin>/scripts/crawl_brand.py --selfcheck
 python3 <chemin>/scripts/review_site.py --selfcheck
 ```
+
+Pour les mainteneurs : `SKILL.md` contient le workflow conversationnel complet,
+`references/registry.md` décrit la taxonomie et `assets/lightning-kit/SOURCE.md` explique le bundling.

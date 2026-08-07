@@ -49,6 +49,10 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `references/story-recipes.md` — recettes narratives prêtes à adapter (acquisition,
   service, vente B2B, Field Service, marketing, pilotage). Utilise-les comme accélérateur,
   jamais comme catalogue automatique.
+- `references/extending.md` — workflow mainteneur pour ajouter un composant `<lc-*>`, créer
+  un template, cataloguer l'asset, ajouter une icône produit et valider l'extension.
+- `references/troubleshooting.md` — diagnostic des erreurs d'installation, crawl, SLOT, JSON,
+  registre, bundle JavaScript, assets et cadrage visuel.
 - `registry/*.json` — catalogue machine-readable des composants, écrans, produits et
   industries. Lis `registry/screens.json` pour choisir un écran et `registry/components.json`
   pour vérifier sa couverture ; règles d'extension dans `references/registry.md`.
@@ -223,8 +227,8 @@ affiche un avertissement licence. Pour `financial-services-cloud`, `consumer-goo
 `manufacturing-cloud`, écris explicitement « licence sectorielle distincte de Sales Cloud ».
 Le manifest doit contenir :
 `"license_selection":{"mode":"industry-cloud","label":"Expérience Manufacturing Cloud","confirmed":true}`
-(adapte le label au choix utilisateur). Le hub et les notes présentateur afficheront automatiquement
-les produits et avertissements associés.
+(adapte le label au choix utilisateur). Le hub affiche discrètement les produits utilisés ; les notes
+présentateur conservent le détail des licences et le build avertit si un produit sectoriel n'a pas été confirmé.
 
 Si l'histoire change de persona, de marché (B2C → B2B) ou de temporalité, crée des
 **chapitres nommés**. Ne masque jamais une seconde histoire derrière un simple « bascule

@@ -41,10 +41,10 @@ crédiblement par un asset cross-industry.
 - Le manifest garde la décision utilisateur dans `license_selection` (`mode`, `label`, `confirmed`).
 - `products.json` peut référencer une icône officielle via `icon`. Le fichier SVG correspondant vit dans
   `assets/product-icons/` et le builder ne copie dans la story que les icônes réellement utilisées.
-- Le hub et les notes présentateur listent automatiquement les produits utilisés.
+- Le hub liste discrètement les produits utilisés ; les notes présentateur conservent le détail des licences.
 - Si une story utilise un produit `industry-cloud` sans choix confirmé, le build reste possible mais
   affiche un avertissement explicite.
-- Cet encart est informatif : il ne remplace pas la vérification contractuelle de l'édition, des
+- Cette mention est informative : elle ne remplace pas la vérification contractuelle de l'édition, des
   add-ons et des permission sets disponibles dans l'org cible.
 
 ## Ajouter un asset industrie
@@ -56,7 +56,8 @@ crédiblement par un asset cross-industry.
    `industries`.
 5. Renseigne `job` et `products` indépendamment de l'industrie.
 6. Si le besoin ne change que les données, crée un fixture/pack plutôt qu'un composant.
-7. Lance `python3 scripts/validate_registry.py`, puis les trois selfchecks.
+7. Lance `python3 scripts/validate_registry.py`, `python3 scripts/build_site.py --selfcheck`, puis
+   construis et contrôle visuellement une story d'exemple avec `scripts/review_site.py`.
 
 ## Validation
 
@@ -71,3 +72,6 @@ crédiblement par un asset cross-industry.
 
 Le builder appelle cette validation avant chaque génération. Une dérive du registre bloque donc le
 build au lieu de produire silencieusement un catalogue faux.
+
+Pour le workflow complet de création d'un composant ou d'un écran, consulte `extending.md`.
+Pour interpréter une erreur de validation ou de rendu, consulte `troubleshooting.md`.
