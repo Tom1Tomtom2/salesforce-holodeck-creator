@@ -3,8 +3,10 @@ __pycache__/
 .DS_Store
 
 # Sorties générées par les scripts (jamais dans le repo de distribution).
-# Chemins ancrés à la racine pour ne PAS matcher le dossier skill « site-web-story/ ».
+# Chemins ancrés à la racine pour ne PAS matcher le dossier de la skill elle-même.
 /*-story/
 /*-brand/
 /plugins/site-web-story/skills/site-web-story/*-story/
 /plugins/site-web-story/skills/site-web-story/*-brand/
+/plugins/site-web-story/skills/salesforce-holodeck-creator/*-story/
+/plugins/site-web-story/skills/salesforce-holodeck-creator/*-brand/

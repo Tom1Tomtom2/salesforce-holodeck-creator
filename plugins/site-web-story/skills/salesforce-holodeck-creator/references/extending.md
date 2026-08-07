@@ -191,7 +191,7 @@ Le self-check échoue si une clé de traduction n'existe plus dans le kit.
 
 ## Validation obligatoire
 
-Depuis le dossier `plugins/site-web-story/skills/site-web-story` :
+Depuis le dossier `plugins/site-web-story/skills/salesforce-holodeck-creator` :
 
 ```bash
 python3 scripts/validate_registry.py

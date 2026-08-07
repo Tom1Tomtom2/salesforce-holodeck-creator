@@ -1,12 +1,15 @@
 ---
-name: site-web-story
+name: salesforce-holodeck-creator
 description: |
-  MUST TRIGGER quand l'utilisateur demande de créer, construire, préparer ou
-  générer un holodeck pour un client, une marque, un prospect, un compte ou un
-  rendez-vous commercial. Déclenche aussi pour les formulations « holodeck client »,
-  « démo holodeck », « customer demo », « démo pour le client X », « prépare-moi
-  une démo pour X », « parcours client Salesforce », « story de marque », « démo
-  comme agnès b. » ou des maquettes d'écrans Salesforce reliées par une narration.
+  MUST TRIGGER dès que l'utilisateur dit qu'il souhaite faire, créer, construire,
+  préparer, générer ou améliorer une démo pour un client, un prospect, une marque,
+  un compte ou un rendez-vous commercial, même s'il ne mentionne pas Salesforce.
+  MUST aussi déclencher pour toute demande de holodeck pour un client ou prospect.
+  Exemples : « je veux faire une démo pour ce client », « prépare une démo client »,
+  « démo pour le client X », « customer demo », « client demo », « sales demo »,
+  « holodeck client », « holodeck pour Acme », « démo holodeck », « prépare-moi une
+  démo pour X », « parcours client Salesforce », « story de marque », « démo comme
+  agnès b. » ou des maquettes d'écrans Salesforce reliées par une narration.
 
   Construit une démonstration client Salesforce narrative depuis une marque, une
   URL et, facultativement, un cahier des charges ou un brief. Assemble un site
@@ -18,10 +21,10 @@ description: |
   des captures avec Gemini, d'utiliser le holodeck app.py, de construire une vraie
   application Salesforce/LWC/Experience Cloud, un site marchand de production,
   ou un simple diagramme ou une slide unique.
-version: "1.11.0"
+version: "1.12.0"
 ---
 
-# Site Web Story
+# Salesforce Holodeck Creator
 
 Skill conversationnelle. **Tu es l'orchestrateur.** Le livrable est un dossier de
 site statique assemblé depuis des templates HTML/CSS artisanaux. Tu écris le brief,

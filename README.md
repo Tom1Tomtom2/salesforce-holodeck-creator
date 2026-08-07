@@ -1,6 +1,6 @@
-# site-web-story
+# Salesforce Holodeck Creator
 
-Skill Claude Code qui construit un **site de démo Salesforce narratif** : un parcours client de
+Skill Claude Code `salesforce-holodeck-creator` qui construit un **site de démo Salesforce narratif** : un parcours client de
 marque raconté en plusieurs « actes » (pub Instagram → configurateur → landing →
 WhatsApp → Data Cloud → console SAV…), en HTML/CSS artisanal. Zéro serveur, zéro clé API.
 
@@ -20,6 +20,10 @@ planche de revue visuelle.
 /reload-plugins
 ```
 
+Le package du plugin conserve l'identifiant d'installation `site-web-story`, tandis que la skill
+chargée par Claude s'appelle `salesforce-holodeck-creator`. Après une mise à jour qui introduit ce
+nouveau nom, exécute `/reload-plugins` ou redémarre Claude Code pour retirer l'ancien nom du cache.
+
 **2. Installer le navigateur du crawler** — **une seule fois par machine**, dans un terminal :
 
 ```
@@ -38,6 +42,9 @@ playwright install chromium
 
 La façon normale d'utiliser le plugin est de demander la démo à Claude. Il orchestre le crawl,
 la sélection des écrans, le manifest, le build et la revue visuelle.
+
+La skill se déclenche pour toute demande explicite de **démo pour un client ou prospect** et de
+**holodeck pour un client ou prospect**, même si la demande ne mentionne pas Salesforce.
 
 Exemple minimal :
 
@@ -83,7 +90,7 @@ Le site est autonome et s'ouvre directement en `file://` : aucun serveur n'est n
 Pour repartir d'un exemple sans passer par le workflow conversationnel :
 
 ```bash
-cd plugins/site-web-story/skills/site-web-story
+cd plugins/site-web-story/skills/salesforce-holodeck-creator
 cp registry/examples/field-service-technician-mobile.json /tmp/ma-story.json
 # Éditer /tmp/ma-story.json, puis :
 python3 scripts/build_site.py /tmp/ma-story.json
@@ -110,12 +117,12 @@ Les trois niveaux d'extension ne coûtent pas la même chose :
 3. **Nouveau composant** : ajoute une nouvelle primitive JSON-driven au Lightning kit, puis expose-la dans un écran.
 
 Le guide complet est dans
-[`references/extending.md`](plugins/site-web-story/skills/site-web-story/references/extending.md).
+[`references/extending.md`](plugins/site-web-story/skills/salesforce-holodeck-creator/references/extending.md).
 
 Commande de validation obligatoire après une extension :
 
 ```bash
-cd plugins/site-web-story/skills/site-web-story
+cd plugins/site-web-story/skills/salesforce-holodeck-creator
 python3 scripts/validate_registry.py
 python3 scripts/build_site.py --selfcheck
 python3 scripts/build_site.py registry/examples/<exemple>.json
@@ -132,7 +139,7 @@ python3 scripts/build_site.py --selfcheck
 python3 scripts/review_site.py --selfcheck
 ```
 
-Le guide [`references/troubleshooting.md`](plugins/site-web-story/skills/site-web-story/references/troubleshooting.md)
+Le guide [`references/troubleshooting.md`](plugins/site-web-story/skills/salesforce-holodeck-creator/references/troubleshooting.md)
 couvre notamment :
 
 - Playwright ou Chromium absent ;

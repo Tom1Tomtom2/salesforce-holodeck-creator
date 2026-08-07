@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "site-web-story",
-      "description": "Crée les holodecks et démonstrations client Salesforce narratives depuis une marque et un brief facultatif, avec notes présentateur et revue visuelle automatisée.",
+      "description": "Expose Salesforce Holodeck Creator pour créer les holodecks et démonstrations client Salesforce narratives depuis une marque et un brief facultatif, avec notes présentateur et revue visuelle automatisée.",
       "category": "productivity",
       "author": {
         "name": "Thomas Damiens"

@@ -1,7 +1,7 @@
 {
   "name": "site-web-story",
-  "version": "1.11.0",
-  "description": "Crée automatiquement les holodecks et démonstrations client Salesforce narratives, avec brief facultatif, notes présentateur et revue visuelle.",
+  "version": "1.12.0",
+  "description": "Expose Salesforce Holodeck Creator pour créer automatiquement les holodecks et démonstrations client Salesforce narratives, avec brief facultatif, notes présentateur et revue visuelle.",
   "author": {
     "name": "Thomas Damiens"
   },
