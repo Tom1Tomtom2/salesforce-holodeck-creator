@@ -409,14 +409,16 @@ def _intro_block(intro: dict, screens: list) -> str:
             f'        <div class="step"><span class="dot"></span>'
             f'<div class="sn">{n:02d}</div><div class="sl">{html.escape(s.get("title",""))}</div></div>'
         )
+    cast_markup = '    <div class="cast">\n' + "\n".join(cast) + "\n    </div>\n" if cast else ""
+    journey_markup = '    <div class="journey">\n' + "\n".join(steps) + "\n    </div>\n"
     return (
         '<section class="intro">\n'
         f'    <div class="kicker">{html.escape(intro.get("kicker", "L\'histoire"))}</div>\n'
         f'    <h2>{html.escape(intro.get("title", ""))}</h2>\n'
         f'    <p class="lede">{html.escape(intro.get("lede", ""))}</p>\n'
-        + ('    <div class="cast">\n' + "\n".join(cast) + "\n    </div>\n" if cast else "")
-        + '    <div class="journey">\n' + "\n".join(steps) + "\n    </div>\n"
-        "</section>\n\n"
+        + cast_markup
+        + journey_markup
+        + "</section>\n\n"
     )
 
 
