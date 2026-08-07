@@ -314,10 +314,15 @@ class LcDemoModal extends JsonComponent {
       if (event.key === 'Escape' && !this.modal.hidden) this.close();
       if (event.key === 'Tab' && !this.modal.hidden) this.trapFocus(event);
     });
+    if (data.previewOpen) {
+      this.modal.hidden = false;
+      this.modal.classList.add('lc-modal--preview');
+    }
   }
 
   open(opener = document.activeElement) {
     this.opener = opener;
+    this.modal.classList.remove('lc-modal--preview');
     this.modal.hidden = false;
     document.body.style.overflow = 'hidden';
     requestAnimationFrame(() => this.querySelector('input, textarea, button')?.focus());

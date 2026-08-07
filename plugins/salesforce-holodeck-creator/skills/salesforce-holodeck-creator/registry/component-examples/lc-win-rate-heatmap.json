@@ -1,0 +1,9 @@
+{
+  "title": "Taux de succès par segment",
+  "meta": "Opportunités clôturées",
+  "columns": ["PME", "Enterprise"],
+  "rows": [
+    {"label": "Inbound", "values": [42, 31]},
+    {"label": "Partenaire", "values": [36, 48]}
+  ]
+}

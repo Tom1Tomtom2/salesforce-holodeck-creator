@@ -58,12 +58,67 @@ Un nouveau composant comprend au minimum :
 - un exemple dans `registry/examples/` dès qu'un template est ajouté ;
 - la mise à jour de `references/screens.md` et, si nécessaire, de `KIT_I18N`.
 
+### Assistant de création
+
+Depuis le dossier de la skill, l'assistant crée la source, le CSS initial, une fixture locale et
+l'entrée de registre après avoir contrôlé la taxonomie :
+
+```bash
+python3 scripts/create_component.py
+```
+
+Il peut aussi être utilisé sans interaction, par exemple :
+
+```bash
+python3 scripts/create_component.py \
+  --id lc-example-summary --label "Example summary" --job assistance \
+  --products agentforce --surface lightning --scope cross-industry
+```
+
+Le résultat est volontairement un squelette : adapte son rendu et sa fixture, puis expose-le dans
+un template. Utilise `--dry-run` pour vérifier la classification sans écrire et `--selfcheck` pour
+tester l'assistant lui-même.
+
+### Assistant d'écran
+
+L'assistant d'écran compose un template à partir de composants existants, ajoute son entrée dans
+`screens.json` et génère une story d'exemple buildable :
+
+```bash
+python3 scripts/create_screen.py \
+  --id forecast-summary --label "Synthèse des prévisions" --format desktop \
+  --surface lightning --job forecasting --products sales-cloud \
+  --scope cross-industry --components lc-forecast-summary,lc-forecast-categories
+```
+
+Les composants sans écran disposent d'une fixture dans `registry/component-examples/`, ce qui
+permet de les exposer sans inventer leur contrat JSON. L'assistant promeut automatiquement leur
+statut à `available` et restaure les fichiers qu'il a modifiés si la validation échoue. Évite de
+lancer deux assistants simultanément dans la même copie de travail.
+
+### Catalogue local
+
+Génère puis ouvre le catalogue autonome pour rechercher les composants et inspecter les exemples
+réellement présents dans les templates. Pour un composant sans écran, le catalogue utilise sa
+fixture `registry/component-examples/<id>.json` lorsqu'elle existe :
+
+```bash
+python3 scripts/build_component_catalog.py
+open component-catalog/index.html
+```
+
+La sortie `component-catalog/` est générée et ignorée par Git. Les filtres couvrent job, produit,
+industrie et statut ; les composants sans écran sont explicitement signalés.
+
 ## Vérification avant PR
 
 Depuis `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator` :
 
 ```bash
 python3 scripts/validate_registry.py
+python3 scripts/create_component.py --selfcheck
+python3 scripts/create_screen.py --selfcheck
+python3 scripts/build_component_catalog.py --selfcheck
 python3 scripts/build_site.py --selfcheck
 python3 scripts/review_site.py --selfcheck
 python3 scripts/build_site.py registry/examples/<exemple>.json

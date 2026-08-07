@@ -1,0 +1,9 @@
+{
+  "title": "Tournée du jour",
+  "meta": "2 arrêts planifiés",
+  "current": 0,
+  "stops": [
+    {"time": "09:00", "label": "Centre de service Acme", "x": 22, "y": 28},
+    {"time": "11:30", "label": "Plateforme logistique Nord", "x": 72, "y": 66}
+  ]
+}

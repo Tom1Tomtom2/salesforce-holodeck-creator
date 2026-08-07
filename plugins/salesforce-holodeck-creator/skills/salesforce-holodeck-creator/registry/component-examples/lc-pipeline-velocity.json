@@ -1,0 +1,9 @@
+{
+  "title": "Vélocité du pipeline",
+  "meta": "Temps moyen par étape",
+  "summary": {"value": "24 jours", "label": "Cycle commercial moyen", "change": "3 jours de moins que le trimestre précédent"},
+  "stages": [
+    {"label": "Qualification", "days": 8, "benchmark": 10},
+    {"label": "Proposition", "days": 16, "benchmark": 14}
+  ]
+}

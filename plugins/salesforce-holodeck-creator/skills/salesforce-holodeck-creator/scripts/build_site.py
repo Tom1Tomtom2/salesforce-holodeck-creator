@@ -243,13 +243,13 @@ KIT_I18N = [
 ]
 
 
-def kit_js_files() -> list:
+def kit_js_files(kit: Path = KIT) -> list:
     """Fichiers JS du kit à bundler, base d'abord. Découverte auto → quand l'utilisateur AJOUTE
     un fichier de composants au kit, il est pris sans toucher au code (cf. son workflow « j'en
     ajoute, on récupère petit à petit »). Ordre : lightning-components.js (base JsonComponent dont
     tout hérite → sinon `class X extends JsonComponent` casse à l'évaluation) puis le reste, trié."""
-    others = sorted(f.name for f in KIT.glob("*.js") if f.name not in KIT_SKIP and f.name != KIT_BASE)
-    return ([KIT_BASE] if (KIT / KIT_BASE).is_file() else []) + others
+    others = sorted(f.name for f in kit.glob("*.js") if f.name not in KIT_SKIP and f.name != KIT_BASE)
+    return ([KIT_BASE] if (kit / KIT_BASE).is_file() else []) + others
 
 
 def _top_level_dupes(js: str) -> list:
@@ -263,7 +263,7 @@ def _top_level_dupes(js: str) -> list:
     return sorted(set(dupes))
 
 
-def bundle_kit_js() -> str:
+def bundle_kit_js(kit: Path = KIT) -> str:
     """Concatène les modules du kit <lc-*> en UN script CLASSIQUE (chargeable en file://).
     Les ES modules (import/export) et fetch() sont bloqués en file:// ; le contrat de la skill
     est le double-clic. On retire donc `import`/`export` : une fois concaténés, les fichiers
@@ -273,8 +273,8 @@ def bundle_kit_js() -> str:
     homonymes lèveraient `Identifier 'definitions' has already been declared`. On la renomme donc
     par fichier (elle n'est jamais partagée entre fichiers). Toute AUTRE collision → on lève."""
     parts = []
-    for name in kit_js_files():
-        src = (KIT / name).read_text(encoding="utf-8")
+    for name in kit_js_files(kit):
+        src = (kit / name).read_text(encoding="utf-8")
         src = re.sub(r"^\s*import\s.*?;\s*$", "", src, flags=re.M)  # lignes `import … ;`
         src = re.sub(r"^export\s+", "", src, flags=re.M)            # mot-clé `export`
         slug = re.sub(r"[^A-Za-z0-9]", "_", name)                   # map d'enregistrement → unique/fichier
@@ -411,14 +411,17 @@ def _intro_block(intro: dict, screens: list) -> str:
             f'        <div class="step"><span class="dot"></span>'
             f'<div class="sn">{n:02d}</div><div class="sl">{html.escape(s.get("title",""))}</div></div>'
         )
+    cast_markup = '    <div class="cast">\n' + "\n".join(cast) + "\n    </div>\n" if cast else ""
+    journey_markup = '    <div class="journey">\n' + "\n".join(steps) + "\n    </div>\n"
+    kicker = html.escape(intro.get("kicker", "L'histoire"))
     return (
         '<section class="intro">\n'
-        f'    <div class="kicker">{html.escape(intro.get("kicker", "L\'histoire"))}</div>\n'
+        f'    <div class="kicker">{kicker}</div>\n'
         f'    <h2>{html.escape(intro.get("title", ""))}</h2>\n'
         f'    <p class="lede">{html.escape(intro.get("lede", ""))}</p>\n'
-        + ('    <div class="cast">\n' + "\n".join(cast) + "\n    </div>\n" if cast else "")
-        + '    <div class="journey">\n' + "\n".join(steps) + "\n    </div>\n"
-        "</section>\n\n"
+        + cast_markup
+        + journey_markup
+        + "</section>\n\n"
     )
 
 
@@ -457,11 +460,12 @@ def _desktop_frame_style(screen: dict) -> str:
     return ";".join(f"{name}:{value}" for name, value in values.items())
 
 
-def _act_section(s: dict, index: int) -> str:
+def _act_section(s: dict, index: int, phone_templates: set | None = None) -> str:
     """Une section .act : récit (num/titre/desc/lien) + écran réel en iframe (cadre phone ou desktop)."""
     side = " right" if index % 2 else ""
     f = html.escape(s["file"])
-    phone = s["template"] in PHONE_TEMPLATES
+    active_phone_templates = PHONE_TEMPLATES if phone_templates is None else phone_templates
+    phone = s["template"] in active_phone_templates
     open_link = f'<a class="open" href="{f}" target="_blank" aria-label="Ouvrir en plein écran"></a>'
     iframe = f'<div class="vp"><iframe src="{f}" loading="lazy" scrolling="no" title="{html.escape(s.get("title",""))}"></iframe></div>'
     if phone:
@@ -531,7 +535,8 @@ def _license_block(products: list, selection: dict | None = None) -> str:
 
 def build_hub(template: str, brand: str, story_title: str, screens: list,
               tagline: str = "", intro: dict | None = None, thesis: str = "",
-              products: list | None = None, license_selection: dict | None = None) -> str:
+              products: list | None = None, license_selection: dict | None = None,
+              phone_templates: set | None = None) -> str:
     """Assemble la page story : hero (placeholders) + intro + une section .act par écran."""
     sections = []
     previous_chapter = None
@@ -542,7 +547,7 @@ def build_hub(template: str, brand: str, story_title: str, screens: list,
             chapter_number += 1
             sections.append(_chapter_section(chapter, chapter_number))
             previous_chapter = chapter
-        sections.append(_act_section(screen, index))
+        sections.append(_act_section(screen, index, phone_templates))
     body = _intro_block(intro or {}, screens) + "\n".join(sections)
     head, _, _ = template.partition("<!-- BUILD:")
     hub = head + body + "\n</body>\n</html>\n"
@@ -655,6 +660,10 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
 
     # Icônes produit officielles utilisées par l'encart licences du hub.
     story_products = _story_products(root, manifest["screens"])
+    screen_registry = json.loads((root / "registry" / "screens.json").read_text(encoding="utf-8"))
+    phone_templates = {
+        screen["id"] for screen in screen_registry.get("screens", []) if screen.get("format") == "mobile"
+    }
     product_icons = sorted({product.get("icon") for product in story_products if product.get("icon")})
     if product_icons:
         icon_output = out / "product-icons"
@@ -723,9 +732,9 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     # 3. hub
     hub_tpl = (root / "assets" / "index.template.html").read_text(encoding="utf-8")
     hub = build_hub(hub_tpl, manifest.get("brand", ""), manifest.get("story_title", ""),
-                    manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
-                    manifest.get("thesis", ""), story_products,
-                    manifest.get("license_selection"))
+                     manifest["screens"], manifest.get("tagline", ""), manifest.get("intro"),
+                     manifest.get("thesis", ""), story_products,
+                     manifest.get("license_selection"), phone_templates)
     (out / "index.html").write_text(hub, encoding="utf-8")
     written.append("index.html")
 

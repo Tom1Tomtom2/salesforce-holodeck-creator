@@ -39,6 +39,9 @@ Si une valeur de taxonomie est nouvelle, explique pourquoi une valeur existante 
 ## Validation
 
 - [ ] `python3 scripts/validate_registry.py`
+- [ ] `python3 scripts/create_component.py --selfcheck`
+- [ ] `python3 scripts/create_screen.py --selfcheck`
+- [ ] `python3 scripts/build_component_catalog.py --selfcheck`
 - [ ] `python3 scripts/build_site.py --selfcheck`
 - [ ] `python3 scripts/review_site.py --selfcheck`
 - [ ] Build et revue de la story d'exemple

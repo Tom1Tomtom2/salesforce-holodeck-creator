@@ -1,0 +1,9 @@
+{
+  "title": "Prévisions par catégorie",
+  "meta": "Opportunités ouvertes",
+  "currency": "EUR",
+  "categories": [
+    {"label": "Engagé", "count": 8, "amount": 850000, "tone": "success"},
+    {"label": "Meilleur cas", "count": 5, "amount": 350000, "tone": "purple"}
+  ]
+}

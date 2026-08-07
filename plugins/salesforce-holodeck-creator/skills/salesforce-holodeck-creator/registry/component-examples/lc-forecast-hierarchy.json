@@ -1,0 +1,8 @@
+{
+  "title": "Hiérarchie des prévisions",
+  "meta": "Trimestre en cours",
+  "currency": "EUR",
+  "rows": [
+    {"level": 0, "initials": "AM", "name": "Amina Martin", "role": "VP Sales", "quota": 1000000, "closed": 600000, "commit": 850000, "bestCase": 1050000, "coverage": "2.4x"}
+  ]
+}

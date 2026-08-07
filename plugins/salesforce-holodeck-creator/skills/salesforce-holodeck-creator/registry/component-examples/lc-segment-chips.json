@@ -1,0 +1,8 @@
+{
+  "title": "Segments d'audience",
+  "meta": "Sélectionnez les segments à activer",
+  "items": [
+    {"label": "Forte intention", "active": true},
+    {"label": "Renouvellement proche", "active": false}
+  ]
+}

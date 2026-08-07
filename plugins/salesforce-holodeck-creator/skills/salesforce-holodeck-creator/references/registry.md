@@ -81,5 +81,16 @@ crédiblement par un asset cross-industry.
 Le builder appelle cette validation avant chaque génération. Une dérive du registre bloque donc le
 build au lieu de produire silencieusement un catalogue faux.
 
+`python3 scripts/build_component_catalog.py` produit `component-catalog/index.html`, une vue locale
+filtrable par job, produit, industrie et statut. Ses aperçus sont extraits des balises `<lc-*>`
+réellement présentes dans `templates/`. Pour un nouveau composant sans écran, une fixture JSON
+optionnelle dans `registry/component-examples/<id>.json` fournit uniquement ses données d'exemple.
+Le bundle est produit par le même code que les stories. Cette sortie générée est ignorée par Git et
+ne remplace aucun registre.
+
+`python3 scripts/create_screen.py` compose un nouveau template avec ces exemples, ajoute l'écran au
+registre et crée `registry/examples/<id>.json`. Le format mobile du registre pilote désormais
+directement le cadrage téléphone du hub, sans liste manuelle supplémentaire.
+
 Pour le workflow complet de création d'un composant ou d'un écran, consulte `extending.md`.
 Pour interpréter une erreur de validation ou de rendu, consulte `troubleshooting.md`.

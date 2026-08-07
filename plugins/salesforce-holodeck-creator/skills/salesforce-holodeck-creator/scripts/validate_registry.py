@@ -128,6 +128,25 @@ def _validate_component_contract(root: Path, source_components: dict) -> None:
             raise RegistryError(f"charte {relative} : URL javascript: interdite")
 
 
+def _validate_component_examples(root: Path, components: dict) -> int:
+    example_dir = root / "registry" / "component-examples"
+    if not example_dir.exists():
+        return 0
+    count = 0
+    for path in sorted(example_dir.glob("*.json")):
+        component_id = path.stem
+        if component_id not in components:
+            raise RegistryError(f"fixture de composant sans entrée de registre : {path.name}")
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise RegistryError(f"fixture JSON invalide {path.name} : {exc}") from exc
+        if not isinstance(data, dict):
+            raise RegistryError(f"fixture {path.name} : la racine doit être un objet JSON")
+        count += 1
+    return count
+
+
 def validate_registry(root: Path = ROOT) -> dict:
     products_data = _load("products.json", root)
     industries_data = _load("industries.json", root)
@@ -150,6 +169,7 @@ def validate_registry(root: Path = ROOT) -> dict:
             details.append("absents des sources : " + ", ".join(stale))
         raise RegistryError("couverture composants incomplète (" + " ; ".join(details) + ")")
     _validate_component_contract(root, source_components)
+    component_examples = _validate_component_examples(root, components)
 
     taxonomy_jobs = taxonomy_data.get("jobs", [])
     if not isinstance(taxonomy_jobs, list) or not taxonomy_jobs or len(taxonomy_jobs) != len(set(taxonomy_jobs)):
@@ -180,6 +200,10 @@ def validate_registry(root: Path = ROOT) -> dict:
             raise RegistryError(f"composant {component_id} : label et job sont obligatoires")
         if component.get("job") not in jobs:
             raise RegistryError(f"composant {component_id} : job non classifié {component.get('job')}")
+        if "surface" in component:
+            surfaces = {item["id"] for item in taxonomy_data["surfaces"]}
+            if component["surface"] not in surfaces:
+                raise RegistryError(f"composant {component_id} : surface inconnue {component['surface']}")
         if not component.get("products"):
             raise RegistryError(f"composant {component_id} : au moins un produit est obligatoire")
         unknown_products = sorted(set(component.get("products", [])) - set(products))
@@ -217,6 +241,14 @@ def validate_registry(root: Path = ROOT) -> dict:
             raise RegistryError(f"écran {screen_id} : template incohérent ou absent")
         if screen.get("format") not in {"mobile", "desktop"}:
             raise RegistryError(f"écran {screen_id} : format invalide")
+        if "surface" in screen:
+            surfaces = {item["id"] for item in taxonomy_data["surfaces"]}
+            if screen["surface"] not in surfaces:
+                raise RegistryError(f"écran {screen_id} : surface inconnue {screen['surface']}")
+            if screen["surface"] == "mobile" and screen["format"] != "mobile":
+                raise RegistryError(f"écran {screen_id} : une surface mobile exige le format mobile")
+            if screen["surface"] == "lightning" and screen["format"] != "desktop":
+                raise RegistryError(f"écran {screen_id} : une surface lightning exige le format desktop")
         if screen.get("status") != "available" or not screen.get("job") or not screen.get("label"):
             raise RegistryError(f"écran {screen_id} : label, job et statut available sont obligatoires")
         if screen.get("job") not in jobs:
@@ -266,6 +298,7 @@ def validate_registry(root: Path = ROOT) -> dict:
         "components": len(components),
         "screens": len(screens),
         "components_in_screens": len(used_components),
+        "component_examples": component_examples,
     }
 
 
