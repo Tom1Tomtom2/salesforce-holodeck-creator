@@ -124,6 +124,9 @@ Les trois niveaux d'extension ne coûtent pas la même chose :
 
 Le guide complet est dans
 [`references/extending.md`](plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/extending.md).
+Pour tout composant Salesforce, la référence
+[`references/design.md`](plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/design.md)
+impose par défaut la grammaire SLDS, les primitives `lc-*` et les icônes `lcIcon()` centralisées.
 Pour contribuer via une pull request, commence par [`CONTRIBUTING.md`](CONTRIBUTING.md) : la charte
 visuelle, la classification et les preuves de rendu y sont obligatoires.
 

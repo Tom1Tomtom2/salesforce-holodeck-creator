@@ -36,6 +36,9 @@ Un composant `<lc-*>` doit :
 - étendre `JsonComponent` et recevoir ses données via un `<script type="application/json">` ;
 - échapper toute donnée utilisateur avec `escapeHtml` ;
 - utiliser les primitives et tokens `--lc-*` de `lightning-components.css` ;
+- suivre `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/design.md`
+  pour toute surface Salesforce : SLDS est le design par défaut et
+  toutes les icônes fonctionnelles proviennent de `lcIcon()` / `iconPaths` ;
 - conserver la densité Lightning : typographie compacte, bordures fines, surfaces blanches et une
   seule action principale par zone ;
 - utiliser des éléments HTML natifs avant ARIA et exposer le nom, le rôle et l'état des contrôles ;
@@ -45,7 +48,9 @@ Un composant `<lc-*>` doit :
 - fonctionner directement en `file://`, sans dépendance réseau ajoutée par le composant.
 
 La charte détaillée et les exemples se trouvent dans
-`plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/component-charter.md`.
+`plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/component-charter.md`
+et `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/design.md`.
+Ces deux fichiers doivent être lus avant de coder un composant Salesforce.
 
 ## Livrables d'une contribution
 

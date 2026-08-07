@@ -21,7 +21,7 @@ description: |
   des captures avec Gemini, d'utiliser le holodeck app.py, de construire une vraie
   application Salesforce/LWC/Experience Cloud, un site marchand de production,
   ou un simple diagramme ou une slide unique.
-version: "1.16.0"
+version: "1.17.0"
 ---
 
 # Salesforce Holodeck Creator
@@ -57,6 +57,8 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
   un template, cataloguer l'asset, ajouter une icône produit et valider l'extension.
 - `references/component-charter.md` — contrat visuel, JSON-driven, accessibilité et classification
   que toute contribution de composant doit respecter.
+- `references/design.md` — **référence obligatoire avant toute création ou modification de
+  composant Salesforce** : SLDS par défaut, primitives `lc-*`, tokens et icônes `lcIcon()`.
 - `references/troubleshooting.md` — diagnostic des erreurs d'installation, crawl, SLOT, JSON,
   registre, bundle JavaScript, assets et cadrage visuel.
 - `registry/*.json` — catalogue machine-readable des composants, écrans, produits et
@@ -80,6 +82,24 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
   échouent sur les sites de marque (anti-bot CDN → 503) ; ce script exécute le JS et passe.
 - `scripts/review_site.py` — ouvre le build dans Chromium, capture chaque écran et le
   hub, produit une planche contact et remonte les erreurs visibles avant restitution.
+
+---
+
+## Règle de création des composants
+
+Quand l'utilisateur demande un nouveau composant `<lc-*>` ou qu'un manque de composant est identifié :
+
+1. lis **avant de coder** `references/component-charter.md` et `references/design.md` ;
+2. si la surface est `lightning` ou `mobile`, applique SLDS par défaut avec les primitives et tokens
+   `lc-*` ; cette règle prime sur une demande visuelle vague ou sur la couleur de la marque cliente ;
+3. utilise `lcIcon()` et `iconPaths` pour toutes les icônes Salesforce ; n'utilise ni emoji, ni
+   caractère Unicode comme pictogramme, ni SVG inline isolé, ni bibliothèque d'icônes externe ;
+4. commence avec `python3 scripts/create_component.py`, puis adapte le squelette sans retirer sa
+   structure SLDS ni son icône Salesforce sauf si la surface est explicitement externe ou canal ;
+5. relis le résultat avec `references/fidelite-salesforce.md` avant de l'exposer dans un écran.
+
+Ne considère jamais `design.md` comme une lecture facultative ou uniquement destinée à la revue :
+elle fait partie du contrat de génération par défaut.
 
 ---
 

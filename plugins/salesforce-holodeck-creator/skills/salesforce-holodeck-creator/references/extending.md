@@ -19,9 +19,12 @@ Avant d'ajouter quoi que ce soit, cherche dans :
 2. `registry/components.json` pour un composant existant mais non exposé ;
 3. `templates/*.html` et `assets/lightning-kit/*-components.js` pour confirmer le contrat réel.
 
-Avant de coder, lis aussi `component-charter.md` et `registry/taxonomy.json`. Toute contribution doit
+Avant de coder, lis aussi `component-charter.md`, **`design.md`** et `registry/taxonomy.json`. Pour un
+composant Salesforce, `design.md` rend SLDS, les primitives `lc-*` et `lcIcon()` obligatoires par
+défaut. Toute contribution doit
 annoncer son `job`, ses `products`, sa surface (`lightning`, `mobile`, `external`, `channel`) et son
-scope (`cross-industry` ou `industry`). Le validateur bloque les jobs libres, les incohérences
+`design_profile` (`slds` ou `brand`), puis son scope (`cross-industry` ou `industry`). Le validateur
+bloque les jobs libres, les incohérences
 job/produit et plusieurs écarts objectifs à la charte.
 
 ## Ajouter un composant `<lc-*>`
@@ -110,6 +113,8 @@ Ajoute une entrée à `registry/components.json` :
   "label": "Example summary",
   "job": "assistance",
   "products": ["agentforce"],
+  "surface": "lightning",
+  "design_profile": "slds",
   "status": "uncatalogued-screen"
 }
 ```

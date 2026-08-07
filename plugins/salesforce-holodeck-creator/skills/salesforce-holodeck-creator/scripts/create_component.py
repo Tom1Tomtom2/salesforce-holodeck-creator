@@ -13,7 +13,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from validate_registry import validate_registry
+from validate_registry import RegistryError, validate_registry
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -50,9 +50,14 @@ def _choose(prompt: str, values: list[str], supplied: str | None) -> str:
     return answer
 
 
-def _component_source(component_id: str, class_name: str, label: str) -> str:
+def _component_source(component_id: str, class_name: str, label: str, surface: str) -> str:
     js_label = json.dumps(label, ensure_ascii=False)
-    return f"""import {{ JsonComponent, escapeHtml }} from './lightning-components.js';
+    heading_start = (
+        '<div class="lc-panel__heading"><span class="lc-object-icon lc-object-icon--activity" '
+        'aria-hidden="true">${lcIcon(\'activity\')}</span><div>'
+    )
+    heading_end = "</div></div>"
+    return f"""import {{ JsonComponent, escapeHtml, lcIcon }} from './lightning-components.js';
 
 class {class_name} extends JsonComponent {{
   render() {{
@@ -61,13 +66,15 @@ class {class_name} extends JsonComponent {{
     this.innerHTML = `
       <section class=\"lc-panel {component_id}\" aria-labelledby=\"${{titleId}}\">
         <div class=\"lc-panel__header\">
-          <div>
+          {heading_start}
             <h2 class=\"lc-panel__title\" id=\"${{titleId}}\">${{escapeHtml(data.title || {js_label})}}</h2>
             <div class=\"lc-panel__meta\">${{escapeHtml(data.meta || '')}}</div>
+          {heading_end}
+          <div class=\"lc-panel__actions\">
+            <button class=\"lc-button lc-button--brand\" type=\"button\" data-component-action>
+              ${{escapeHtml(data.actionLabel || 'Continuer')}}
+            </button>
           </div>
-          <button class=\"lc-button lc-button--brand\" type=\"button\" data-component-action>
-            ${{escapeHtml(data.actionLabel || 'Continuer')}}
-          </button>
         </div>
         <div class=\"{component_id}__body\">
           <p>${{escapeHtml(data.description || 'Décris ici la valeur métier du composant.')}}</p>
@@ -179,6 +186,7 @@ def create_component(root: Path, *, component_id: str, label: str, job: str,
         "job": job,
         "products": products,
         "surface": surface,
+        "design_profile": "slds" if surface in {"lightning", "mobile"} else "brand",
         "status": "uncatalogued-screen",
     }
     if scope == "industry":
@@ -204,7 +212,7 @@ def create_component(root: Path, *, component_id: str, label: str, job: str,
     original_css = css_path.read_text(encoding="utf-8")
     original_registry = registry_path.read_text(encoding="utf-8")
     try:
-        _atomic_write(source, _component_source(component_id, _class_name(component_id), label.strip()))
+        _atomic_write(source, _component_source(component_id, _class_name(component_id), label.strip(), surface))
         _atomic_write(css_path, original_css + _component_css(component_id))
         _atomic_write(fixture, json.dumps(fixture_data, indent=2, ensure_ascii=False) + "\n")
         _atomic_write(registry_path, _insert_registry_entry(original_registry, entry))
@@ -246,7 +254,18 @@ def selfcheck() -> None:
         generated_source = (root / result["source"]).read_text(encoding="utf-8")
         assert json.dumps("Vue d'équipe\npartagée", ensure_ascii=False) in generated_source
         assert "Vue d'équipe\npartagée" not in generated_source
+        assert "lc-panel__heading" in generated_source
+        assert "lcIcon('activity')" in generated_source
+        assert "lc-object-icon" in generated_source
         validate_registry(root)
+        source_path = root / result["source"]
+        source_path.write_text(generated_source.replace("lcIcon('activity')", "'★'"), encoding="utf-8")
+        try:
+            validate_registry(root)
+        except RegistryError as exc:
+            assert "lcIcon" in str(exc) or "Unicode" in str(exc)
+        else:
+            raise AssertionError("un composant SLDS sans lcIcon() doit être rejeté")
     print("selfcheck OK")
 
 

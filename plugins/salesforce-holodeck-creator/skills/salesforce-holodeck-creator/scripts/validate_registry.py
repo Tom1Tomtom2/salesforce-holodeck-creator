@@ -84,7 +84,7 @@ def _template_components(text: str) -> list:
     return list(dict.fromkeys(re.findall(r"<(lc-[a-z0-9-]+)\b", text)))
 
 
-def _validate_component_contract(root: Path, source_components: dict) -> None:
+def _validate_component_contract(root: Path, source_components: dict, components: dict | None = None) -> None:
     """Garde-fous statiques minimaux de la charte pour les contributions au kit."""
     sources = {
         source: (root / source).read_text(encoding="utf-8")
@@ -115,6 +115,31 @@ def _validate_component_contract(root: Path, source_components: dict) -> None:
             raise RegistryError(
                 f"composant {component_id} : ajoute la balise à lightning-components.css"
             )
+
+    if components:
+        for component_id, component in components.items():
+            if component.get("design_profile") != "slds":
+                continue
+            text = sources[source_components[component_id]]
+            class_name = "".join(part.capitalize() for part in component_id.split("-"))
+            match = re.search(
+                rf"class\s+{re.escape(class_name)}\s+extends\s+JsonComponent\b(.*?)(?=\nclass\s+Lc|\nconst\s+\w*definitions|\Z)",
+                text,
+                re.DOTALL,
+            )
+            if not match:
+                raise RegistryError(f"composant {component_id} : classe {class_name} introuvable pour la revue SLDS")
+            implementation = re.sub(r"/\*.*?\*/|//[^\n]*", "", match.group(1), flags=re.DOTALL)
+            if not re.search(r'class=["\\][^"\\]*\blc-panel\b', implementation):
+                raise RegistryError(f"composant {component_id} : racine SLDS lc-panel obligatoire")
+            if not re.search(r'lc-panel__header', implementation):
+                raise RegistryError(f"composant {component_id} : en-tête SLDS lc-panel__header obligatoire")
+            if not re.search(r"\blcIcon\s*\(", implementation):
+                raise RegistryError(f"composant {component_id} : icône Salesforce via lcIcon() obligatoire")
+            if re.search(r"<svg\b", implementation, re.IGNORECASE):
+                raise RegistryError(f"composant {component_id} : SVG ad hoc interdit, utilise lcIcon()")
+            if re.search(r"[★☆✓✔✕✖●○◎◉▦⌄⌃→←↑↓😀-🙏🌀-🫿]", implementation):
+                raise RegistryError(f"composant {component_id} : pictogramme Unicode interdit, utilise lcIcon()")
 
     for source, text in sources.items():
         relative = Path(source).name
@@ -168,7 +193,7 @@ def validate_registry(root: Path = ROOT) -> dict:
         if stale:
             details.append("absents des sources : " + ", ".join(stale))
         raise RegistryError("couverture composants incomplète (" + " ; ".join(details) + ")")
-    _validate_component_contract(root, source_components)
+    _validate_component_contract(root, source_components, components)
     component_examples = _validate_component_examples(root, components)
 
     taxonomy_jobs = taxonomy_data.get("jobs", [])
@@ -204,6 +229,12 @@ def validate_registry(root: Path = ROOT) -> dict:
             surfaces = {item["id"] for item in taxonomy_data["surfaces"]}
             if component["surface"] not in surfaces:
                 raise RegistryError(f"composant {component_id} : surface inconnue {component['surface']}")
+            expected_profile = "slds" if component["surface"] in {"lightning", "mobile"} else "brand"
+            if component.get("design_profile") != expected_profile:
+                raise RegistryError(
+                    f"composant {component_id} : design_profile attendu {expected_profile} "
+                    f"pour la surface {component['surface']}"
+                )
         if not component.get("products"):
             raise RegistryError(f"composant {component_id} : au moins un produit est obligatoire")
         unknown_products = sorted(set(component.get("products", [])) - set(products))

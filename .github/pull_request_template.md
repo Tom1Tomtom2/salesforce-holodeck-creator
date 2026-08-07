@@ -23,6 +23,8 @@ Si une valeur de taxonomie est nouvelle, explique pourquoi une valeur existante 
 
 - [ ] Données JSON échappées avec `escapeHtml`
 - [ ] Tokens et primitives `--lc-*` réutilisés
+- [ ] Composant Salesforce conforme à `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/design.md` et à la grammaire SLDS
+- [ ] Icônes Salesforce fournies par `lcIcon()` / `iconPaths` (aucun emoji ou SVG ad hoc)
 - [ ] HTML natif privilégié et états ARIA synchronisés
 - [ ] Navigation clavier et focus visible vérifiés
 - [ ] Cibles mobiles de 44 px si applicable

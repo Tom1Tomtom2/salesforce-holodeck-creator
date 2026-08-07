@@ -30,6 +30,9 @@ template et contenir des valeurs brutes plutôt que du HTML arbitraire.
 
 ## 2. Grammaire visuelle
 
+Pour toute surface Salesforce (`lightning` ou `mobile`), `design.md` est la référence normative :
+SLDS et les icônes Salesforce du kit sont le défaut obligatoire, pas une option de finition.
+
 - **Couleurs** : bleu d'action `--lc-brand`, titres `--lc-heading`, états via `--lc-success`,
   `--lc-warning` et `--lc-error`. La couleur cliente `--accent` ne repeint jamais Lightning.
 - **Surfaces** : `--lc-page`, `--lc-surface`, `--lc-surface-subtle`, bordures `--lc-border*`.
@@ -39,6 +42,8 @@ template et contenir des valeurs brutes plutôt que du HTML arbitraire.
 - **Actions** : une action primaire par groupe ; les actions secondaires restent neutres.
 - **Layout** : rangées 1/1, 2/3-1/3 ou 1/3-1/3-1/3. Le composant remplit sa colonne et ne
   décide pas seul de la grille de page.
+- **Icônes** : utilise `lcIcon()` et les tracés centralisés dans `iconPaths`. Aucun emoji, symbole
+  Unicode, SVG ad hoc ou pack d'icônes externe dans un composant Salesforce.
 
 Les couleurs de graphiques déterministes peuvent utiliser la palette Salesforce du kit. Une couleur
 configurable doit être échappée et ne peut pas être le seul moyen d'exprimer un statut.
@@ -73,6 +78,7 @@ La classification suit cet ordre :
 3. `cross_industry` : `true` par défaut ;
 4. `industries` : seulement lorsque le composant est réellement sectoriel ;
 5. `status` : `available` si un template l'expose, sinon `uncatalogued-screen`.
+6. `design_profile` : `slds` pour une surface Salesforce, `brand` pour une surface externe/canal.
 
 La liste des jobs autorisés et les surfaces de revue sont dans `registry/taxonomy.json`. Un composant
 ne devient pas sectoriel parce que son exemple contient un nom de banque, d'usine ou de magasin.

@@ -296,7 +296,7 @@ def selfcheck() -> None:
         )
         copied_source = copied_root / "assets" / "lightning-kit" / "fixture-only-components.js"
         copied_source.write_text(
-            "class LcFixtureOnly extends JsonComponent { render() { this.innerHTML = '<p>ok</p>'; } }\n"
+            "class LcFixtureOnly extends JsonComponent { render() { this.innerHTML = '<section class=\"lc-panel\"><div class=\"lc-panel__header\">' + lcIcon('activity') + '</div></section>'; } }\n"
             "const definitions = {\n  'lc-fixture-only': LcFixtureOnly,\n};\n"
             "for (const [name, constructor] of Object.entries(definitions)) {\n"
             "  if (!customElements.get(name)) customElements.define(name, constructor);\n}\n",
@@ -313,6 +313,7 @@ def selfcheck() -> None:
             "job": "assistance",
             "products": ["agentforce"],
             "surface": "lightning",
+            "design_profile": "slds",
             "status": "uncatalogued-screen",
         })
         registry_path.write_text(json.dumps(registry, ensure_ascii=False), encoding="utf-8")
