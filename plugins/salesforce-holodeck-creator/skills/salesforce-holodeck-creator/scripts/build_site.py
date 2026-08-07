@@ -385,6 +385,8 @@ PHONE_TEMPLATES = {
     "fieldservice-mobile-work-order", "fieldservice-mobile-work-plan",
     "fieldservice-mobile-coverage", "fieldservice-mobile-part-return",
     "fieldservice-mobile-agent-summary",
+    "mobile-sales-opportunity", "mobile-revenue-approval",
+    "mobile-agentforce-assistant", "mobile-maps-nearby",
 }
 
 

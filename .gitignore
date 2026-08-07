@@ -8,3 +8,5 @@ __pycache__/
 /*-brand/
 /plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/*-story/
 /plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/*-brand/
+/plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/manifest.json
+/plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/*-story.zip

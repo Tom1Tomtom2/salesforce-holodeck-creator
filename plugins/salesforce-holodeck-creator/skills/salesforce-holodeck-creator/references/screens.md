@@ -11,7 +11,8 @@ déjà son animation CSS et son clin d'œil produit Salesforce (le `.why` de l'�
 **Format & page story.** La colonne *Format* pilote l'affichage de l'écran dans `index.html`
 (scrollytelling) : `mobile` → coque téléphone, `desktop` → cadre navigateur avec barre d'adresse
 (SLOT `url` du manifest). Les templates *mobile* — `instagram`, `whatsapp`, `landing-capture`,
-`client-app`, `mobile-card-scan` et les templates `fieldservice-mobile-*` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
+`client-app`, `mobile-card-scan`, `mobile-sales-opportunity`, `mobile-revenue-approval`,
+`mobile-agentforce-assistant`, `mobile-maps-nearby` et les templates `fieldservice-mobile-*` — dessinent déjà leur propre coque `.phone` ; `build_site.py` les recadre au lieu d'en
 ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur cette colonne).
 
 ## Table canal → template
@@ -25,6 +26,10 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Landing de capture + résolution d'identité | `landing-capture.html` | mobile | Data Cloud identity resolution (overlay) | fusion des fragments (scriptée) |
 | Landing B2B — capture de lead | `landing-b2b-capture.html` | desktop | Data Cloud → lead rattaché au compte, routé vers Sales (overlay) | soumission → résolution des fragments (scriptée) |
 | Scan de carte de visite | `mobile-card-scan.html` | mobile | Agentforce OCR + Data Cloud dédoublonne → contact Sales | scan → extraction champ par champ → dédoublon (scriptée) |
+| Opportunité dans Salesforce mobile | `mobile-sales-opportunity.html` | mobile | Sales Cloud — highlights + Path + prochaine action | prochaine action qui apparaît (scriptée) |
+| Approbation de devis en mobilité | `mobile-revenue-approval.html` | mobile | Revenue Cloud — remise hors seuil routée pour validation | approbation → bandeau vert qui monte (scriptée) |
+| Assistant Agentforce mobile | `mobile-agentforce-assistant.html` | mobile | Agentforce — résumé de compte + action proposée | frappe → réponses IA une à une (scriptée) |
+| Comptes à proximité | `mobile-maps-nearby.html` | mobile | Salesforce Maps — territoire + comptes autour de soi | rayon qui s'étend, pins qui tombent, liste (scriptée) |
 | Profil client unifié | `datacloud-profil.html` | desktop | Data Cloud — flux + segments | events « live » + segment qui s'allume |
 | Acquisition / activation / re-segmentation | `datacloud-pipeline.html` | desktop | Data Cloud — pipeline vers Meta/Google | status-line qui pulse |
 | Création de segment assistée IA | `datacloud-segment.html` | desktop | Data Cloud — Einstein génère le segment (panneau chat) | — (statique) |
@@ -79,6 +84,10 @@ activation d'audience vers Meta, re-segmentation post-événement) : n'adapte qu
 - **landing-capture.html** — `title`, `act-tag`, `url`, `landing`, `resolve`
 - **landing-b2b-capture.html** — `title`, `act-tag`, `nav`, `hero`, `form`, `resolve` · desktop (pas de coque : le hub dessine la barre navigateur) · garde les id `sub`/`resolve`/`f1`/`f2`/`mrg`/`uni`
 - **mobile-card-scan.html** — `title`, `act-tag`, `rep`, `card`, `extract`, `dedup`, `cta` · mobile (dessine sa coque `.phone`) · garde les id `scan`/`x1`..`x4`/`dedup`/`done`
+- **mobile-sales-opportunity.html** — `title`, `act-tag`, `rep`, `highlights`, `path`, `details`, `activity` · mobile (dessine sa coque `.phone`) · garde les id `p1`..`p5`/`next`
+- **mobile-revenue-approval.html** — `title`, `act-tag`, `rep`, `request`, `quote`, `actions` · mobile (dessine sa coque `.phone`) · garde les id `approve`/`reject`/`banner`
+- **mobile-agentforce-assistant.html** — `title`, `act-tag`, `header`, `thread`, `composer` · mobile (dessine sa coque `.phone`) · garde les id `typing`/`a1`/`a2`/`a3`
+- **mobile-maps-nearby.html** — `title`, `act-tag`, `rep`, `map`, `list` · mobile (dessine sa coque `.phone`, carte 100 % CSS) · garde les id `radius`/`pin1`..`pin3`/`l1`..`l3`
   (garde les `id` cur/sub/resolve/f1/f2/mrg/uni : le `<script>` en bas les anime)
 - **datacloud-profil.html** — `title`, `act-tag`, `sf-logo`, `sf-app`, `sf-tabs`, `sf-avatar`, `identity`, `stream`, `segments`
   (garde `.live-2`/`.live-1` en tête du flux, une seule pastille `.seg.on`)

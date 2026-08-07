@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Opportunité dans l'app Salesforce mobile · Sales Cloud    │
+     │ Fidèle à l'app native : en-tête blanc, actions rapides, pastille      │
+     │ d'objet orange, champs, Path SLDS en chevrons, sections repliables,   │
+     │ barre d'onglets basse. Chrome partagé .sfm-* (shared.css).            │
+     │ Couleur SALESFORCE fixe (#0176d3), PAS l'accent de marque.            │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Le <script> orchestre l'animation : garde les id (p1..p5, next).      │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Opportunité — Salesforce mobile<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .phone { width: 390px; }
+    .screen { width: 100%; height: 800px; overflow-y: auto; }
+
+    /* Prochaine action Einstein (clin d'œil produit, sous le Path) */
+    .sfm-next { background: var(--sf-blue-soft); border-top: 1px solid var(--sf-line); border-bottom: 1px solid var(--sf-line); display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; opacity: 0; }
+    .sfm-next.in { animation: nfade 0.5s ease forwards; }
+    @keyframes nfade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .sfm-next .ni { width: 28px; height: 28px; border-radius: 7px; background: var(--sf-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sfm-next .ni svg { width: 16px; height: 16px; }
+    .sfm-next .nt { font-size: 0.82rem; line-height: 1.4; }
+    .sfm-next .nt .k { color: var(--sf-blue); font-weight: 600; display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.4px; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Opportunité dans Salesforce mobile<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="sfm">
+            <!-- SLOT: rep ─ en-tête blanc SF : retour vers la liste + étoile/recherche/notif. -->
+            <div class="sfm-head">
+                <span class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg><span>Opportunités</span></span>
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></span>
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span>
+            </div>
+            <!-- /SLOT: rep -->
+
+            <!-- SLOT: highlights ─ actions rapides + pastille d'objet (Opportunity) + nom. -->
+            <div class="sfm-qa">
+                <div class="qa"><span class="b blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.5-1.1a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg></span><span class="l">Appeler</span></div>
+                <div class="qa"><span class="b green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span><span class="l">Tâche</span></div>
+                <div class="qa"><span class="b pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="l">Événement</span></div>
+                <div class="qa"><span class="b grey"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span><span class="l">Plus</span></div>
+            </div>
+            <div class="sfm-obj">
+                <span class="tile"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span>
+                <div><div class="lab">Opportunité</div><div class="nm">Renouvellement cadre — Durand Équipements</div></div>
+            </div>
+            <!-- /SLOT: highlights -->
+
+            <!-- SLOT: details ─ champs clés puis Path SLDS + bouton, puis prochaine action.
+                 Garde les id p1..p5 (chevrons du Path) et #next. -->
+            <div class="sfm-fields">
+                <div class="f"><div class="l">Nom du compte</div><div class="v link">Durand Équipements</div></div>
+                <div class="f"><div class="l">Date de clôture</div><div class="v">30/09/2026</div></div>
+                <div class="f"><div class="l">Montant</div><div class="v">124 000,00 €</div></div>
+                <div class="f"><div class="l">Téléphone</div><div class="v link">04 78 55 88 88</div></div>
+                <div class="f"><div class="l">Propriétaire</div><div class="v link">Julien Martin</div></div>
+            </div>
+            <div class="sfm-path-wrap">
+                <div class="sfm-path">
+                    <div class="st done" id="p1">✓</div>
+                    <div class="st done" id="p2">✓</div>
+                    <div class="st done" id="p3">✓</div>
+                    <div class="st cur" id="p4">Négociation</div>
+                    <div class="st" id="p5">Signé</div>
+                </div>
+                <div class="sfm-path-stage">Étape : Négociation</div>
+                <div class="sfm-path-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="vertical-align:-2px;margin-right:6px"><path d="M20 6L9 17l-5-5"/></svg>Marquer l'étape comme terminée</div>
+            </div>
+            <div class="sfm-next" id="next">
+                <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg></span>
+                <div class="nt"><span class="k">✦ Einstein · prochaine action</span>Envoyer la proposition révisée avant la relance de vendredi.</div>
+            </div>
+            <!-- /SLOT: details -->
+
+            <!-- SLOT: activity ─ sections repliables (Activité / Détails / Associé) + onglets bas. -->
+            <div class="sfm-sections">
+                <div class="row">Activité<span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></div>
+                <div class="row">Détails<span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></div>
+                <div class="row">Associé<span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span></div>
+            </div>
+            <div class="sfm-tabs">
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg>Chatter</span>
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>Comptes</span>
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M9 8a3 3 0 106 0 3 3 0 00-6 0M21 20v-2a4 4 0 00-3-3.9"/></svg>Groupes</span>
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M8 15v3M13 11v7M18 7v11"/></svg>Tableaux</span>
+                <span class="t on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>Menu</span>
+            </div>
+            <!-- /SLOT: activity -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // ponytail: timeline scriptée pour le GIF — la prochaine action Einstein apparaît après un temps de lecture
+    var t = 0, step = function (fn, d) { t += d; setTimeout(fn, t); };
+    step(function(){ document.getElementById('next').classList.add('in'); }, 1500);
+</script>
+</body>
+</html>
