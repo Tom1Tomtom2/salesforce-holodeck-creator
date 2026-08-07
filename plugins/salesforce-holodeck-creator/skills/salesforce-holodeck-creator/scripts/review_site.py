@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture et contrôle visuellement un site généré par site-web-story.
+"""Capture et contrôle visuellement un site généré par salesforce-holodeck-creator.
 
 Usage :
     python3 scripts/review_site.py ./nova-story
@@ -232,7 +232,7 @@ def selfcheck() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Capture et contrôle un site site-web-story généré.")
+    parser = argparse.ArgumentParser(description="Capture et contrôle un site salesforce-holodeck-creator généré.")
     parser.add_argument("site", nargs="?", help="dossier <slug>-story")
     parser.add_argument("--selfcheck", action="store_true")
     args = parser.parse_args()

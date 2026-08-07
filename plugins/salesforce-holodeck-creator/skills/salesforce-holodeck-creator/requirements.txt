@@ -1,4 +1,4 @@
-# Dépendances de site-web-story.
+# Dépendances de salesforce-holodeck-creator.
 #
 # build_site.py (génération du site) : AUCUNE dépendance — stdlib pure, Python 3.10+.
 # crawl_brand.py (crawl de marque)   : playwright, ci-dessous.

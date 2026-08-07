@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble un site de démo `site-web-story` à partir d'un manifest JSON.
+"""Assemble un site de démo `salesforce-holodeck-creator` à partir d'un manifest JSON.
 
 Claude ne recopie plus le HTML : il produit un manifest {marque, tokens, écrans}
 où chaque écran mappe des noms de SLOT à leur contenu. Ce script copie chaque
@@ -885,7 +885,7 @@ def selfcheck():
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Assemble un site site-web-story depuis un manifest JSON.")
+    ap = argparse.ArgumentParser(description="Assemble un site salesforce-holodeck-creator depuis un manifest JSON.")
     ap.add_argument("manifest", nargs="?", help="chemin du manifest JSON, ou '-' pour stdin")
     ap.add_argument("--selfcheck", action="store_true", help="lance l'auto-vérification et quitte")
     args = ap.parse_args()

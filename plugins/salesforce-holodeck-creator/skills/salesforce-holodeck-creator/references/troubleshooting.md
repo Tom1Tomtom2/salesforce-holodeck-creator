@@ -4,7 +4,7 @@ Ce guide suit l'ordre le plus rapide pour isoler une panne : environnement, regi
 
 ## Diagnostic rapide
 
-Place-toi dans `plugins/site-web-story/skills/salesforce-holodeck-creator` et lance :
+Place-toi dans `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator` et lance :
 
 ```bash
 python3 scripts/validate_registry.py

@@ -45,7 +45,7 @@ Un composant `<lc-*>` doit :
 - fonctionner directement en `file://`, sans dépendance réseau ajoutée par le composant.
 
 La charte détaillée et les exemples se trouvent dans
-`plugins/site-web-story/skills/salesforce-holodeck-creator/references/component-charter.md`.
+`plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/component-charter.md`.
 
 ## Livrables d'une contribution
 
@@ -60,7 +60,7 @@ Un nouveau composant comprend au minimum :
 
 ## Vérification avant PR
 
-Depuis `plugins/site-web-story/skills/salesforce-holodeck-creator` :
+Depuis `plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator` :
 
 ```bash
 python3 scripts/validate_registry.py

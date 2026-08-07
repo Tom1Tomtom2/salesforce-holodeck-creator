@@ -15,14 +15,14 @@ planche de revue visuelle.
 **1. Installer le plugin** (dans Claude Code) :
 
 ```
-/plugin marketplace add https://github.com/Tom1Tomtom2/site-web-story-plugin
-/plugin install site-web-story@site-web-story-marketplace
+/plugin marketplace add https://github.com/Tom1Tomtom2/salesforce-holodeck-creator
+/plugin install salesforce-holodeck-creator@salesforce-holodeck-creator-marketplace
 /reload-plugins
 ```
 
-Le package du plugin conserve l'identifiant d'installation `site-web-story`, tandis que la skill
-chargée par Claude s'appelle `salesforce-holodeck-creator`. Après une mise à jour qui introduit ce
-nouveau nom, exécute `/reload-plugins` ou redémarre Claude Code pour retirer l'ancien nom du cache.
+Le plugin, le marketplace et la skill portent désormais le même nom `salesforce-holodeck-creator`.
+Si tu avais installé l'ancienne version `site-web-story`, désinstalle-la puis réinstalle avec les
+commandes ci-dessus, et exécute `/reload-plugins` (ou redémarre Claude Code) pour vider l'ancien cache.
 
 **2. Installer le navigateur du crawler** — **une seule fois par machine**, dans un terminal :
 
@@ -90,7 +90,7 @@ Le site est autonome et s'ouvre directement en `file://` : aucun serveur n'est n
 Pour repartir d'un exemple sans passer par le workflow conversationnel :
 
 ```bash
-cd plugins/site-web-story/skills/salesforce-holodeck-creator
+cd plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator
 cp registry/examples/field-service-technician-mobile.json /tmp/ma-story.json
 # Éditer /tmp/ma-story.json, puis :
 python3 scripts/build_site.py /tmp/ma-story.json
@@ -123,14 +123,14 @@ Les trois niveaux d'extension ne coûtent pas la même chose :
 3. **Nouveau composant** : ajoute une nouvelle primitive JSON-driven au Lightning kit, puis expose-la dans un écran.
 
 Le guide complet est dans
-[`references/extending.md`](plugins/site-web-story/skills/salesforce-holodeck-creator/references/extending.md).
+[`references/extending.md`](plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/extending.md).
 Pour contribuer via une pull request, commence par [`CONTRIBUTING.md`](CONTRIBUTING.md) : la charte
 visuelle, la classification et les preuves de rendu y sont obligatoires.
 
 Commande de validation obligatoire après une extension :
 
 ```bash
-cd plugins/site-web-story/skills/salesforce-holodeck-creator
+cd plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator
 python3 scripts/validate_registry.py
 python3 scripts/build_site.py --selfcheck
 python3 scripts/build_site.py registry/examples/<exemple>.json
@@ -147,7 +147,7 @@ python3 scripts/build_site.py --selfcheck
 python3 scripts/review_site.py --selfcheck
 ```
 
-Le guide [`references/troubleshooting.md`](plugins/site-web-story/skills/salesforce-holodeck-creator/references/troubleshooting.md)
+Le guide [`references/troubleshooting.md`](plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator/references/troubleshooting.md)
 couvre notamment :
 
 - Playwright ou Chromium absent ;
