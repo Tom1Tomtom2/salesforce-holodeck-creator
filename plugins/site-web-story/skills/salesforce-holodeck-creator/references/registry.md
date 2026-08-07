@@ -4,7 +4,7 @@ Le dossier `registry/` est l'index machine-readable de la bibliothèque. Il ajou
 sans déplacer les fichiers sources : le bundler continue de lire `templates/` et
 `assets/lightning-kit/` aux mêmes emplacements.
 
-## Les quatre registres
+## Les cinq registres
 
 - `products.json` décrit les produits Salesforce et les jobs qu'ils couvrent.
   Les produits sectoriels portent aussi un bloc `license` avec la catégorie et l'avertissement à
@@ -13,6 +13,7 @@ sans déplacer les fichiers sources : le bundler continue de lire `templates/` e
   `cross_industry`, jamais par une fausse industrie `cross-industry`.
 - `components.json` inventorie chaque `<lc-*>`, sa source, son job, ses produits et sa disponibilité.
 - `screens.json` inventorie chaque template, son format, ses SLOTs et ses composants.
+- `taxonomy.json` contrôle les jobs, surfaces et règles de classification partagées par les contributeurs.
 
 Les valeurs de `components[].status` signifient :
 
@@ -30,6 +31,9 @@ Les valeurs de `components[].status` signifient :
 3. Préfère un asset `cross_industry: true` et adapte uniquement ses données.
 4. Applique un filtre industrie seulement si le parcours exige une structure ou une interaction
    réellement sectorielle.
+
+Le job doit exister dans `taxonomy.json` et être couvert par au moins un des produits déclarés sur
+l'asset. Cette relation empêche les catégories libres et les associations produit arbitraires.
 
 Un changement de marque, de vocabulaire, de persona ou de données ne justifie pas un nouvel écran.
 Il doit vivre dans le manifest ou dans un futur fixture/pack sectoriel. Crée un asset sectoriel
@@ -70,6 +74,9 @@ crédiblement par un asset cross-industry.
 - que les références produit et industrie existent ;
 - que les règles `cross_industry` sont cohérentes ;
 - que le statut d'un composant reflète son exposition réelle dans un écran.
+- que tous les jobs appartiennent à la taxonomie contrôlée et sont cohérents avec les produits ;
+- que chaque composant est JSON-driven, déclaré dans le CSS du kit et ne contient pas plusieurs
+  anti-patterns incompatibles avec la charte ou le fonctionnement `file://`.
 
 Le builder appelle cette validation avant chaque génération. Une dérive du registre bloque donc le
 build au lieu de produire silencieusement un catalogue faux.

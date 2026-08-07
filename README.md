@@ -124,6 +124,8 @@ Les trois niveaux d'extension ne coûtent pas la même chose :
 
 Le guide complet est dans
 [`references/extending.md`](plugins/site-web-story/skills/salesforce-holodeck-creator/references/extending.md).
+Pour contribuer via une pull request, commence par [`CONTRIBUTING.md`](CONTRIBUTING.md) : la charte
+visuelle, la classification et les preuves de rendu y sont obligatoires.
 
 Commande de validation obligatoire après une extension :
 
@@ -164,9 +166,12 @@ couvre notamment :
 | `scripts/build_site.py` | génère le site depuis un manifest | aucune (stdlib, Python 3.10+) |
 | `scripts/crawl_brand.py` | crawle logo + images + palette | playwright + un navigateur |
 | `scripts/review_site.py` | capture le hub et contrôle le rendu | playwright + un navigateur |
-| `scripts/validate_registry.py` | valide le catalogue composants/écrans/produits/industries | aucune (stdlib) |
+| `scripts/validate_registry.py` | valide catalogue, taxonomie, classification et contrat statique des composants | aucune (stdlib) |
 | `templates/*.html` | bibliothèque d'écrans à chrome verrouillée | — |
 | `registry/*.json` | taxonomie machine-readable des assets | — |
+
+La CI GitHub exécute le registre, la taxonomie et le self-check déterministe sur chaque pull request.
+La revue visuelle Chromium reste une preuve obligatoire fournie par le contributeur.
 
 Vérification rapide après install :
 ```bash

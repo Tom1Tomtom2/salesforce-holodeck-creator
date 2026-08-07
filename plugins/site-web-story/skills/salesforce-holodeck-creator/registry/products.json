@@ -5,7 +5,7 @@
       "id": "salesforce-platform",
       "label": "Salesforce Platform",
       "aliases": ["CRM", "Lightning", "Salesforce"],
-      "jobs": ["record-management", "customer-360", "workflow", "reporting"]
+      "jobs": ["record-management", "customer-360", "workflow", "reporting", "navigation", "feedback", "interaction", "clienteling", "point-of-sale"]
     },
     {
       "id": "sales-cloud",
@@ -19,7 +19,7 @@
       "label": "Service Cloud",
       "icon": "service-cloud.svg",
       "aliases": ["Service", "Service Console"],
-      "jobs": ["case-management", "contact-center", "customer-service"]
+      "jobs": ["case-management", "contact-center", "customer-service", "asset-service"]
     },
     {
       "id": "data-cloud",
@@ -40,7 +40,7 @@
       "label": "Marketing Cloud",
       "icon": "marketing-cloud.svg",
       "aliases": ["Marketing", "Journey Builder", "Email Studio"],
-      "jobs": ["campaign-management", "journey-orchestration", "email-authoring", "marketing-performance"]
+      "jobs": ["campaign-management", "journey-orchestration", "email-authoring", "marketing-performance", "paid-social-acquisition"]
     },
     {
       "id": "field-service",

@@ -19,6 +19,11 @@ Avant d'ajouter quoi que ce soit, cherche dans :
 2. `registry/components.json` pour un composant existant mais non exposé ;
 3. `templates/*.html` et `assets/lightning-kit/*-components.js` pour confirmer le contrat réel.
 
+Avant de coder, lis aussi `component-charter.md` et `registry/taxonomy.json`. Toute contribution doit
+annoncer son `job`, ses `products`, sa surface (`lightning`, `mobile`, `external`, `channel`) et son
+scope (`cross-industry` ou `industry`). Le validateur bloque les jobs libres, les incohérences
+job/produit et plusieurs écarts objectifs à la charte.
+
 ## Ajouter un composant `<lc-*>`
 
 ### 1. Choisir sa source
@@ -56,6 +61,7 @@ Règles :
 - donne un nom accessible à chaque contrôle icon-only ;
 - conserve des cibles tactiles d'au moins 44 × 44 px sur mobile ;
 - n'utilise pas uniquement la couleur pour exprimer un statut ;
+- expose les états interactifs (`aria-pressed`, `aria-selected`, `aria-expanded`) et synchronise-les ;
 - envoie les interactions avec `this.emitAction('nom-action', detail)` ;
 - ne charge aucun asset réseau : le build doit fonctionner en `file://`.
 
@@ -99,6 +105,10 @@ Ajoute une entrée à `registry/components.json` :
 
 Utilise `uncatalogued-screen` tant qu'aucun template ne contient la balise. Dès qu'un écran l'expose,
 le statut attendu devient `available`. `validate_registry.py` vérifie cette règle automatiquement.
+
+`job` doit exister dans `registry/taxonomy.json` et être couvert par au moins un produit de
+`products`. Ajoute une nouvelle valeur de taxonomie seulement quand aucune intention existante ne
+convient ; documente alors la décision dans la PR.
 
 Pour un composant sectoriel, ajoute aussi :
 
@@ -207,5 +217,9 @@ Vérifie ensuite :
 - le composant fonctionne au clavier ;
 - le rendu autonome s'ouvre directement en `file://` ;
 - `git diff --check` ne remonte rien.
+
+La CI exécute les validations sans navigateur sur chaque PR. Le contributeur reste responsable de
+la revue Chromium et des captures, car une charte visuelle ne peut pas être validée uniquement par
+analyse statique.
 
 Pour un re-sync complet du kit amont, consulte `assets/lightning-kit/SOURCE.md`.

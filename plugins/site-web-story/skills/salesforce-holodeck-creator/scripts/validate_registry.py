@@ -64,6 +64,15 @@ def _source_components(root: Path) -> dict:
             if component_id in found:
                 raise RegistryError(f"composant défini dans plusieurs sources : {component_id}")
             found[component_id] = source.relative_to(root).as_posix()
+        classes = set(re.findall(r"\bclass\s+(Lc[A-Za-z0-9]+)\s+extends\s+(?:JsonComponent|HTMLElement)\b", text))
+        registered_classes = set(re.findall(
+            r"^\s*['\"]lc-[a-z0-9-]+['\"]\s*:\s*(Lc[A-Za-z0-9]+)\b", text, re.MULTILINE
+        ))
+        orphan_classes = sorted(classes - registered_classes)
+        if orphan_classes:
+            raise RegistryError(
+                f"classes de composant non enregistrées dans {source.name} : " + ", ".join(orphan_classes)
+            )
     return found
 
 
@@ -75,11 +84,56 @@ def _template_components(text: str) -> list:
     return list(dict.fromkeys(re.findall(r"<(lc-[a-z0-9-]+)\b", text)))
 
 
+def _validate_component_contract(root: Path, source_components: dict) -> None:
+    """Garde-fous statiques minimaux de la charte pour les contributions au kit."""
+    sources = {
+        source: (root / source).read_text(encoding="utf-8")
+        for source in set(source_components.values())
+    }
+    css = (root / "assets" / "lightning-kit" / "lightning-components.css").read_text(encoding="utf-8")
+    css_header = css[:css.find("}", css.find(":root")) + 1] if ":root" in css else ""
+    required_tokens = {
+        "--lc-brand", "--lc-heading", "--lc-text", "--lc-text-secondary", "--lc-page",
+        "--lc-surface", "--lc-border", "--lc-success", "--lc-warning", "--lc-error",
+        "--lc-radius", "--lc-shadow", "--lc-font",
+    }
+    missing_tokens = sorted(token for token in required_tokens if token not in css_header)
+    if missing_tokens:
+        raise RegistryError("charte CSS : tokens de base absents " + ", ".join(missing_tokens))
+
+    for component_id, source in source_components.items():
+        text = sources[source]
+        if component_id != "lc-toast-region" and not re.search(
+            r"class\s+\w+\s+extends\s+JsonComponent\b", text
+        ):
+            raise RegistryError(
+                f"composant {component_id} : la source doit exposer un composant JSON-driven"
+            )
+        if not re.search(rf"['\"]{re.escape(component_id)}['\"]\s*:", text):
+            raise RegistryError(f"composant {component_id} : définition custom element introuvable")
+        if not re.search(rf"\b{re.escape(component_id)}\b", css):
+            raise RegistryError(
+                f"composant {component_id} : ajoute la balise à lightning-components.css"
+            )
+
+    for source, text in sources.items():
+        relative = Path(source).name
+        if re.search(r"\b(?:fetch|XMLHttpRequest)\s*\(", text):
+            raise RegistryError(f"charte {relative} : accès réseau interdit, le kit doit fonctionner en file://")
+        if re.search(r"\btabindex\s*=\s*['\"][1-9]\d*['\"]", text):
+            raise RegistryError(f"charte {relative} : tabindex positif interdit")
+        if re.search(r"\bon(?:click|change|input|keydown|keyup)\s*=", text, re.IGNORECASE):
+            raise RegistryError(f"charte {relative} : gestionnaires inline interdits")
+        if re.search(r"javascript\s*:", text, re.IGNORECASE):
+            raise RegistryError(f"charte {relative} : URL javascript: interdite")
+
+
 def validate_registry(root: Path = ROOT) -> dict:
     products_data = _load("products.json", root)
     industries_data = _load("industries.json", root)
     components_data = _load("components.json", root)
     screens_data = _load("screens.json", root)
+    taxonomy_data = _load("taxonomy.json", root)
 
     products = _indexed(products_data.get("products", []), "produit")
     industries = _indexed(industries_data.get("industries", []), "industrie")
@@ -95,6 +149,24 @@ def validate_registry(root: Path = ROOT) -> dict:
         if stale:
             details.append("absents des sources : " + ", ".join(stale))
         raise RegistryError("couverture composants incomplète (" + " ; ".join(details) + ")")
+    _validate_component_contract(root, source_components)
+
+    taxonomy_jobs = taxonomy_data.get("jobs", [])
+    if not isinstance(taxonomy_jobs, list) or not taxonomy_jobs or len(taxonomy_jobs) != len(set(taxonomy_jobs)):
+        raise RegistryError("taxonomy.json : jobs doit être une liste non vide sans doublon")
+    if taxonomy_jobs != sorted(taxonomy_jobs):
+        raise RegistryError("taxonomy.json : jobs doit être trié pour limiter les doublons en revue")
+    jobs = set(taxonomy_jobs)
+    for collection_name, collection in (("scopes", taxonomy_data.get("scopes")),
+                                        ("surfaces", taxonomy_data.get("surfaces"))):
+        if not isinstance(collection, list) or not collection:
+            raise RegistryError(f"taxonomy.json : {collection_name} doit être une liste non vide")
+        _indexed(collection, collection_name[:-1])
+
+    product_jobs = {job for product in products.values() for job in product.get("jobs", [])}
+    unknown_product_jobs = sorted(product_jobs - jobs)
+    if unknown_product_jobs:
+        raise RegistryError(f"taxonomy.json : jobs produit non classifiés {unknown_product_jobs}")
 
     for component in components.values():
         component_id = component["id"]
@@ -106,11 +178,19 @@ def validate_registry(root: Path = ROOT) -> dict:
             raise RegistryError(f"composant {component_id} : statut invalide")
         if not component.get("job") or not component.get("label"):
             raise RegistryError(f"composant {component_id} : label et job sont obligatoires")
+        if component.get("job") not in jobs:
+            raise RegistryError(f"composant {component_id} : job non classifié {component.get('job')}")
         if not component.get("products"):
             raise RegistryError(f"composant {component_id} : au moins un produit est obligatoire")
         unknown_products = sorted(set(component.get("products", [])) - set(products))
         if unknown_products:
             raise RegistryError(f"composant {component_id} : produits inconnus {unknown_products}")
+        if not any(component["job"] in products[product_id].get("jobs", [])
+                   for product_id in component["products"]):
+            raise RegistryError(
+                f"composant {component_id} : le job {component['job']} n'est couvert par aucun "
+                f"produit déclaré {component['products']}"
+            )
         _, asset_industries = _effective_industry(
             component, components_data.get("defaults", {}), "composant"
         )
@@ -139,11 +219,19 @@ def validate_registry(root: Path = ROOT) -> dict:
             raise RegistryError(f"écran {screen_id} : format invalide")
         if screen.get("status") != "available" or not screen.get("job") or not screen.get("label"):
             raise RegistryError(f"écran {screen_id} : label, job et statut available sont obligatoires")
+        if screen.get("job") not in jobs:
+            raise RegistryError(f"écran {screen_id} : job non classifié {screen.get('job')}")
         if not screen.get("products"):
             raise RegistryError(f"écran {screen_id} : au moins un produit est obligatoire")
         unknown_products = sorted(set(screen.get("products", [])) - set(products))
         if unknown_products:
             raise RegistryError(f"écran {screen_id} : produits inconnus {unknown_products}")
+        if not any(screen["job"] in products[product_id].get("jobs", [])
+                   for product_id in screen["products"]):
+            raise RegistryError(
+                f"écran {screen_id} : le job {screen['job']} n'est couvert par aucun "
+                f"produit déclaré {screen['products']}"
+            )
         _, asset_industries = _effective_industry(screen, screens_data.get("defaults", {}), "écran")
         unknown_industries = sorted(set(asset_industries) - set(industries))
         if unknown_industries:

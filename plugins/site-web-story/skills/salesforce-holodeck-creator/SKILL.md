@@ -21,7 +21,7 @@ description: |
   des captures avec Gemini, d'utiliser le holodeck app.py, de construire une vraie
   application Salesforce/LWC/Experience Cloud, un site marchand de production,
   ou un simple diagramme ou une slide unique.
-version: "1.13.0"
+version: "1.14.0"
 ---
 
 # Salesforce Holodeck Creator
@@ -55,10 +55,13 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
   jamais comme catalogue automatique.
 - `references/extending.md` — workflow mainteneur pour ajouter un composant `<lc-*>`, créer
   un template, cataloguer l'asset, ajouter une icône produit et valider l'extension.
+- `references/component-charter.md` — contrat visuel, JSON-driven, accessibilité et classification
+  que toute contribution de composant doit respecter.
 - `references/troubleshooting.md` — diagnostic des erreurs d'installation, crawl, SLOT, JSON,
   registre, bundle JavaScript, assets et cadrage visuel.
 - `registry/*.json` — catalogue machine-readable des composants, écrans, produits et
-  industries. Lis `registry/screens.json` pour choisir un écran et `registry/components.json`
+  industries, avec taxonomie contrôlée dans `registry/taxonomy.json`. Lis `registry/screens.json`
+  pour choisir un écran et `registry/components.json`
   pour vérifier sa couverture ; règles d'extension dans `references/registry.md`.
 - `scripts/validate_registry.py` — vérifie que le catalogue reste aligné sur les templates,
   les SLOTs et les définitions `<lc-*>`. Le builder l'exécute automatiquement.

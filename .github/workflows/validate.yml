@@ -1,0 +1,27 @@
+name: Validate Holodeck Library
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  registry-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/site-web-story/skills/salesforce-holodeck-creator
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate registry, taxonomy and component charter
+        run: python3 scripts/validate_registry.py
+      - name: Run deterministic build self-check
+        run: python3 scripts/build_site.py --selfcheck
+      - name: Compile Python scripts
+        run: python3 -m py_compile scripts/*.py

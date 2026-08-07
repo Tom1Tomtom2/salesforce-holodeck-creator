@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "scopes": [
+    {"id":"cross-industry","label":"Transverse","description":"Composant réutilisable quel que soit le secteur."},
+    {"id":"industry","label":"Sectoriel","description":"Composant réservé à un ou plusieurs secteurs déclarés."}
+  ],
+  "surfaces": [
+    {"id":"lightning","label":"Lightning Experience","description":"Écran Salesforce desktop ou console avec grammaire SLDS."},
+    {"id":"mobile","label":"Application mobile","description":"Expérience mobile ou technicien avec cibles tactiles."},
+    {"id":"external","label":"Expérience externe","description":"Site, portail, e-commerce ou canal hors Lightning."},
+    {"id":"channel","label":"Canal conversationnel","description":"Email, messagerie ou réseau social."}
+  ],
+  "jobs": [
+    "account-forecasting", "account-planning", "account-target-management", "activation",
+    "agent-collaboration", "application-intake", "appointment-booking", "appointment-management",
+    "approval", "asset-hierarchy", "asset-service", "assistance", "automation",
+    "campaign-management", "case-collaboration", "case-management", "checkout", "clienteling",
+    "collaboration", "contact-center", "content-generation", "credit-decisioning",
+    "currency-management", "customer-360", "customer-portal", "customer-service",
+    "deal-inspection", "dispatch", "email-authoring", "feedback", "forecasting",
+    "identity-resolution", "integration", "interaction", "inventory", "journey-orchestration",
+    "loan-origination", "loan-processing", "loan-underwriting", "margin-management",
+    "marketing-performance", "messaging", "navigation", "order-management",
+    "paid-social-acquisition", "pipeline", "point-of-sale", "pricing", "product-configuration",
+    "product-discovery", "quote-configuration", "quote-pipeline", "recommendation",
+    "record-management", "reporting", "retail-execution", "route-optimization", "sales-activity",
+    "sales-agreement-management", "sales-analytics", "segmentation", "self-service",
+    "service-escalation", "store-performance", "system-synchronization",
+    "trade-promotion-management", "unified-profile", "warranty-management",
+    "work-order-management", "workflow"
+  ],
+  "classification_rules": [
+    "Classer d'abord par job métier, puis par produit et seulement ensuite par industrie.",
+    "Utiliser cross-industry par défaut ; industry exige un workflow, un objet ou une interaction réellement sectorielle.",
+    "Une variation de données, marque, vocabulaire ou persona ne crée ni job ni composant.",
+    "Toute nouvelle valeur de taxonomie doit être proposée dans cette liste et expliquée dans la pull request."
+  ]
+}
