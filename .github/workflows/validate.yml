@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: plugins/site-web-story/skills/salesforce-holodeck-creator
+        working-directory: plugins/salesforce-holodeck-creator/skills/salesforce-holodeck-creator
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

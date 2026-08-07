@@ -270,7 +270,7 @@ def validate_registry(root: Path = ROOT) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Valide les registres site-web-story.")
+    parser = argparse.ArgumentParser(description="Valide les registres salesforce-holodeck-creator.")
     parser.add_argument("--root", type=Path, default=ROOT, help="dossier racine de la skill")
     args = parser.parse_args()
     try:

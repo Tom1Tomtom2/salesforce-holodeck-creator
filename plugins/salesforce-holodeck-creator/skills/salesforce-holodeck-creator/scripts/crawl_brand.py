@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Crawle le site d'une marque avec un vrai navigateur (Chromium headless) pour
-pré-remplir la Phase 1 de site-web-story : logo, images produit, palette, typo.
+pré-remplir la Phase 1 de salesforce-holodeck-creator : logo, images produit, palette, typo.
 
 Pourquoi un navigateur et pas WebFetch/curl : les sites de marque (audi.fr…) sont
 derrière un anti-bot de CDN qui renvoie 503 à tout client sans JS. Chromium exécute

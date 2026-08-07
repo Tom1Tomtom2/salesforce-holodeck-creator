@@ -12,7 +12,7 @@
       "label": "Sales Cloud",
       "icon": "sales-cloud.svg",
       "aliases": ["Sales", "CRM Analytics for Sales"],
-      "jobs": ["pipeline", "forecasting", "deal-inspection", "sales-activity", "sales-analytics"]
+      "jobs": ["pipeline", "forecasting", "deal-inspection", "sales-activity", "sales-analytics", "lead-capture"]
     },
     {
       "id": "service-cloud",
