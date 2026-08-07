@@ -1,0 +1,24 @@
+{
+  "brand": "QuantumBit",
+  "slug": "revenue-cloud-advanced-quotes",
+  "story_title": "Du produit configurable au devis rentable",
+  "tagline": "Configurez, tarifez et approuvez chaque proposition avec le bon niveau de contrôle.",
+  "thesis": "Revenue Cloud Advanced relie catalogue, tarification, marge, devises et approbations pour accélérer les propositions complexes sans sacrifier la rentabilité.",
+  "license_selection": {"mode":"add-on","label":"Revenue Cloud Advanced","confirmed":true},
+  "tokens": {"--accent":"#0b827c","--accent-dark":"#024d4c","--accent-soft":"#e7f7f6"},
+  "intro": {
+    "kicker": "Revenue Cloud Advanced",
+    "title": "Un devis complexe, une décision maîtrisée",
+    "lede": "Camille compose la solution EuroGrid, simule la marge en EUR et USD, puis Marc approuve l’exception commerciale avec tout le contexte utile.",
+    "cast": [
+      {"name":"Camille Martin","role":"Account Executive EMEA","bio":"Construit et négocie les propositions stratégiques.","image":"people/femme-2.jpg"},
+      {"name":"Marc Petit","role":"Finance Business Partner","bio":"Protège la marge et sécurise les exceptions tarifaires.","image":"people/homme-2.jpg"}
+    ]
+  },
+  "screens": [
+    {"file":"acte1-configurateur.html","template":"revenue-product-configurator","channel":"Revenue Cloud Advanced","chapter":"Composer","act":"Acte 1 · Camille","title":"Configurer la solution EuroGrid","desc":"Camille sélectionne la plateforme, les gateways et le support. Les attributs structurent les dépendances et les options applicables sans ajouter les textes de la slide source.","trigger":"EuroGrid confirme 42 sites et une résidence des données en Europe.","result":"Le bundle conforme est prêt à être tarifé.","transition":"La configuration doit maintenant respecter le budget et les seuils de marge.","persona":"Camille Martin","presenter":{"duration_seconds":55,"message":"La configuration transforme les contraintes du client en bundle valide.","show":"Les produits sélectionnés, les attributs et le total recalculé."},"display":{"mode":"full","scale":0.49,"height":930},"slots":{"act-tag":"Acte 1 · Configurer la solution"}},
+    {"file":"acte2-tarification.html","template":"revenue-quote-workspace","channel":"Revenue Cloud Advanced","chapter":"Tarifer","act":"Acte 2 · Camille","title":"Arbitrer prix, marge et devises","desc":"Camille ajuste les remises par ligne, visualise la cascade de prix et compare EUR, USD et GBP avec les taux contractuels. Agentforce propose un scénario qui évite une escalade inutile.","trigger":"Le client demande 12 % de remise sur la plateforme et un prix consolidé en USD.","result":"La valeur nette et la marge sont immédiatement explicables.","transition":"L’exception restante doit être tranchée par Finance.","persona":"Camille Martin","presenter":{"duration_seconds":70,"message":"Chaque remise reste reliée à son impact sur la marge et aux garde-fous.","show":"Le changement de devise, les remises par ligne et la recommandation Agentforce."},"display":{"mode":"full","scale":0.44,"height":1120},"slots":{"act-tag":"Acte 2 · Tarifer et protéger la marge"}},
+    {"file":"acte3-approbation.html","template":"revenue-approval-center","channel":"Revenue Cloud Advanced","chapter":"Décider","act":"Acte 3 · Marc","title":"Approuver avec les bons garde-fous","desc":"Marc voit les seuils, la marge, le risque de change, la chaîne d’approbation et l’historique avant de décider.","trigger":"La remise Edge Control dépasse l’autonomie commerciale de Camille.","result":"L’exception est approuvée sans perdre la traçabilité de la décision.","transition":"Le management peut suivre les devis qui ralentissent encore le revenu.","persona":"Marc Petit","presenter":{"duration_seconds":55,"message":"L’approbateur reçoit le contexte commercial et financier au même endroit.","show":"Le contrôle en échec, l’étape Finance et l’historique de décision."},"display":{"mode":"full","scale":0.48,"height":920},"slots":{"act-tag":"Acte 3 · Décider avec les garde-fous"}},
+    {"file":"acte4-pipeline.html","template":"revenue-quote-pipeline","channel":"Revenue Cloud Advanced","chapter":"Piloter","act":"Acte 4 · Marc","title":"Prioriser le pipeline des devis","desc":"Marc repère les devis en révision, les marges faibles et les approbations vieillissantes dans un board orienté quote-to-cash.","trigger":"La revue hebdomadaire doit distinguer les opportunités commerciales des devis réellement bloqués.","result":"Les équipes ciblent les exceptions qui retardent la signature.","transition":"Les devis acceptés peuvent passer à la commande avec un contexte complet.","persona":"Marc Petit","presenter":{"duration_seconds":50,"message":"Le pilotage se concentre sur les devis qui retardent réellement le revenu.","show":"Les colonnes quote-to-cash, les risques, l’âge et la marge des devis."},"display":{"mode":"full","scale":0.45,"height":980},"slots":{"act-tag":"Acte 4 · Piloter les devis à risque"}}
+  ]
+}

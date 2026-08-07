@@ -26,6 +26,12 @@
     {"id":"lc-deal-inspection","source":"assets/lightning-kit/sales-components.js","label":"Deal inspection","job":"deal-inspection","products":["sales-cloud","agentforce"],"status":"available"},
     {"id":"lc-quote-builder","source":"assets/lightning-kit/sales-components.js","label":"Quote builder","job":"quote-configuration","products":["revenue-cloud"],"status":"available"},
     {"id":"lc-quote-approval","source":"assets/lightning-kit/sales-components.js","label":"Quote approval","job":"approval","products":["revenue-cloud"],"status":"available"},
+    {"id":"lc-revenue-product-configurator","source":"assets/lightning-kit/revenue-components.js","label":"Revenue product configurator","job":"product-configuration","products":["revenue-cloud"],"status":"available"},
+    {"id":"lc-revenue-quote-pricing","source":"assets/lightning-kit/revenue-components.js","label":"Revenue quote pricing","job":"pricing","products":["revenue-cloud"],"status":"available"},
+    {"id":"lc-revenue-pricing-waterfall","source":"assets/lightning-kit/revenue-components.js","label":"Pricing waterfall","job":"margin-management","products":["revenue-cloud"],"status":"available"},
+    {"id":"lc-revenue-currency-manager","source":"assets/lightning-kit/revenue-components.js","label":"Multi-currency manager","job":"currency-management","products":["revenue-cloud"],"status":"available"},
+    {"id":"lc-revenue-approval-center","source":"assets/lightning-kit/revenue-components.js","label":"Revenue approval center","job":"approval","products":["revenue-cloud"],"status":"available"},
+    {"id":"lc-revenue-quote-pipeline","source":"assets/lightning-kit/revenue-components.js","label":"Quote pipeline board","job":"quote-pipeline","products":["revenue-cloud"],"status":"available"},
     {"id":"lc-sales-activity","source":"assets/lightning-kit/sales-components.js","label":"Sales activity","job":"sales-activity","products":["sales-cloud"],"status":"available"},
 
     {"id":"lc-dashboard-header","source":"assets/lightning-kit/dashboard-components.js","label":"Dashboard header","job":"sales-analytics","products":["sales-cloud"],"status":"uncatalogued-screen"},

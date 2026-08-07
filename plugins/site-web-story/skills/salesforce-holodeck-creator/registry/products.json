@@ -61,13 +61,13 @@
     },
     {
       "id": "revenue-cloud",
-      "label": "Revenue Cloud",
+      "label": "Revenue Cloud Advanced",
       "icon": "revenue-cloud.svg",
-      "aliases": ["CPQ", "Revenue Lifecycle Management"],
-      "jobs": ["quote-configuration", "pricing", "approval"],
+      "aliases": ["Revenue Cloud", "RCA", "CPQ", "Revenue Lifecycle Management"],
+      "jobs": ["product-configuration", "quote-configuration", "pricing", "margin-management", "currency-management", "approval", "quote-pipeline"],
       "license": {
         "category": "add-on",
-        "notice": "Licence Revenue Cloud distincte de Sales Cloud. Vérifier l’édition, les fonctions de tarification et les droits activés dans l’org."
+        "notice": "Revenue Cloud Advanced requiert des licences et permissions dédiées. Vérifier les fonctions de catalogue, tarification, configuration et orchestration activées dans l’org cible."
       }
     },
     {

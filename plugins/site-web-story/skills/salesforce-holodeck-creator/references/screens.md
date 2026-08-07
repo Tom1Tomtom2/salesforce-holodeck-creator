@@ -57,6 +57,10 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 | Objectif de compte Manufacturing | `manufacturing-account-target.html` | desktop | Manufacturing Cloud | synthèse, affectations et distribution |
 | Service actif et garanties Manufacturing | `manufacturing-asset-service.html` | desktop | Manufacturing Cloud + Service Cloud + Agentforce | identité, couvertures, dossiers, interventions et jalons |
 | Hiérarchie des actifs Manufacturing | `manufacturing-asset-hierarchy.html` | desktop | Manufacturing Cloud | arbre accessible, recherche et navigation clavier |
+| Configurateur produits Revenue Cloud Advanced | `revenue-product-configurator.html` | desktop | Revenue Cloud Advanced | catalogue, attributs et règles de configuration |
+| Atelier de devis Revenue Cloud Advanced | `revenue-quote-workspace.html` | desktop | Revenue Cloud Advanced + Agentforce | tarification, marge, multi-devises et recommandation |
+| Centre d’approbation Revenue Cloud Advanced | `revenue-approval-center.html` | desktop | Revenue Cloud Advanced | garde-fous, chaîne et historique de décision |
+| Pipeline des devis Revenue Cloud Advanced | `revenue-quote-pipeline.html` | desktop | Revenue Cloud Advanced | board quote-to-cash, marge et risques |
 
 `datacloud-pipeline.html` couvre 3 scènes du même gabarit (acquisition « lookalike »,
 activation d'audience vers Meta, re-segmentation post-événement) : n'adapte que les SLOTs
@@ -130,6 +134,18 @@ La recherche, le bouton « Ask » et le cluster d'icônes (droite) sont **verrou
 - **manufacturing-asset-hierarchy.html** — `title`, `act-tag`, `sf-*`, `header`, `hierarchy`
   (`lc-asset-hierarchy`). L’arbre suit le modèle ARIA tree/treeitem/group et prend en charge les flèches,
   Origine/Fin, Entrée et Espace.
+- **revenue-product-configurator.html** — `title`, `act-tag`, `sf-*`, `configurator`
+  (`lc-revenue-product-configurator`). Le composant couvre catalogue, sélection, quantités, attributs et résumé ;
+  la sélection et les quantités recalculent le total ponctuel dans la démo.
+- **revenue-quote-workspace.html** — `title`, `act-tag`, `sf-*`, `header`, `pricing`
+  (`lc-revenue-quote-pricing`), `waterfall` (`lc-revenue-pricing-waterfall`), `currencies`
+  (`lc-revenue-currency-manager`), `recommendation` (`lc-ai-recommendation`).
+- **revenue-approval-center.html** — `title`, `act-tag`, `sf-*`, `header`, `approval`
+  (`lc-revenue-approval-center`).
+- **revenue-quote-pipeline.html** — `title`, `act-tag`, `sf-*`, `pipeline`
+  (`lc-revenue-quote-pipeline`). Ce board suit les devis et leurs garde-fous, pas les opportunités Sales Cloud.
+  L'exemple complet `registry/examples/revenue-cloud-advanced-quotes.json` enchaîne configuration,
+  tarification multi-devises, approbation et pilotage en conservant le même compte et le même devis.
 
 `lc-agent-overlay` a deux modes de déclenchement : la valeur par défaut affiche une capsule
 flottante sur les sites externes ; `data-mode="lightning"` remplace le bouton Ask du shell
@@ -194,6 +210,7 @@ est **partielle** — voici l'état honnête, à annoncer à l'utilisateur en Ph
 | Explication des variations du pipeline | `lightning-pipeline-inspection` | ✅ waterfall, opportunités et insights Einstein |
 | Prévision agrégée / forecast hiérarchique | `lightning-dashboard` | ⚠️ proche (KPI/charts génériques) ; composants forecast disponibles mais non câblés |
 | **Devis (CPQ / Revenue Cloud)** | `lightning-revenue` | ✅ configuration, calcul temps réel, approbation et Revenue Agent |
+| **Devis Revenue Cloud Advanced** | `revenue-product-configurator`, `revenue-quote-workspace`, `revenue-approval-center`, `revenue-quote-pipeline` | ✅ configuration, pricing, marge, multi-devises, approbation et pipeline des devis |
 | Portail partenaire / Experience Cloud | — | ❌ **à créer** (aucun composant dédié — chrome à dessiner) |
 | **Marketing Cloud (campagne, parcours, e-mail studio, segment)** | `lightning-marketing` | ✅ (câblé — 6 surfaces masquables) — utile B2C **et** B2B (nurturing) |
 

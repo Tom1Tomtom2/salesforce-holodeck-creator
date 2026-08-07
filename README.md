@@ -104,10 +104,11 @@ Autres exemples disponibles :
 - `registry/examples/manufacturing-sales-service.json`
 - `registry/examples/field-service-technician-mobile.json`
 - `registry/examples/core-sales-revenue.json`
+- `registry/examples/revenue-cloud-advanced-quotes.json`
 
-Ce dernier exemple couvre le nouveau parcours transverse Sales Cloud + Revenue Cloud : pipeline
-d'opportunités en Kanban, inspection Einstein, configuration de devis, calcul temps réel et
-approbation de marge avec Agentforce.
+Ces deux derniers exemples couvrent les parcours commerciaux avancés : le premier relie Sales Cloud
+et Revenue Cloud ; le second détaille configuration, tarification multi-devises, approbation et
+pipeline des devis dans Revenue Cloud Advanced.
 
 Pour choisir un écran, consulte d'abord `registry/screens.json`, puis `references/screens.md`
 pour son contrat JSON et ses SLOTs. Ne modifie jamais directement un dossier `*-story/` : c'est une

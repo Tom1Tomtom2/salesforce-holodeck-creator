@@ -25,7 +25,8 @@ Les valeurs de `components[].status` signifient :
 2. Filtre ensuite sur les produits Salesforce attendus dans le brief.
    Avant de choisir un produit sectoriel, fais confirmer à l'utilisateur qu'il souhaite une expérience
    Financial Services Cloud, Consumer Goods Cloud ou Manufacturing Cloud plutôt qu'une expérience
-   limitée aux Clouds déjà licenciés. Ces licences sont distinctes de Sales Cloud.
+   limitée aux Clouds déjà licenciés. Ces licences sont distinctes de Sales Cloud. Confirme aussi les
+   add-ons dédiés comme Revenue Cloud Advanced avant de figer un parcours qui les mobilise.
 3. Préfère un asset `cross_industry: true` et adapte uniquement ses données.
 4. Applique un filtre industrie seulement si le parcours exige une structure ou une interaction
    réellement sectorielle.
@@ -42,8 +43,8 @@ crédiblement par un asset cross-industry.
 - `products.json` peut référencer une icône officielle via `icon`. Le fichier SVG correspondant vit dans
   `assets/product-icons/` et le builder ne copie dans la story que les icônes réellement utilisées.
 - Le hub liste discrètement les produits utilisés ; les notes présentateur conservent le détail des licences.
-- Si une story utilise un produit `industry-cloud` sans choix confirmé, le build reste possible mais
-  affiche un avertissement explicite.
+- Si une story utilise un produit `industry-cloud` ou `add-on` sans choix confirmé, le build reste
+  possible mais affiche un avertissement explicite.
 - Cette mention est informative : elle ne remplace pas la vérification contractuelle de l'édition, des
   add-ons et des permission sets disponibles dans l'org cible.
 

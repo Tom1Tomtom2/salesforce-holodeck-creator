@@ -740,12 +740,12 @@ def build(manifest: dict, root: Path = ROOT) -> Path:
     narrative_warnings = []
     if not manifest.get("thesis"):
         narrative_warnings.append("thèse de démo absente")
-    industry_products = [product["label"] for product in _story_products(root, manifest["screens"])
-                         if (product.get("license") or {}).get("category") == "industry-cloud"]
+    licensed_products = [product["label"] for product in _story_products(root, manifest["screens"])
+                         if (product.get("license") or {}).get("category") in {"industry-cloud", "add-on"}]
     selection = manifest.get("license_selection") or {}
-    if industry_products and not selection.get("confirmed"):
+    if licensed_products and not selection.get("confirmed"):
         narrative_warnings.append(
-            "choix de licence sectorielle non confirmé : " + ", ".join(industry_products)
+            "choix de licence ou add-on non confirmé : " + ", ".join(licensed_products)
         )
     for index, screen in enumerate(manifest.get("screens", []), 1):
         missing = [key for key in ("trigger", "result", "transition") if not screen.get(key)]
@@ -876,6 +876,9 @@ def selfcheck():
             # re-sync : aucune collision de noms top-level (sinon SyntaxError → tout le kit tombe en file://)
             assert not _top_level_dupes(js), f"collision top-level dans le bundle : {_top_level_dupes(js)}"
             assert "const definitions =" not in js, "map d'enregistrement `definitions` non isolée par fichier"
+            assert "lc-revenue-quote-pricing" in js, "composants Revenue Cloud absents du bundle"
+            assert 'data-revenue-config-total' in js, "total du configurateur non pilotable"
+            assert 'aria-pressed="${index === activeCategory}"' in js, "état des catégories Revenue non exposé"
         finally:
             os.chdir(prev)
     print("selfcheck OK")

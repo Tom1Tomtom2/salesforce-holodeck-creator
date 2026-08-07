@@ -108,13 +108,15 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
    - produits Salesforce imposés ou à éviter,
     - faits/chiffres fournis et sujets sensibles à ne pas inventer.
 
-   **Choix des licences Salesforce — obligatoire dès qu'un écran sectoriel est envisagé.** Présente
-   explicitement deux options à l'utilisateur :
+   **Choix des licences Salesforce — obligatoire dès qu'un écran sectoriel ou un add-on est envisagé.**
+   Présente explicitement les options à l'utilisateur :
    - expérience construite avec les Clouds déjà licenciés (par exemple Sales Cloud / Service Cloud) ;
    - expérience sectorielle avec **Financial Services Cloud**, **Consumer Goods Cloud** ou
      **Manufacturing Cloud**. Ces produits ont des licences et droits distincts de Sales Cloud.
+   - expérience avec un add-on dédié, par exemple **Revenue Cloud Advanced** pour la configuration,
+     la tarification, les devis et les approbations.
    Demande quel périmètre il souhaite utiliser avant de figer la story. Ne présente jamais un écran
-   sectoriel comme une simple fonctionnalité de Sales Cloud. Enregistre le choix dans
+   sectoriel ou Revenue Cloud Advanced comme une simple fonctionnalité de Sales Cloud. Enregistre le choix dans
    `license_selection` et garde `confirmed:false` tant que l'utilisateur ne l'a pas confirmé.
 
    Formulation attendue : « Si tu veux mieux cibler la démo, tu peux aussi me donner
@@ -228,7 +230,8 @@ il ne justifie ni un nouveau composant ni un nouvel écran. Voir `references/reg
 
 Avant de soumettre la story, dresse la liste des `products` réellement utilisés par les écrans et
 affiche un avertissement licence. Pour `financial-services-cloud`, `consumer-goods-cloud` et
-`manufacturing-cloud`, écris explicitement « licence sectorielle distincte de Sales Cloud ».
+`manufacturing-cloud`, écris explicitement « licence sectorielle distincte de Sales Cloud ». Pour
+`revenue-cloud`, précise que Revenue Cloud Advanced est un add-on avec licences et permissions dédiées.
 Le manifest doit contenir :
 `"license_selection":{"mode":"industry-cloud","label":"Expérience Manufacturing Cloud","confirmed":true}`
 (adapte le label au choix utilisateur). Le hub affiche discrètement les produits utilisés ; les notes
@@ -362,7 +365,7 @@ Règles pour le manifest :
   nouvelles classes — la chrome est verrouillée.
 - **Écrans composables `<lc-*>`** (`lightning-record`, `lightning-dashboard`, `lightning-fieldservice`,
   `lightning-marketing`, `lightning-sales`, `lightning-pipeline-inspection`, `lightning-revenue`, les écrans `fieldservice-mobile-*`, `financial-loan-portal`, `financial-loan-processor`,
-     `financial-loan-underwriter`, les écrans `consumer-*` et `manufacturing-*`) :
+     `financial-loan-underwriter`, les écrans `consumer-*`, `manufacturing-*` et `revenue-*`) :
   leurs SLOTs enveloppent un composant `<lc-*>` + un `<script type="application/json">`. Reprends le bloc
   d'exemple et **n'ajuste que le JSON** (valeurs), jamais la balise ni les clés attendues. Le marqueur SLOT
   est **autour** du `<script>` (un commentaire dedans casserait `JSON.parse`) — c'est déjà le cas, n'y touche pas.
@@ -385,7 +388,7 @@ Règles pour le manifest :
   prend son `image` et alimente automatiquement le SLOT `sf-avatar`, afin que l'utilisateur connecté
   change avec l'acte. Un `sf-avatar` explicite dans `slots` reste prioritaire.
 - **`license_selection`** = choix produit/licence confirmé avec l'utilisateur. `mode` vaut en général
-  `core-clouds` ou `industry-cloud`, `label` décrit la configuration retenue et `confirmed` bloque
+  `core-clouds`, `industry-cloud` ou `add-on`, `label` décrit la configuration retenue et `confirmed` bloque
   l'absence silencieuse d'avertissement. Les produits réellement utilisés sont déduits des templates.
 - **`trigger` / `result` / `transition`** = contrat causal de l'acte. Ils alimentent les
   notes présentateur ; `transition` peut aussi apparaître discrètement dans le récit du hub.
