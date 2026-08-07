@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Approbation mobile · Revenue Cloud                        │
+     │ Le manager approuve une remise hors seuil depuis l'app Salesforce     │
+     │ mobile. Chrome natif : en-tête blanc, pastille d'objet, champs,       │
+     │ barre d'action approuver/refuser, bandeau de confirmation, onglets.   │
+     │ Chrome partagé .sfm-* (shared.css). Couleur SALESFORCE fixe.          │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Le <script> orchestre l'animation : garde les id (approve, reject,    │
+     │ banner).                                                              │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Approbation de devis — Salesforce mobile<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .phone { width: 390px; }
+    .screen { width: 100%; height: 800px; overflow-y: auto; position: relative; }
+
+    /* Motif de l'approbation (avertissement seuil) */
+    .sfm-flag { background: #fef5e7; border-top: 1px solid var(--sf-line); border-bottom: 1px solid var(--sf-line); display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; }
+    .sfm-flag .fi { width: 28px; height: 28px; border-radius: 7px; background: #fe9339; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sfm-flag .fi svg { width: 16px; height: 16px; }
+    .sfm-flag .ft { font-size: 0.82rem; line-height: 1.4; color: var(--sf-ink); }
+    .sfm-flag .ft b { color: #a35a00; }
+
+    .sfm-fields .f .v.warn { color: #a35a00; font-weight: 600; }
+    .sfm-fields .f.net { background: var(--sf-blue-soft); }
+    .sfm-fields .f.net .l { color: var(--sf-blue); font-weight: 600; }
+    .sfm-fields .f.net .v { color: var(--sf-blue); font-weight: 700; font-size: 1.05rem; }
+
+    /* Barre d'action approuver/refuser */
+    .sfm-approve { background: #fff; display: flex; gap: 10px; padding: 14px 16px 18px; border-top: 1px solid var(--sf-line); }
+    .sfm-approve .btn2 { flex: 1; padding: 14px; border-radius: 5px; font-size: 0.92rem; font-weight: 600; text-align: center; }
+    .sfm-approve .approve { background: var(--sf-blue); color: #fff; }
+    .sfm-approve .reject { background: #fff; color: var(--sf-blue); border: 1px solid #c9c9c9; }
+
+    /* Bandeau de confirmation (monte après approbation) */
+    .done-banner { position: absolute; left: 0; right: 0; bottom: 0; background: #2e844a; color: #fff; padding: 18px 20px 26px; display: flex; gap: 12px; align-items: center; transform: translateY(120%); transition: transform 0.5s cubic-bezier(.2,.8,.2,1); }
+    .done-banner.show { transform: translateY(0); }
+    .done-banner svg { width: 26px; height: 26px; flex-shrink: 0; }
+    .done-banner .dt { font-size: 0.86rem; line-height: 1.4; }
+    .done-banner .dt b { font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Approbation de devis en mobilité<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="sfm">
+            <!-- SLOT: rep ─ en-tête blanc SF : retour Approbations + étoile/recherche/notif. -->
+            <div class="sfm-head">
+                <span class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg><span>Approbations</span></span>
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></span>
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span>
+            </div>
+            <!-- /SLOT: rep -->
+
+            <!-- SLOT: request ─ pastille d'objet (Approbation) + n° de devis + demandeur. -->
+            <div class="sfm-obj">
+                <span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+                <div><div class="lab">Demande d'approbation</div><div class="nm">Devis Q-2026-0847</div><div class="lab" style="margin-top:3px">Soumis par Julien Martin · il y a 12 min</div></div>
+            </div>
+            <!-- /SLOT: request -->
+
+            <!-- SLOT: quote ─ récap du devis (champs) + motif de l'approbation. -->
+            <div class="sfm-fields">
+                <div class="f"><div class="l">Compte</div><div class="v link">Durand Équipements</div></div>
+                <div class="f"><div class="l">Montant catalogue</div><div class="v">142 500,00 €</div></div>
+                <div class="f"><div class="l">Remise demandée</div><div class="v warn">18 % · −25 650 €</div></div>
+                <div class="f net"><div class="l">Net à approuver</div><div class="v">116 850,00 €</div></div>
+            </div>
+            <div class="sfm-flag">
+                <span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></span>
+                <div class="ft"><b>Remise &gt; 15 %</b> — au-dessus du seuil, la règle Revenue Cloud route la demande vers vous.</div>
+            </div>
+            <!-- /SLOT: quote -->
+
+            <!-- SLOT: actions ─ boutons approuver/refuser + onglets bas.
+                 Garde #approve, #reject, #banner. -->
+            <div class="sfm-approve">
+                <button class="btn2 reject" id="reject">Refuser</button>
+                <button class="btn2 approve" id="approve">Approuver</button>
+            </div>
+            <div class="sfm-tabs">
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg>Chatter</span>
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>Comptes</span>
+                <span class="t on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Approbations</span>
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M8 15v3M13 11v7M18 7v11"/></svg>Tableaux</span>
+                <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>Menu</span>
+            </div>
+            <!-- /SLOT: actions -->
+
+            <div class="done-banner" id="banner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+                <div class="dt"><b>Devis approuvé</b><br>Julien est notifié — le devis passe en « Prêt à signer ».</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ponytail: timeline scriptée pour le GIF — le manager approuve, le bandeau vert monte
+    var t = 0, step = function (fn, d) { t += d; setTimeout(fn, t); };
+    step(function(){
+        var a = document.getElementById('approve');
+        a.textContent = 'Approbation…'; a.style.opacity = '0.7';
+    }, 1600);
+    step(function(){ document.getElementById('banner').classList.add('show'); }, 700);
+</script>
+</body>
+</html>

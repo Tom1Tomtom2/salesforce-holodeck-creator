@@ -1,0 +1,23 @@
+{
+  "brand": "Safic-Alcan",
+  "slug": "mobile-sales-tour",
+  "story_title": "Le CRM dans la poche du commercial",
+  "tagline": "Territoire, opportunité, IA et approbation : toute la journée commerciale tient dans l'app Salesforce mobile.",
+  "thesis": "Parce que le commercial travaille sur le terrain, Salesforce mobile lui donne son territoire cartographié, ses opportunités à jour, un assistant Agentforce et une approbation en un tap — sans jamais rouvrir son ordinateur.",
+  "tokens": {"--accent":"#0975d3","--accent-dark":"#064f93","--accent-soft":"#e7f3fc"},
+  "intro": {
+    "kicker": "Sales Cloud + Salesforce Maps + Agentforce + Revenue Cloud",
+    "title": "Une journée commerciale, tout en mobilité",
+    "lede": "Julien prospecte sur le terrain ; Camille approuve à distance. L'app mobile relie les deux.",
+    "cast": [
+      {"name":"Julien Martin","role":"Commercial terrain","bio":"Visite ses comptes et fait avancer ses opportunités depuis son téléphone.","image":"people/homme-1.jpg"},
+      {"name":"Camille Leroy","role":"Directrice commerciale","bio":"Valide les remises hors seuil où qu'elle soit.","image":"people/femme-1.jpg"}
+    ]
+  },
+  "screens": [
+    {"file":"acte1-maps.html","template":"mobile-maps-nearby","channel":"App Salesforce mobile · Maps","chapter":"Localiser","act":"Acte 1 · Le territoire","title":"Voir ses comptes autour de soi","desc":"Entre deux rendez-vous, Julien ouvre Salesforce Maps : ses comptes s'affichent autour de sa position, triés par distance. Il repère Durand Équipements à 400 m, avec une opportunité ouverte.","trigger":"Julien ouvre la carte de son territoire.","result":"Il identifie le compte le plus proche à visiter et lance son itinéraire.","transition":"Il entre chez Durand Équipements et ouvre l'opportunité.","persona":"Julien Martin","display":null},
+    {"file":"acte2-opportunite.html","template":"mobile-sales-opportunity","channel":"App Salesforce mobile · Sales Cloud","chapter":"Consulter","act":"Acte 2 · L'opportunité","title":"L'opportunité à jour, en réunion","desc":"Devant le client, Julien ouvre l'opportunité « Renouvellement cadre » : montant, étape de vente, activité récente et prochaine action, le tout à jour et lisible sur téléphone.","trigger":"Julien ouvre l'opportunité depuis la fiche du compte.","result":"Il a tout le contexte pour mener l'entretien sans son ordinateur.","transition":"Il demande à l'assistant IA de préparer la suite.","persona":"Julien Martin","display":null},
+    {"file":"acte3-agentforce.html","template":"mobile-agentforce-assistant","channel":"App Salesforce mobile · Agentforce","chapter":"Assister","act":"Acte 3 · L'assistant","title":"Agentforce prépare le rendez-vous","desc":"Julien demande à Agentforce de préparer sa visite : l'assistant résume le compte, pointe l'opportunité en attente et propose de générer la proposition révisée.","trigger":"Julien pose sa question à l'assistant Agentforce.","result":"Il obtient un résumé actionnable et une action prête à lancer.","transition":"La proposition part en approbation chez Camille.","persona":"Julien Martin","display":null},
+    {"file":"acte4-approbation.html","template":"mobile-revenue-approval","channel":"App Salesforce mobile · Revenue Cloud","chapter":"Approuver","act":"Acte 4 · L'approbation","title":"Valider une remise en un tap","desc":"La remise dépasse le seuil : Revenue Cloud route la demande vers Camille. Depuis son téléphone, elle voit le récap du devis et le motif, puis approuve en un geste.","trigger":"Camille reçoit la demande d'approbation sur son mobile.","result":"Le devis est approuvé, Julien est notifié et passe en « Prêt à signer ».","transition":"La boucle terrain → validation est bouclée sans un seul ordinateur.","persona":"Camille Leroy","display":null}
+  ]
+}

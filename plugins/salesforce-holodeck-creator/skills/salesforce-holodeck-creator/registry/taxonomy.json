@@ -26,7 +26,7 @@
     "record-management", "reporting", "retail-execution", "route-optimization", "sales-activity",
     "sales-agreement-management", "sales-analytics", "segmentation", "self-service",
     "service-escalation", "store-performance", "system-synchronization",
-    "trade-promotion-management", "unified-profile", "warranty-management",
+    "territory-mapping", "trade-promotion-management", "unified-profile", "warranty-management",
     "work-order-management", "workflow"
   ],
   "classification_rules": [

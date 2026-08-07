@@ -71,6 +71,16 @@
       }
     },
     {
+      "id": "salesforce-maps",
+      "label": "Salesforce Maps",
+      "aliases": ["Maps", "MapAnything"],
+      "jobs": ["territory-mapping"],
+      "license": {
+        "category": "add-on",
+        "notice": "Salesforce Maps requiert une licence dédiée. Vérifier l’édition et les jeux de données géographiques activés dans l’org."
+      }
+    },
+    {
       "id": "mulesoft",
       "label": "MuleSoft",
       "icon": "mulesoft.svg",

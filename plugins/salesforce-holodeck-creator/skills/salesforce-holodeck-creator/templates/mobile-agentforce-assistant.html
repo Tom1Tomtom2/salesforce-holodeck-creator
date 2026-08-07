@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │ TEMPLATE — Assistant Agentforce mobile · Agentforce                  │
+     │ Le commercial pose une question à l'IA depuis l'app mobile ;          │
+     │ Agentforce répond (résumé de compte + prochaine action). Panneau       │
+     │ assistant natif : en-tête blanc SF, fil de conversation, saisie bas.   │
+     │ Couleur SALESFORCE fixe (#0176d3), PAS l'accent de marque.            │
+     │ NE MODIFIE QUE le contenu entre les marqueurs SLOT.                  │
+     │ Aucune image externe. Le <script> orchestre l'animation : garde les   │
+     │ id (typing, a1, a2, a3).                                              │
+     └─────────────────────────────────────────────────────────────────────┘ -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- SLOT: title -->Assistant Agentforce — Salesforce mobile<!-- /SLOT --></title>
+<link rel="stylesheet" href="shared.css">
+<style>
+    body { background: #d7dbe3; min-height: 100vh; padding: 20px 0; }
+    .phone { width: 390px; }
+    .screen { width: 100%; height: 800px; overflow-y: auto; }
+
+    /* En-tête blanc SF, variante assistant : orbe bleue + statut en ligne + fermer */
+    .af-head { background: #fff; padding: 30px 16px 12px; border-bottom: 1px solid var(--sf-line); display: flex; align-items: center; gap: 11px; position: sticky; top: 0; z-index: 20; }
+    .af-head .orb { width: 34px; height: 34px; border-radius: 9px; background: var(--sf-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .af-head .orb svg { width: 19px; height: 19px; }
+    .af-head .t { flex: 1; min-width: 0; }
+    .af-head .t .n { font-weight: 600; font-size: 1.02rem; color: var(--sf-ink); line-height: 1.1; }
+    .af-head .t .s { font-size: 0.72rem; color: var(--sf-ink2); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+    .af-head .t .s::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #2e844a; }
+    .af-head .x { color: var(--sf-ink2); flex-shrink: 0; }
+    .af-head .x svg { width: 22px; height: 22px; }
+
+    /* Fil de conversation */
+    .thread { background: var(--sf-page); flex: 1; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; }
+    .msg { max-width: 84%; padding: 11px 14px; border-radius: 16px; font-size: 0.85rem; line-height: 1.45; }
+    .msg.user { align-self: flex-end; background: var(--sf-blue); color: #fff; border-bottom-right-radius: 5px; }
+    .msg.ai { align-self: flex-start; background: #fff; color: var(--sf-ink); border: 1px solid var(--sf-line); border-bottom-left-radius: 5px; }
+    .msg.ai b { color: var(--sf-blue); }
+    .msg.ai .li { display: flex; gap: 8px; margin-top: 7px; }
+    .msg.ai .li svg { width: 14px; height: 14px; color: #a35a00; flex-shrink: 0; margin-top: 2px; }
+
+    /* Carte "action proposée" par l'IA */
+    .suggest { align-self: flex-start; max-width: 84%; background: var(--sf-blue-soft); border: 1px solid rgba(1,118,211,0.22); border-radius: 16px; border-bottom-left-radius: 5px; padding: 12px 14px; }
+    .suggest .st { font-size: 0.68rem; letter-spacing: 0.6px; text-transform: uppercase; color: var(--sf-blue); font-weight: 600; }
+    .suggest .sh { font-size: 0.85rem; font-weight: 500; margin: 5px 0 10px; line-height: 1.35; color: var(--sf-ink); }
+    .suggest .sbtn { display: inline-flex; align-items: center; gap: 7px; background: var(--sf-blue); color: #fff; font-size: 0.8rem; font-weight: 600; padding: 9px 14px; border-radius: 6px; }
+    .suggest .sbtn svg { width: 13px; height: 13px; }
+
+    /* Messages animés (apparition) */
+    .rev { opacity: 0; transform: translateY(8px); }
+    .rev.in { animation: rise 0.4s ease forwards; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+    /* Indicateur de frappe */
+    .typing { align-self: flex-start; background: #fff; border: 1px solid var(--sf-line); border-radius: 16px; border-bottom-left-radius: 5px; padding: 13px 16px; display: none; gap: 5px; }
+    .typing.on { display: flex; }
+    .typing span { width: 7px; height: 7px; border-radius: 50%; background: #b0b0b0; animation: blink 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,60%,100% { opacity: 0.3; } 30% { opacity: 1; } }
+
+    /* Barre de saisie */
+    .composer { padding: 12px 16px 22px; background: #fff; border-top: 1px solid var(--sf-line); display: flex; gap: 10px; align-items: center; }
+    .composer .box { flex: 1; background: #f0f2f6; border-radius: 22px; padding: 11px 16px; font-size: 0.82rem; color: var(--sf-ink2); }
+    .composer .send { width: 40px; height: 40px; border-radius: 50%; background: var(--sf-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .composer .send svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+<div class="act-tag"><!-- SLOT: act-tag -->Acte · Assistant Agentforce dans Salesforce mobile<!-- /SLOT --></div>
+
+<div class="phone">
+    <div class="phone-notch"></div>
+    <div class="screen">
+        <div class="sfm">
+            <!-- SLOT: header ─ en-tête blanc de l'assistant Agentforce (orbe, statut, fermer). -->
+            <div class="af-head">
+                <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg></div>
+                <div class="t"><div class="n">Agentforce</div><div class="s">Assistant commercial · en ligne</div></div>
+                <span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></span>
+            </div>
+            <!-- /SLOT: header -->
+
+            <!-- SLOT: thread ─ conversation. Garde #typing et les id a1, a2, a3 (réponses animées). -->
+            <div class="thread">
+                <div class="msg user">Prépare-moi mon rendez-vous chez Durand Équipements cet après-midi.</div>
+
+                <div class="typing" id="typing"><span></span><span></span><span></span></div>
+
+                <div class="msg ai rev" id="a1">
+                    <b>Durand Équipements</b> — client depuis 2019, 3 contrats actifs. Chiffre d'affaires en hausse de 12 % sur 12 mois. Aucun ticket SAV ouvert.
+                </div>
+
+                <div class="msg ai rev" id="a2">
+                    Point d'attention :
+                    <div class="li"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>L'opportunité « Renouvellement cadre » (124 k€) attend la proposition révisée.</div>
+                </div>
+
+                <div class="suggest rev" id="a3">
+                    <div class="st">✦ Action proposée</div>
+                    <div class="sh">Générer la proposition révisée à partir du dernier échange et l'attacher à l'opportunité.</div>
+                    <span class="sbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Lancer</span>
+                </div>
+            </div>
+            <!-- /SLOT: thread -->
+
+            <!-- SLOT: composer ─ barre de saisie (décor). -->
+            <div class="composer">
+                <div class="box">Posez une question…</div>
+                <div class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+            </div>
+            <!-- /SLOT: composer -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // ponytail: timeline scriptée pour le GIF — frappe puis réponses de l'IA une à une
+    var t = 0, step = function (fn, d) { t += d; setTimeout(fn, t); };
+    step(function(){ document.getElementById('typing').classList.add('on'); }, 900);
+    step(function(){
+        document.getElementById('typing').classList.remove('on');
+        document.getElementById('a1').classList.add('in');
+    }, 1600);
+    step(function(){ document.getElementById('a2').classList.add('in'); }, 700);
+    step(function(){ document.getElementById('a3').classList.add('in'); }, 700);
+</script>
+</body>
+</html>
