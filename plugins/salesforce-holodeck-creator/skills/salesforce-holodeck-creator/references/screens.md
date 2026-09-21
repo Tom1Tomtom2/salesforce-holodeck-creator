@@ -21,6 +21,7 @@ ajouter une (liste `PHONE_TEMPLATES` dans le script — la garder alignée sur c
 |---|---|---|---|---|
 | Pub réseaux sociaux | `instagram.html` | mobile | Data Cloud → Meta (`.why`) | compteur de likes |
 | Conversation, RDV, SAV, escalade | `whatsapp.html` | mobile | Agentforce / Data Cloud (`.who.ai`) | apparition en cascade `.step` |
+| Canal d'équipe — agent IA qui répond | `slack-agent-channel.html` | desktop | Agentforce répond dans le canal (message bot `APP` + carte enregistrement Salesforce) | apparition en cascade `.step` |
 | Email (bienvenue, cross-sell, fidélité) | `email-marketing.html` | desktop | Einstein Copy Insights (panneau) | — (statique) |
 | Fiche produit / navigation e-commerce | `site-ecommerce.html` | desktop | Data Cloud beacon temps réel | dot qui pulse |
 | Landing de capture + résolution d'identité | `landing-capture.html` | mobile | Data Cloud identity resolution (overlay) | fusion des fragments (scriptée) |
@@ -79,6 +80,11 @@ activation d'audience vers Meta, re-segmentation post-événement) : n'adapte qu
 - **whatsapp.html** — `title`, `act-tag`, `brand-initial`, `contact-name`, `contact-status`, `thread`
   (palette dans le thread : `.msg in/out`, `.who ai`, `.prod`, `.slots`, `.rdv`, `.escalate` ;
   numérote l'apparition avec `step sN`)
+- **slack-agent-channel.html** — `title`, `act-tag`, `workspace-initial`, `rail-me`, `workspace-name`,
+  `channels`, `channel-name`, `channel-topic`, `thread` · desktop (cadre navigateur ; SLOT `url` du manifest
+  → mets `app.slack.com`). L'espace de travail = la marque cliente (`--accent`). Palette dans le thread :
+  `.sl-msg` (humain), `.sl-msg.bot` (agent, badge `App`), `.sl-card` (carte enregistrement Salesforce),
+  `.sl-actions` (boutons de l'agent), `.sl-reacts`, `.sl-thread-line` ; numérote l'apparition avec `step sN`
 - **email-marketing.html** — `title`, `act-tag`, `email`, `einstein`
 - **site-ecommerce.html** — `title`, `act-tag`, `order-confirm` (retirable), `nav`, `pdp`, `beacon`
 - **landing-capture.html** — `title`, `act-tag`, `url`, `landing`, `resolve`
