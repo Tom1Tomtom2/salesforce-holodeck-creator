@@ -76,12 +76,18 @@ captures via Gemini). Ici tout est dessiné en markup, comme la démo agnès b.
 - `scripts/build_site.py` — assemble le site depuis un manifest JSON (copie les
   templates, injecte les SLOTs, réécrit les tokens, génère le hub). **C'est lui qui
   écrit le HTML, pas toi.**
-- `scripts/crawl_brand.py` — crawle le site de la marque avec un **vrai navigateur**
-  (Chromium/Chrome headless furtif) et pré-remplit la Phase 1 : logo, images produit
-  HD, palette, typo, secteur. **À lancer avant de proposer l'ambiance.** WebFetch/curl
-  échouent sur les sites de marque (anti-bot CDN → 503) ; ce script exécute le JS et passe.
+- `scripts/crawl_brand.py` — pré-remplit la Phase 1 : logo, images produit HD, palette,
+  typo, secteur. **À lancer avant de proposer l'ambiance.** WebFetch/curl échouent sur les
+  sites de marque (anti-bot CDN → 503) ; il faut un vrai navigateur. Deux moteurs :
+  **(1) le navigateur intégré de l'app Claude** — chemin par défaut, aucune installation :
+  tu ouvres la page toi-même, tu exécutes le JS de `--print-extract-js`, puis le script
+  transforme le résultat en `brand.json` via `--from-browser` (stdlib pure) ;
+  **(2) Playwright/Chromium** — fallback seulement, nécessite une installation.
 - `scripts/review_site.py` — ouvre le build dans Chromium, capture chaque écran et le
   hub, produit une planche contact et remonte les erreurs visibles avant restitution.
+  **Ce script reste sur Playwright** : le navigateur intégré de l'app Claude ne peut pas
+  ouvrir d'URL `file://`, et le site généré est justement en `file://`. Sans Playwright,
+  la revue visuelle automatisée n'est pas disponible — voir Phase 3 § 3.
 
 ---
 
@@ -152,15 +158,48 @@ elle fait partie du contrat de génération par défaut.
    l'audience, l'objectif, la durée et les produits à mettre en avant. C'est facultatif ;
    sinon je les déduis de la marque et je te soumets mes hypothèses. » Ne pose pas six
    questions successives et ne retarde jamais le crawl en attendant ces réponses.
-2. **Crawle le site** (n'utilise PAS WebFetch : les sites de marque renvoient 503 à un
-   client sans JS) :
+2. **Crawle le site avec le NAVIGATEUR INTÉGRÉ de l'app Claude** (chemin par défaut —
+   aucune installation). N'utilise PAS WebFetch : les sites de marque renvoient 503 à un
+   client sans JS. Le navigateur intégré, lui, exécute le JS et passe.
+
+   Déroulé, dans cet ordre :
+   1. ouvre la page de la marque dans le navigateur intégré ;
+   2. ferme le bandeau cookies s'il y en a un, en choisissant l'option la plus respectueuse
+      de la vie privée (refuser le non-essentiel) ;
+   3. **dans un seul et même appel JavaScript** : scrolle par paliers (0,25 → 0,5 → 0,75 → 1,
+      ~800 ms entre chaque), reviens en haut, attends ~1 s, **puis** exécute le JS d'extraction.
+      La hydratation lazy-load et l'extraction doivent être dans le MÊME appel : sur une home
+      à carrousel, le DOM change entre deux appels et tu extrairais une page à moitié vide ;
+   4. récupère le JS d'extraction avec :
+      ```bash
+      python3 scripts/crawl_brand.py --print-extract-js
+      ```
+      (il est imprimé en forme auto-appelée, directement collable dans l'outil JavaScript) ;
+   5. enregistre la valeur BRUTE renvoyée dans un fichier, par exemple `<slug>-extract.json` ;
+   6. laisse le script faire la post-production (stdlib pure, aucun navigateur) :
+      ```bash
+      python3 scripts/crawl_brand.py --from-browser <slug>-extract.json \
+              --brand "<Marque>" --slug <slug> --source-url <url>
+      ```
+
+   **Contrôle qualité avant de continuer** : si `images` et `productLinks` reviennent vides
+   alors que la page est manifestement riche, ne conclus pas trop vite — refais **un** appel
+   scroll + extraction. Si c'est encore vide, le site sert ses visuels en `background-image`
+   CSS ou en vignettes trop petites : passe au Plan B plutôt que de t'acharner.
+
+   **Fallback Playwright** (seulement si le navigateur intégré est indisponible ou si l'accès
+   au site est refusé) :
    ```bash
    python3 scripts/crawl_brand.py <url> --brand "<Marque>" --slug <slug>
    ```
-   Il écrit `./<slug>-brand/` : `brand.json` (accent proposé, typo, secteur, CTA détectés),
+   Ce mode pilote son propre Chromium et demande `pip install playwright && playwright install
+   chromium`. Ne le propose jamais en premier, et n'envoie pas l'utilisateur dans un terminal
+   pour l'installer : le navigateur intégré couvre le cas normal.
+
+   Dans les deux cas, le script écrit `./<slug>-brand/` : `brand.json` (accent proposé, typo, secteur, CTA détectés),
    `logo.*`, et `product-N.*` (visuels produit HD). **Lis `brand.json`** pour l'ambiance.
-   Inspecte les `product-N.*` avec l'outil de lecture de fichiers/images disponible
-   dans Claude Code pour repérer les modèles/produits réels.
+   Inspecte les `product-N.*` avec l'outil de lecture de fichiers/images pour repérer
+   les modèles/produits réels.
    - **Ce 1er crawl est « à l'aveugle »** (il tourne AVANT qu'on sache quels produits l'histoire va
      montrer) : il ramasse le logo, la palette, et quelques visuels de la home pour l'ambiance. Les
      **images produit EXACTES** se récupèrent en 2e passe, après la story validée (voir Phase 3 §1bis).
@@ -194,8 +233,12 @@ elle fait partie du contrat de génération par défaut.
      comme des fichiers fournis.
    - Si l'utilisateur ne peut/veut pas fournir d'images : **déduis l'ambiance du nom + secteur**
      (et signale-le) — le site reste en dégradés d'accent (contrat « zéro image »).
-   - Première utilisation : `pip install -r requirements.txt && playwright install chromium`
-     (Chrome système utilisé en priorité s'il est là).
+   - **`brand.json.engine`** dit quel moteur a produit le fichier (`navigateur intégré
+     (app Claude)` ou `Playwright`). Utile quand un résultat semble pauvre.
+   - **Playwright absent (code de sortie 3)** : ne concerne que le fallback. Le script le dit
+     clairement et s'arrête sans stack trace. Ce n'est **pas bloquant** et ce n'est pas une
+     raison d'envoyer l'utilisateur dans un terminal : reviens au navigateur intégré, ou
+     enchaîne sur le Plan B ci-dessus.
 3. **Recherche la stratégie de la marque** (pour que la story colle à ses vrais enjeux,
    pas juste à son catalogue). C'est de la synthèse — pas de parsing : tu lis et tu résumes.
    - **Google News (source de tête, passe l'anti-bot)** — presse récente et datée :
@@ -314,11 +357,23 @@ plus précis que les visuels « à l'aveugle » de la Phase 1. **Uniquement si `
    chaque produit de la story à un lien via son `label` (ex. story « manteau Will » → `label` contenant
    « Will »). Ne prends QUE des `href` présents dans le catalogue — **ne devine, ne construis, ni ne
    complète aucune URL** (une URL inventée = 404 = image cassée ; contrat « données réelles »).
-2. Re-crawle ces pages produit — leur visuel exact atterrit en `product-N.*` :
+2. Récupère leur visuel exact. **Chemin par défaut — navigateur intégré de l'app Claude**,
+   aucune installation :
+   - ouvre chaque `href` retenu dans le navigateur intégré ;
+   - exécute dessus le JS de page produit :
+     ```bash
+     python3 scripts/crawl_brand.py --print-extract-js product
+     ```
+     il renvoie `{page, title, image}` où `image` est l'og:image (sinon la plus grande image rendue) ;
+   - télécharge toutes les `image` collectées d'un coup (stdlib pure, aucun navigateur) :
+     ```bash
+     python3 scripts/crawl_brand.py --fetch <image1> <image2>… --slug <slug>
+     ```
+   **Fallback Playwright** si le navigateur intégré est indisponible :
    ```bash
    python3 scripts/crawl_brand.py --pages <href1> <href2>… --slug <slug>
    ```
-   (`--pages` visite des **pages** et en extrait l'og:image ; `--fetch` reste pour des **URL d'images
+   (`--pages` visite des **pages** et en extrait l'og:image ; `--fetch` prend des **URL d'images
    directes**. Les deux écrivent `product-N.*` dans `<slug>-brand/`.)
 3. `Read` les `product-N.*` obtenus pour vérifier que ce sont les bons produits, puis réfère-les par
    **basename** dans la clé `assets` du manifest (comme au Plan B). Si un produit de la story n'a AUCUN
@@ -473,6 +528,13 @@ Avant la restitution, lance la revue visuelle :
 ```bash
 python3 scripts/review_site.py ./<slug>-story
 ```
+**Si Playwright est absent (code de sortie 3), la revue automatisée n'est pas disponible** :
+c'est le seul script qui ne peut pas passer par le navigateur intégré de l'app Claude, qui
+ne sait pas ouvrir d'URL `file://`. Ne bloque pas la restitution pour autant : relis les
+fichiers générés, vérifie que chaque `acte*.html` contient son encart `.why` et des SLOTs
+remplis (aucun « Nova » résiduel), **dis explicitement à l'utilisateur que la revue visuelle
+n'a pas tourné** et invite-le à ouvrir `index.html` lui-même. Mentionne en une ligne que
+`pip install playwright && playwright install chromium` activerait la planche contact.
 Elle capture le hub et chaque écran dans `./<slug>-story/review/`, produit une planche
 contact `contact-sheet.html` et un rapport `review-report.json` (console, erreurs de page,
 assets cassés, débordements horizontaux). Lis le rapport et ouvre la planche contact.

@@ -25,11 +25,25 @@ Lis d'abord `review/review-report.json`, puis ouvre `review/contact-sheet.html`.
 
 Symptômes :
 
-- `ModuleNotFoundError: playwright` ;
-- message demandant `playwright install chromium` ;
-- le crawl ou la revue visuelle ne démarre pas.
+- `crawl_brand.py` ou `review_site.py` s'arrête avec le **code de sortie 3** et un message
+  disant que Playwright n'est pas installé.
 
-Correction :
+**Ce n'est pas un blocage pour le crawl.** Playwright n'est plus le moteur par défaut : le
+crawl de marque passe par le **navigateur intégré de l'app Claude**, qui ne demande aucune
+installation. Reprends par là :
+
+```bash
+python3 scripts/crawl_brand.py --print-extract-js          # JS à exécuter dans la page
+python3 scripts/crawl_brand.py --from-browser <payload>.json \
+        --brand "<Marque>" --slug <slug> --source-url <url>
+```
+
+**Le seul script réellement bloqué est `review_site.py`** : la revue visuelle ouvre le site
+généré en `file://`, et le navigateur intégré ne sait pas ouvrir ce protocole. Sans Playwright,
+la planche contact n'est pas produite — dis-le à l'utilisateur au lieu de prétendre avoir relu
+le rendu, et invite-le à ouvrir `index.html` lui-même.
+
+Pour activer Playwright (facultatif, une fois par machine) :
 
 ```bash
 python3 -m pip install -r requirements.txt
