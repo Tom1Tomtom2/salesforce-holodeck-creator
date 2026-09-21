@@ -1,8 +1,15 @@
 # Dépendances de salesforce-holodeck-creator.
 #
-# build_site.py (génération du site) : AUCUNE dépendance — stdlib pure, Python 3.10+.
-# crawl_brand.py (crawl de marque)   : playwright, ci-dessous.
-# review_site.py (revue visuelle)    : playwright, ci-dessous.
+# LE CAS NORMAL NE DEMANDE AUCUNE INSTALLATION.
+# Le crawl de marque passe par le navigateur intégré de l'app Claude
+# (crawl_brand.py --print-extract-js puis --from-browser) ; la post-production
+# et la génération du site sont en stdlib pure, Python 3.10+.
+#
+# build_site.py    (génération du site)  : AUCUNE dépendance.
+# crawl_brand.py   (--from-browser, --fetch) : AUCUNE dépendance.
+# crawl_brand.py   (fallback <url> / --pages) : playwright, ci-dessous.
+# review_site.py   (revue visuelle)      : playwright, ci-dessous — pas de contournement,
+#                                          le navigateur intégré n'ouvre pas les file://.
 #
 # Installation du crawler (une fois par machine) :
 #   pip install -r requirements.txt

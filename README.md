@@ -1,18 +1,43 @@
 # Salesforce Holodeck Creator
 
-Skill Claude Code `salesforce-holodeck-creator` qui construit un **site de démo Salesforce narratif** : un parcours client de
+Skill Claude `salesforce-holodeck-creator` qui construit un **site de démo Salesforce narratif** : un parcours client de
 marque raconté en plusieurs « actes » (pub Instagram → configurateur → landing →
 WhatsApp → Data Cloud → console SAV…), en HTML/CSS artisanal. Zéro serveur, zéro clé API.
 
-Elle crawle le site de la marque avec un vrai navigateur (logo, images produit HD,
-palette, typo), puis génère un site statique navigable depuis un manifest JSON.
+Elle crawle le site de la marque avec le navigateur intégré de l'app Claude (logo, images
+produit HD, palette, typo), puis génère un site statique navigable depuis un manifest JSON.
 Un brief complémentaire peut préciser l'audience, l'objectif, la durée et les produits
 Salesforce ; il reste facultatif. Le build produit aussi des notes présentateur et une
 planche de revue visuelle.
 
-## Installation sur une nouvelle machine
+## Installation
 
-**1. Installer le plugin** (dans Claude Code) :
+### Option A — Cowork, sans GitHub ni terminal (recommandé)
+
+C'est le chemin par défaut pour un utilisateur non développeur. **Aucune connexion GitHub,
+aucun marketplace, aucune ligne de commande.**
+
+1. Récupère le fichier **`salesforce-holodeck-creator.skill`** (partagé sur Slack, Drive ou
+   en pièce jointe — c'est une simple archive).
+2. Dans l'app Claude : **Personnaliser → Compétences → `+` → Importer une compétence**,
+   puis sélectionne le fichier `.skill`.
+3. C'est terminé. Demande par exemple :
+   `Prépare-moi un holodeck pour Acme, https://www.example.com.`
+
+Tout fonctionne immédiatement : les templates, le registre, le Lightning kit, le crawl de
+marque et la génération du site ne dépendent que de Python 3.10+ (déjà présent sur macOS) et
+du navigateur intégré de l'app Claude. Seule la **revue visuelle automatisée** demande une
+installation — voir l'Option C.
+
+> Pour régénérer le bundle après une modification du skill :
+> ```bash
+> cd plugins/salesforce-holodeck-creator/skills
+> zip -r ../../../salesforce-holodeck-creator.skill salesforce-holodeck-creator -x "*.DS_Store" "*__pycache__*"
+> ```
+> L'archive doit contenir **un seul dossier racine** `salesforce-holodeck-creator/`
+> avec `SKILL.md` directement dedans.
+
+### Option B — Claude Code, via le marketplace (développeurs)
 
 ```
 /plugin marketplace add https://github.com/Tom1Tomtom2/salesforce-holodeck-creator
@@ -20,23 +45,59 @@ planche de revue visuelle.
 /reload-plugins
 ```
 
-Le plugin, le marketplace et la skill portent désormais le même nom `salesforce-holodeck-creator`.
+Le plugin, le marketplace et la skill portent le même nom `salesforce-holodeck-creator`.
 Si tu avais installé l'ancienne version `site-web-story`, désinstalle-la puis réinstalle avec les
 commandes ci-dessus, et exécute `/reload-plugins` (ou redémarre Claude Code) pour vider l'ancien cache.
 
-**2. Installer le navigateur du crawler** — **une seule fois par machine**, dans un terminal :
+> **Si une demande d'authentification GitHub apparaît** : elle vient du clone en SSH, pas du dépôt
+> (qui est public). Deux contournements :
+> - utilise l'URL `https://…` complète comme ci-dessus plutôt que la forme courte `owner/repo` ;
+> - ou force le HTTPS : `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` avant la commande.
+>
+> Si tu veux simplement éviter le sujet, passe par l'**Option A**.
 
-```
+### Option C — Playwright (facultatif, uniquement pour la revue visuelle)
+
+**Le crawl de marque n'a plus besoin de Playwright.** Il passe par le **navigateur intégré de
+l'app Claude** : Claude ouvre lui-même le site, exécute le script d'extraction dans la page,
+et `crawl_brand.py --from-browser` transforme le résultat en `brand.json` — téléchargement du
+logo et des visuels compris, en stdlib pure.
+
+Il reste **un seul script** qui ne peut pas s'en passer : `review_site.py`, la revue visuelle.
+Elle ouvre le site généré en `file://`, un protocole que le navigateur intégré n'ouvre pas.
+
+Si tu veux la planche contact automatique, une seule fois par machine :
+
+```bash
 pip install playwright
 playwright install chromium
 ```
 
-> ⚠️ Ne saute pas la 2ᵉ commande : `playwright install chromium` télécharge le **navigateur**
-> lui-même (le moteur de crawl). `pip install playwright` seul n'installe que la lib Python — le
-> crawl échouera sans navigateur. Chrome système est utilisé en priorité s'il est présent.
+> `playwright install chromium` télécharge le **navigateur** lui-même ; `pip install playwright`
+> seul n'installe que la lib Python. Chrome système est utilisé en priorité s'il est présent.
 >
-> Sans cette étape, la **génération** du site fonctionne quand même (stdlib pure) ; seul le
-> crawl automatique de la marque est indisponible — on remplit alors le manifest à la main.
+> Sans Playwright, la génération du site fonctionne intégralement : seule la revue visuelle
+> automatisée manque, et Claude te le dit explicitement au lieu de prétendre avoir relu le rendu.
+
+#### Comment marche le crawl par le navigateur intégré
+
+```bash
+# 1. le JS à exécuter dans la page (forme auto-appelée, collable telle quelle)
+python3 scripts/crawl_brand.py --print-extract-js
+
+# 2. Claude ouvre la marque, scrolle pour hydrater les visuels, exécute ce JS,
+#    enregistre la valeur brute dans acme-extract.json, puis :
+python3 scripts/crawl_brand.py --from-browser acme-extract.json \
+        --brand "Acme" --slug acme --source-url https://www.example.com
+
+# 3. après validation de la story, les visuels produit exacts :
+python3 scripts/crawl_brand.py --print-extract-js product   # JS de page produit
+python3 scripts/crawl_brand.py --fetch <image1> <image2> --slug acme
+```
+
+Le champ `brand.json.engine` indique quel moteur a produit le fichier. Le fallback Playwright
+(`crawl_brand.py <url> --brand … --slug …`) reste disponible si le navigateur intégré est
+indisponible ou si l'accès au site est refusé.
 
 ## Démarrage rapide
 
@@ -155,6 +216,9 @@ python3 scripts/build_site.py registry/examples/<exemple>.json
 python3 scripts/review_site.py ./<slug>-story
 ```
 
+Après toute modification du skill, **régénère aussi le bundle `.skill`** (voir Option A) pour que
+les utilisateurs Cowork reçoivent la mise à jour.
+
 ## Dépannage
 
 Commence toujours par ces commandes depuis le dossier de la skill :
@@ -182,8 +246,8 @@ couvre notamment :
 | Composant | Rôle | Dépendances |
 |---|---|---|
 | `scripts/build_site.py` | génère le site depuis un manifest | aucune (stdlib, Python 3.10+) |
-| `scripts/crawl_brand.py` | crawle logo + images + palette | playwright + un navigateur |
-| `scripts/review_site.py` | capture le hub et contrôle le rendu | playwright + un navigateur |
+| `scripts/crawl_brand.py` | crawle logo + images + palette | navigateur intégré de l'app Claude (aucune installation) ; playwright en fallback |
+| `scripts/review_site.py` | capture le hub et contrôle le rendu | playwright obligatoire (ouvre des `file://`) |
 | `scripts/validate_registry.py` | valide catalogue, taxonomie, classification et contrat statique des composants | aucune (stdlib) |
 | `scripts/create_component.py` | génère un squelette de composant classifié et sa fixture | aucune (stdlib) |
 | `scripts/create_screen.py` | compose un écran, le catalogue et une story d'exemple | aucune (stdlib) |
@@ -195,6 +259,7 @@ La CI GitHub exécute le registre, la taxonomie et le self-check déterministe s
 La revue visuelle Chromium reste une preuve obligatoire fournie par le contributeur.
 
 Vérification rapide après install :
+
 ```bash
 python3 <chemin>/scripts/build_site.py --selfcheck
 python3 <chemin>/scripts/validate_registry.py
